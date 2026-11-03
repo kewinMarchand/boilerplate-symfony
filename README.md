@@ -21,7 +21,7 @@ Le site suit le thème clair ou sombre du système. Un bouton « Thème » dans 
 
 | Brique                                      | Rôle                                                                    |
 | ------------------------------------------- | ----------------------------------------------------------------------- |
-| Symfony 7.4 LTS, PHP 8.4 (FrankenPHP)       | Routage, contrôleurs, formulaires, validation, pages d'erreur            |
+| Symfony 7.4 LTS, PHP 8.5 (FrankenPHP)       | Routage, contrôleurs, formulaires, validation, pages d'erreur            |
 | Twig 3                                      | Rendu serveur, templates rangés par domaine                              |
 | AssetMapper + importmap                     | JavaScript et CSS sans bundler, versionnés à la compilation              |
 | Stimulus (stimulus-bundle), Turbo (ux-turbo) | Comportements ciblés, navigation et formulaires sans rechargement        |

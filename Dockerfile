@@ -1,4 +1,4 @@
-FROM dunglas/frankenphp:1-php8.4-bookworm AS base
+FROM dunglas/frankenphp:1-php8.5-bookworm AS base
 WORKDIR /app
 RUN install-php-extensions intl opcache zip
 COPY --from=composer/composer:2-bin /composer /usr/bin/composer
