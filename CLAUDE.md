@@ -35,7 +35,7 @@ Boilerplate personnel. Les conventions générales sont dans `~/.claude/CLAUDE.m
 | PHP                             | `>=8.5`          | image FrankenPHP 1.x en PHP 8.5, `array_find()` (8.4) utilisé dans le domaine               |
 | FrankenPHP                      | `1-php8.5-bookworm` | serveur web et PHP dans un seul conteneur, image officielle mise en avant par Symfony     |
 | PHPStan                         | niveau `max`     | le code est neuf et petit, autant partir du niveau le plus strict                           |
-| PHPUnit                         | `^12.5`          | version courante, attributs PHP pour les data providers                                     |
+| PHPUnit                         | `^13.4`          | version courante, attributs PHP pour les data providers                                     |
 | Embla Carousel                  | `8.6.0`          | imposé par la spec commune, cœur vanilla dans l'importmap                                    |
 | embla-carousel-wheel-gestures   | `8.1.0`          | la molette et le glissé au trackpad ne sont pas dans le cœur d'Embla                        |
 | symfony/translation             | `8.1.*`          | messages intégrés de Symfony (CSRF, validation) en français                                |
