@@ -9,6 +9,7 @@ use App\Contact\Domain\ContactMessageNotSentException;
 use App\Contact\Domain\ContactMessageRejectedException;
 use App\Contact\Domain\ContactMessageSender;
 use App\Shared\Infrastructure\Http\InvalidApiPayloadException;
+use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Contracts\HttpClient\Exception\ExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -16,7 +17,7 @@ final readonly class HttpContactMessageSender implements ContactMessageSender
 {
     private const int UNPROCESSABLE = 422;
 
-    public function __construct(private HttpClientInterface $apiClient)
+    public function __construct(#[Target('api.client')] private HttpClientInterface $apiClient)
     {
     }
 

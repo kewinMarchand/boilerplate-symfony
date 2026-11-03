@@ -10,22 +10,22 @@
         "ext-intl": "*",
         "kewinmarchand/csp": "^0.1",
         "sentry/sentry-symfony": "^5.15",
-        "symfony/asset": "7.4.*",
-        "symfony/asset-mapper": "7.4.*",
-        "symfony/console": "7.4.*",
-        "symfony/dotenv": "7.4.*",
+        "symfony/asset": "8.1.*",
+        "symfony/asset-mapper": "8.1.*",
+        "symfony/console": "8.1.*",
+        "symfony/dotenv": "8.1.*",
         "symfony/flex": "^2.12",
-        "symfony/form": "7.4.*",
-        "symfony/framework-bundle": "7.4.*",
-        "symfony/http-client": "7.4.*",
-        "symfony/runtime": "7.4.*",
-        "symfony/security-csrf": "7.4.*",
+        "symfony/form": "8.1.*",
+        "symfony/framework-bundle": "8.1.*",
+        "symfony/http-client": "8.1.*",
+        "symfony/runtime": "8.1.*",
+        "symfony/security-csrf": "8.1.*",
         "symfony/stimulus-bundle": "^3.6",
-        "symfony/translation": "7.4.*",
-        "symfony/twig-bundle": "7.4.*",
+        "symfony/translation": "8.1.*",
+        "symfony/twig-bundle": "8.1.*",
         "symfony/ux-turbo": "^3.6",
-        "symfony/validator": "7.4.*",
-        "symfony/yaml": "7.4.*"
+        "symfony/validator": "8.1.*",
+        "symfony/yaml": "8.1.*"
     },
     "config": {
         "allow-plugins": {
@@ -79,7 +79,7 @@
     "extra": {
         "symfony": {
             "allow-contrib": false,
-            "require": "7.4.*",
+            "require": "8.1.*",
             "docker": "false"
         }
     },
@@ -91,11 +91,11 @@
         "phpstan/phpstan-phpunit": "^2.1",
         "phpstan/phpstan-symfony": "^2.1.1",
         "phpunit/phpunit": "^12.5.43",
-        "symfony/browser-kit": "7.4.*",
-        "symfony/css-selector": "7.4.*",
-        "symfony/web-profiler-bundle": "7.4.*"
+        "symfony/browser-kit": "8.1.*",
+        "symfony/css-selector": "8.1.*",
+        "symfony/web-profiler-bundle": "8.1.*"
     },
-    "description": "Boilerplate Symfony 7.4 LTS, Twig, Stimulus et Turbo, avec lint, analyse statique, tests unitaires, e2e, accessibilité et Lighthouse",
+    "description": "Boilerplate Symfony 8.1, Twig, Stimulus et Turbo, avec lint, analyse statique, tests unitaires, e2e, accessibilité et Lighthouse",
     "name": "kewinmarchand/boilerplate-symfony",
     "repositories": [{
         "name": "csp",

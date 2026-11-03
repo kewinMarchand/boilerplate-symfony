@@ -7,12 +7,13 @@ namespace App\Task\Infrastructure\Http;
 use App\Shared\Infrastructure\Http\InvalidApiPayloadException;
 use App\Task\Domain\TaskRepository;
 use App\Task\Domain\TasksLoadException;
+use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Contracts\HttpClient\Exception\ExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final readonly class HttpTaskRepository implements TaskRepository
 {
-    public function __construct(private HttpClientInterface $apiClient)
+    public function __construct(#[Target('api.client')] private HttpClientInterface $apiClient)
     {
     }
 

@@ -12,6 +12,7 @@ use App\Catalog\Domain\Category;
 use App\Catalog\Domain\CategoryTree;
 use App\Catalog\Domain\InvalidPriceException;
 use App\Shared\Infrastructure\Http\InvalidApiPayloadException;
+use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Contracts\HttpClient\Exception\ExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -19,7 +20,7 @@ final class HttpCatalogRepository implements CatalogRepository
 {
     private ?CategoryTree $tree = null;
 
-    public function __construct(private readonly HttpClientInterface $apiClient)
+    public function __construct(#[Target('api.client')] private readonly HttpClientInterface $apiClient)
     {
     }
 

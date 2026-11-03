@@ -1,7 +1,7 @@
 framework:
     http_client:
         scoped_clients:
-            # Seul client de l'API commune, injecté par son nom ($apiClient) dans les Infrastructure/Http des modules.
+            # Seul client de l'API commune, injecté par #[Target('api.client')] dans les Infrastructure/Http des modules.
             api.client:
                 base_uri: '%env(API_URL)%'
                 headers:

@@ -7,12 +7,13 @@ namespace App\Content\Infrastructure\Http;
 use App\Content\Domain\SlideRepository;
 use App\Content\Domain\SlidesLoadException;
 use App\Shared\Infrastructure\Http\InvalidApiPayloadException;
+use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Contracts\HttpClient\Exception\ExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final readonly class HttpSlideRepository implements SlideRepository
 {
-    public function __construct(private HttpClientInterface $apiClient)
+    public function __construct(#[Target('api.client')] private HttpClientInterface $apiClient)
     {
     }
 

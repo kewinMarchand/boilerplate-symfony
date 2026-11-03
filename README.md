@@ -1,6 +1,6 @@
 # boilerplate-symfony
 
-Point de départ pour une application **Symfony 7.4 LTS** rendue côté serveur avec **Twig**, enrichie par **Stimulus** et **Turbo**, avec toute la chaîne qualité : lint, format, analyse statique, tests unitaires et fonctionnels, end-to-end, accessibilité et Lighthouse. Tout tourne dans Docker : aucun PHP ni Composer n'est nécessaire sur le poste.
+Point de départ pour une application **Symfony 8.1** rendue côté serveur avec **Twig**, enrichie par **Stimulus** et **Turbo**, avec toute la chaîne qualité : lint, format, analyse statique, tests unitaires et fonctionnels, end-to-end, accessibilité et Lighthouse. Tout tourne dans Docker : aucun PHP ni Composer n'est nécessaire sur le poste.
 
 Les pages de démonstration montrent chaque brique en situation :
 
@@ -21,7 +21,7 @@ Le site suit le thème clair ou sombre du système. Un bouton « Thème » dans 
 
 | Brique                                      | Rôle                                                                    |
 | ------------------------------------------- | ----------------------------------------------------------------------- |
-| Symfony 7.4 LTS, PHP 8.5 (FrankenPHP)       | Routage, contrôleurs, formulaires, validation, pages d'erreur            |
+| Symfony 8.1, PHP 8.5 (FrankenPHP)           | Routage, contrôleurs, formulaires, validation, pages d'erreur            |
 | Twig 3                                      | Rendu serveur, templates rangés par domaine                              |
 | AssetMapper + importmap                     | JavaScript et CSS sans bundler, versionnés à la compilation              |
 | Stimulus (stimulus-bundle), Turbo (ux-turbo) | Comportements ciblés, navigation et formulaires sans rechargement        |
