@@ -34,6 +34,6 @@ return [
         'version' => '8.1.0',
     ],
     'wheel-gestures' => [
-        'version' => '2.2.48',
+        'version' => '2.3.0',
     ],
 ];
