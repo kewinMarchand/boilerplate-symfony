@@ -39,6 +39,8 @@ final class ApiMockResponseFactory
                 default => 'products',
             }),
             '/api/contact_messages' => self::contact($options),
+            '/api/slides' => self::fixture('empty' === $scenario ? null : 'slides'),
+            '/api/legal_pages/mentions-legales', '/api/legal_pages/donnees-personnelles', '/api/legal_pages/accessibilite' => self::fixture('legal-page-'.basename($path)),
             default => new MockResponse('{}', ['http_code' => 404]),
         };
     }

@@ -2,14 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Site\Home;
+namespace App\Content\Domain;
 
-final readonly class Slide
+final readonly class LegalPageSection
 {
     public function __construct(
-        public string $image,
         public string $title,
-        public string $text,
+        public string $html,
     ) {
     }
 }

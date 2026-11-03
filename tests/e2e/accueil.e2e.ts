@@ -8,6 +8,8 @@ test.describe('Accueil', () => {
     await expect(page.getByTestId('home-tasks-link')).toBeVisible()
     await expect(page.getByTestId('home-contact-link')).toBeVisible()
     await expect(page.getByTestId('carousel-slide')).toHaveCount(5)
+    await expect(page.getByTestId('carousel-slide').first()).toContainText('Heliconia')
+    await expect(page.getByTestId('home-carousel-error')).toHaveCount(0)
     await expect(page.getByTestId('home-blog-card')).toHaveCount(3)
     await expect(page.getByTestId('home-blog-empty')).toHaveCount(0)
     await expect(page.getByTestId('home-blog-error')).toHaveCount(0)
@@ -90,5 +92,24 @@ test.describe('Articles de l’accueil, états de l’API', () => {
     await page.goto('/')
 
     await expect(page.getByTestId('home-blog-error')).toBeVisible()
+  })
+})
+
+test.describe('Carrousel de l’accueil, états de l’API', () => {
+  test('aucune diapositive : la section disparaît', async ({ page }) => {
+    await page.setExtraHTTPHeaders({ 'X-Scenario': 'empty' })
+    await page.goto('/')
+
+    await expect(page.getByTestId('home-hero')).toBeVisible()
+    await expect(page.getByTestId('home-carousel')).toHaveCount(0)
+    await expect(page.getByTestId('home-carousel-error')).toHaveCount(0)
+  })
+
+  test('erreur : message lisible à la place du carrousel', async ({ page }) => {
+    await page.setExtraHTTPHeaders({ 'X-Scenario': 'error' })
+    await page.goto('/')
+
+    await expect(page.getByTestId('home-carousel-error')).toContainText('Impossible de charger le carrousel pour le moment.')
+    await expect(page.getByTestId('home-carousel')).toHaveCount(0)
   })
 })

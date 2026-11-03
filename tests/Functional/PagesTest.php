@@ -99,10 +99,11 @@ final class PagesTest extends WebTestCase
     public function testAccessibilityStatementIsNonCompliantWithoutAudit(): void
     {
         $client = self::createClient();
-        $client->request('GET', '/accessibilite');
+        $crawler = $client->request('GET', '/accessibilite');
 
-        self::assertSelectorTextContains('[data-testid="legal-accessibility-status"]', 'non conforme');
-        self::assertSelectorTextContains('[data-testid="legal-accessibility-status"]', 'aucun audit n’a encore été réalisé');
+        $compliance = $crawler->filter('[data-testid="legal-section"]')->first()->text();
+        self::assertStringContainsString('non conforme', $compliance);
+        self::assertStringContainsString("Aucun audit n'a encore été réalisé.", $compliance);
     }
 
     public function testRobotsPointsToSitemap(): void

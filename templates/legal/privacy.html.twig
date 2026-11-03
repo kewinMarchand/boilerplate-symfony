@@ -4,25 +4,7 @@
 
 {% block body %}
     <article class="prose">
-        <h1>Données personnelles</h1>
-
-        <h2>Responsable du traitement</h2>
-        <p>{{ site.publisher.name }}, {{ site.publisher.address }}, représentée par {{ site.publisher.director }}.</p>
-
-        <h2>Finalité</h2>
-        <p>Les données saisies dans le formulaire de contact (nom, adresse e-mail, message) servent uniquement à répondre à votre demande. Elles ne sont ni cédées ni utilisées à des fins commerciales.</p>
-
-        <h2>Base légale</h2>
-        <p>Le traitement repose sur l’intérêt légitime de l’éditeur à répondre aux demandes qui lui sont adressées (article 6.1.f du RGPD).</p>
-
-        <h2>Durée de conservation</h2>
-        <p>Les messages sont conservés trois ans au plus à compter du dernier échange, puis supprimés.</p>
-
-        <h2>Vos droits</h2>
-        <p>Vous disposez d’un droit d’accès, de rectification, d’effacement et d’opposition, ainsi que d’un droit à la limitation du traitement. Pour les exercer, écrivez à <a href="mailto:{{ site.publisher.email }}">{{ site.publisher.email }}</a>.</p>
-
-        <h2>Réclamation</h2>
-        <p>Si vous estimez que vos droits ne sont pas respectés, vous pouvez adresser une réclamation à la Commission nationale de l’informatique et des libertés (CNIL), sur <a href="https://www.cnil.fr/fr/plaintes">cnil.fr</a>.</p>
+        {{ include('legal/_page_content.html.twig', {fallback_title: 'Données personnelles'}) }}
 
         {% if matomo() %}
             <section aria-labelledby="mesure-audience" data-testid="legal-audience-measurement">
@@ -38,8 +20,5 @@
                 </div>
             </section>
         {% endif %}
-
-        <h2>Cookies</h2>
-        <p>Aucun cookie de mesure d’audience n’est déposé. Seul un cookie technique de session, exempté de consentement, peut être posé après l’envoi du formulaire de contact sans JavaScript, pour afficher la confirmation.</p>
     </article>
 {% endblock %}

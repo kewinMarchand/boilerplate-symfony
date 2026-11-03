@@ -3,62 +3,7 @@
 {% set seo = seo_page({title: 'Déclaration d\'accessibilité', description: 'Déclaration d’accessibilité du site ' ~ site.name ~ ' selon le RGAA 4.1.2 : état de conformité, tests réalisés et voies de recours.'}) %}
 
 {% block body %}
-    {% set compliance = accessibility_compliance() %}
-    {% set audit = site.accessibility %}
     <article class="prose">
-        <h1>Déclaration d'accessibilité</h1>
-        <p>{{ site.publisher.name }} s’engage à rendre son site accessible conformément à l’article 47 de la loi n° 2005-102 du 11 février 2005. Cette déclaration d’accessibilité s’applique au site {{ site.name }} ({{ site.url }}).</p>
-
-        <h2>État de conformité</h2>
-        <p data-testid="legal-accessibility-status">Le site {{ site.name }} est <strong>{{ compliance.value }}</strong> avec le référentiel général d’amélioration de l’accessibilité (RGAA), version 4.1.2{% if audit.audit_date is null %}, car aucun audit n’a encore été réalisé{% endif %}.</p>
-
-        <h2>Résultats des tests</h2>
-        {% if audit.audit_date is null %}
-            <p>Seuls des tests automatisés ont été réalisés, avec axe-core (règles WCAG 2.1 niveaux A et AA) sur toutes les pages, en affichage ordinateur et mobile, en mode standard et en mode accessibilité renforcée. Ces tests ne valent pas audit : ils ne couvrent qu’une partie des critères du RGAA.</p>
-        {% else %}
-            <p>L’audit réalisé le {{ audit.audit_date|date('d/m/Y') }}{% if audit.auditor %} par {{ audit.auditor }}{% endif %} révèle que {{ audit.compliance_rate }} % des critères du RGAA 4.1.2 sont respectés.</p>
-        {% endif %}
-
-        <h2>Contenus non accessibles</h2>
-        <p>À compléter après audit.</p>
-
-        <h2>Mode accessibilité renforcée</h2>
-        <p>Le bouton « Accessibilité renforcée », présent dans l’en-tête de chaque page, agrandit le texte, augmente les espacements, renforce les contrastes, souligne tous les liens, épaissit l’indicateur de focus et coupe les animations. Le choix est mémorisé sur votre appareil.</p>
-
-        <h2>Établissement de cette déclaration</h2>
-        <p>Date : {{ audit.audit_date ? audit.audit_date|date('d/m/Y') : 'à compléter après audit' }}.</p>
-        <h3>Technologies utilisées</h3>
-        <ul>
-            <li>HTML</li>
-            <li>CSS</li>
-            <li>JavaScript</li>
-        </ul>
-        <h3>Environnement de test</h3>
-        <ul>
-            <li>Chromium piloté par Playwright, affichage ordinateur (1280 × 720)</li>
-            <li>Chromium piloté par Playwright, émulation mobile Pixel 7</li>
-        </ul>
-        <h3>Outils utilisés</h3>
-        <ul>
-            <li>axe-core</li>
-            <li>Lighthouse</li>
-        </ul>
-        <h3>Pages testées</h3>
-        <ul>
-            {% for item in site.navigation.main|merge(site.navigation.legal) %}
-                <li><a href="{{ path(item.route) }}">{{ item.label }}</a></li>
-            {% endfor %}
-        </ul>
-
-        <h2>Retour d’information et contact</h2>
-        <p>Si vous n’arrivez pas à accéder à un contenu ou à un service, contactez-nous à <a href="mailto:{{ site.publisher.email }}">{{ site.publisher.email }}</a> ou par le <a href="{{ path('contact') }}">formulaire de contact</a> pour être orienté vers une alternative accessible ou obtenir le contenu sous une autre forme.</p>
-
-        <h2>Voies de recours</h2>
-        <p>Si vous constatez un défaut d’accessibilité vous empêchant d’accéder à un contenu ou à un service, que vous nous l’avez signalé et que vous n’avez pas obtenu de réponse satisfaisante, vous pouvez :</p>
-        <ul>
-            <li>écrire un message au <a href="https://formulaire.defenseurdesdroits.fr/">Défenseur des droits</a>,</li>
-            <li>contacter le délégué du Défenseur des droits dans votre région,</li>
-            <li>envoyer un courrier par la poste (gratuit, ne pas mettre de timbre) : Défenseur des droits, Libre réponse 71120, 75342 Paris CEDEX 07.</li>
-        </ul>
+        {{ include('legal/_page_content.html.twig', {fallback_title: 'Déclaration d\'accessibilité'}) }}
     </article>
 {% endblock %}

@@ -1,0 +1,17 @@
+{#- Titre, introduction et sections d'une page légale lue dans l'API (page), ou titre de repli (fallback_title) et message (error).
+    Le HTML vient de l'API, qui échappe le HTML saisi dans l'admin et retire les liens javascript: et data: : il est injecté tel quel. -#}
+{% if page %}
+    <h1>{{ page.title }}</h1>
+    {% if page.introduction %}
+        <div class="legal-html">{{ page.introduction|raw }}</div>
+    {% endif %}
+    {% for section in page.sections %}
+        <section data-testid="legal-section">
+            <h2>{{ section.title }}</h2>
+            <div class="legal-html">{{ section.html|raw }}</div>
+        </section>
+    {% endfor %}
+{% else %}
+    <h1>{{ fallback_title }}</h1>
+    {{ include('shared/ui/_alert.html.twig', {variant: 'error', body: error, testid: 'legal-error'}) }}
+{% endif %}

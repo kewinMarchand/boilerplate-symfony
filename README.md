@@ -6,11 +6,11 @@ Les pages de démonstration montrent chaque brique en situation :
 
 | Page                       | Ce qu'elle montre                                                                                                   |
 | -------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| `/`                        | Hero pleine largeur (image LCP prioritaire), carrousel Embla en contrôleur Stimulus, grille d'articles rendue serveur |
+| `/`                        | Hero pleine largeur (image LCP prioritaire), carrousel Embla en contrôleur Stimulus lu dans l'API, grille d'articles rendue serveur |
 | `/catalogue/...`           | Catalogue à facettes : formulaire GET natif, état dans l'URL, Turbo Frame, panneau de filtres modal sur mobile        |
 | `/taches`                  | Liste chargée à la demande dans un Turbo Frame, avec ses trois états : chargement, erreur avec relance, liste vide    |
 | `/contact`                 | Symfony Form et Validator, erreurs liées aux champs, envoi par Turbo Stream, fonctionne sans JavaScript              |
-| Pages légales              | Mentions légales, données personnelles, déclaration d'accessibilité calculée depuis la config, plan du site          |
+| Pages légales              | Mentions légales, données personnelles, déclaration d'accessibilité lues dans l'API (texte administré dans son `/admin`), plan du site |
 | `/charte-graphique`        | Charte graphique, en développement uniquement (404 en production)                                                    |
 
 Un bouton « Accessibilité renforcée » dans l'en-tête agrandit le texte, espace le contenu (WCAG 1.4.12), renforce les contrastes et coupe les animations. Le choix est mémorisé dans le navigateur.
@@ -103,16 +103,16 @@ git cherry-pick <sha>
 | Sujet | Fichiers |
 | --- | --- |
 | Nom du projet et du paquet | `composer.json` (`name`, `description`), `package.json` (`name`, `description`), `compose.yaml` (`name:` du projet Compose, image `…:prod`), `compose.override.yaml` (image `…:dev`), `Makefile.qa.mk` (`LHCI_PROJECT`), `LICENSE`, titres de `README.md` et `CLAUDE.md` |
-| Config du site et identité | `config/packages/site.yaml` (nom, description, couleur du thème, navigation), `templates/seo/manifest.webmanifest.twig` (`short_name`), `src/Shared/UI/Seo/SeoPageFactory.php` (texte alternatif de l'image de partage), `templates/home/index.html.twig` (sur-titre et boutons du hero), `src/Site/Home/InMemorySlideRepository.php` (diapositives). Le nom du site est aussi vérifié par `tests/Functional/PagesTest.php` (`SITE`) et `tests/e2e/navigation.e2e.ts` |
+| Config du site et identité | `config/packages/site.yaml` (nom, description, couleur du thème, navigation), `templates/seo/manifest.webmanifest.twig` (`short_name`), `src/Shared/UI/Seo/SeoPageFactory.php` (texte alternatif de l'image de partage), `templates/home/index.html.twig` (sur-titre et boutons du hero). Les diapositives du carrousel se modifient dans l'admin de l'API Platform (`GET /api/slides`, visuels `assets/images/slide-<n>-*`). Le nom du site est aussi vérifié par `tests/Functional/PagesTest.php` (`SITE`) et `tests/e2e/navigation.e2e.ts` |
 | Ports | `Makefile` (`HTTP_PORT`, 8095), `compose.yaml` (port par défaut), `.env` (`SITE_URL`), `playwright.config.ts`, `Makefile.qa.mk` (`LHCI_PORT`, 3230) et `.lighthouserc.json` |
 | Logo et favicons | `assets/images/logo-mark.svg`, `public/favicon.ico`, `public/favicon.svg`, `public/apple-touch-icon.png`, `public/icon-192.png`, `public/icon-512.png`, `public/og-image.jpg` |
-| Pages légales | `config/packages/site.yaml` (`publisher`, `host`, et `site.accessibility` une fois l'audit RGAA réalisé), textes de `templates/legal/` |
+| Pages légales | textes dans l'admin de l'API Platform (`GET /api/legal_pages/{slug}`), `config/packages/site.yaml` (`site.accessibility` une fois l'audit RGAA réalisé, pour l'état de conformité du lien du pied de page), section « Mesure d'audience » de `templates/legal/privacy.html.twig` |
 | URL Lighthouse | `.lighthouserc.json` (une URL par page à mesurer, sur le port 3230) |
 | CI | `.github/workflows/ci.yml` |
 
 ### Retirer les modules d'exemple
 
-`Catalog`, `Blog` et `Task` sont des exemples. `Contact` sert de module restant, et `Site` et `Shared` restent en place. Pour les retirer sans casser deptrac ni `make arch-selftest` :
+`Catalog`, `Blog` et `Task` sont des exemples. `Contact` et `Content` (carrousel et pages légales) restent, et `Site` et `Shared` restent en place. Pour les retirer sans casser deptrac ni `make arch-selftest` :
 
 1. **Code** : supprimer `src/Catalog/`, `src/Blog/` et `src/Task/`, puis `assets/controllers/catalog_controller.js` et `assets/controllers/category_menu_controller.js`. Dans `src/Site/UI/HomeController.php`, ne garder que les diapositives.
 2. **Templates** : supprimer `templates/catalog/`, `templates/tasks/`, `templates/legal/_category_tree.html.twig`, et dans `templates/shared/layout/`, `_category_menu.html.twig`, `_category_menu_column.html.twig` et `_mobile_menu_level.html.twig`. Puis retirer :
@@ -124,13 +124,13 @@ git cherry-pick <sha>
    - dans `templates/bundles/TwigBundle/Exception/error404.html.twig`, le lien vers le catalogue
    - dans `templates/styleguide/index.html.twig`, les liens `path('catalog')` et le filtre `price`.
 3. **Routes et services** : les routes disparaissent avec leurs contrôleurs. Retirer les entrées `catalog` et `tasks` de la navigation dans `config/packages/site.yaml` (menu, sitemap, plan du site, fil d'Ariane), et les alias des ports de `Task`, `Blog` et `Catalog` dans `config/services.yaml`.
-4. **Architecture** : dans `deptrac.yaml`, supprimer les couches et les règles `Catalog*`, `Blog*` et `Task*`, et réduire la règle de `Site` à `[ContactDomain, Shared, Framework]`. Dans `tools/arch-selftest.sh`, repointer les cinq violations PHP vers `Contact`, en gardant leurs noms de classe :
+4. **Architecture** : dans `deptrac.yaml`, supprimer les couches et les règles `Catalog*`, `Blog*` et `Task*`, et réduire la règle de `Site` à `[ContentDomain, ContactDomain, Shared, Framework]`. Dans `tools/arch-selftest.sh`, repointer les cinq violations PHP vers `Contact`, en gardant leurs noms de classe :
 
    | Violation | Fichier | Dépendance interdite |
    | --- | --- | --- |
    | `ArchSelftestDomainToInfrastructure` | `src/Contact/Domain/` | `App\Contact\Infrastructure\Http\HttpContactMessageSender` |
    | `ArchSelftestDomainToFramework` | `src/Contact/Domain/` | `Symfony\Component\HttpFoundation\Response`, inchangée |
-   | `ArchSelftestModuleToModule` | `src/Contact/Domain/` | `App\Site\Home\Slide` (sans second module, le module vise `Site`) |
+   | `ArchSelftestModuleToModule` | `src/Contact/Domain/` | `App\Content\Domain\Slide` |
    | `ArchSelftestSharedToModule` | `src/Shared/UI/` | `App\Contact\Domain\ContactMessage` |
    | `ArchSelftestUiToInfrastructure` | `src/Contact/Infrastructure/` | `App\Contact\UI\ContactController` (l'UI de `Contact` peut appeler son infrastructure, on teste donc le sens interdit) |
 5. **Tests** :
@@ -181,8 +181,9 @@ src/
     UI/              contrôleur, état de recherche porté par l'URL (euros), fenêtre de pagination, extension Twig
   Blog/              forme réduite : Domain/ (Article, port, exception), Infrastructure/Http/
   Contact/           forme réduite : Domain/, Infrastructure/Http/ (envoi, violations 422), UI/ (contrôleur, formulaire)
+  Content/           forme réduite : Domain/ (Slide, LegalPage, ports, exceptions), Infrastructure/Http/
   Task/              forme réduite : Domain/ (Task protège son invariant), Infrastructure/Http/, UI/
-  Site/              pages sans métier propre : UI/ (accueil, légal, SEO, charte), Home/ (diapositives),
+  Site/              pages sans métier propre : UI/ (accueil, légal, SEO, charte),
                      Legal/ (conformité d'accessibilité), Styleguide/ (contraste, tokens)
   Shared/            socle sans métier : UI/Seo/ (métadonnées, fil d'Ariane), UI/Twig/
 templates/

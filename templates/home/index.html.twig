@@ -19,12 +19,16 @@
     </section>
 
     <div class="container main__content">
-        {{ include('shared/carousel/_carousel.html.twig', {
-            id: 'home-carousel',
-            title: 'À la une',
-            testid: 'home-carousel',
-            slides: slides,
-        }) }}
+        {% if slides_error %}
+            {{ include('shared/ui/_alert.html.twig', {variant: 'error', body: slides_error, testid: 'home-carousel-error'}) }}
+        {% elseif slides is not empty %}
+            {{ include('shared/carousel/_carousel.html.twig', {
+                id: 'home-carousel',
+                title: 'À la une',
+                testid: 'home-carousel',
+                slides: slides,
+            }) }}
+        {% endif %}
 
         <section class="blog" aria-labelledby="home-blog-title" data-testid="home-blog">
             <h2 id="home-blog-title">Derniers articles</h2>

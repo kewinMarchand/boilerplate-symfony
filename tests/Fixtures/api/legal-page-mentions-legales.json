@@ -1,0 +1,23 @@
+{
+    "slug": "mentions-legales",
+    "title": "Mentions légales",
+    "introduction": "<p>Les informations ci-dessous sont des valeurs d'exemple, fictives, à remplacer depuis l'administration.</p>",
+    "sections": [
+        {
+            "title": "Éditeur",
+            "html": "<p>Exemple SAS (société fictive), 1 rue de l’Exemple, 13000 Marseille. SIRET : 000 000 000 00000.</p>\n<p>Contact : <a href=\"mailto:contact@example.com\">contact@example.com</a></p>"
+        },
+        {
+            "title": "Directeur de la publication",
+            "html": "<p>Camille Exemple</p>"
+        },
+        {
+            "title": "Hébergeur",
+            "html": "<p>Hébergeur Exemple, 2 avenue de l’Exemple, 75000 Paris.</p>"
+        },
+        {
+            "title": "Propriété intellectuelle",
+            "html": "<p>L'ensemble des contenus de ce site (textes, images, code) est la propriété de Exemple SAS (société fictive), sauf mention contraire. Toute reproduction ou représentation, totale ou partielle, sans autorisation écrite préalable est interdite.</p>"
+        }
+    ]
+}

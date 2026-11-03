@@ -871,6 +871,22 @@ fieldset {
     margin-top: var(--space-6);
 }
 
+/* HTML des pages légales venu de l'API, sans classe : listes alignées sur les paragraphes, liens comme bui-link */
+.legal-html :is(ul, ol) {
+    margin: 0 0 var(--space-4);
+    padding-inline-start: var(--space-6);
+}
+
+.legal-html a {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+}
+
+.legal-html a:hover {
+    text-decoration-thickness: 2px;
+}
+
 .chips {
     margin-bottom: var(--space-4);
 }

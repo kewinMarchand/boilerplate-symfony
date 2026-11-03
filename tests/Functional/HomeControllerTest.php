@@ -6,6 +6,8 @@ namespace App\Tests\Functional;
 
 use App\Blog\Domain\ArticleRepository;
 use App\Blog\Domain\ArticlesLoadException;
+use App\Content\Domain\SlideRepository;
+use App\Content\Domain\SlidesLoadException;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 final class HomeControllerTest extends WebTestCase
@@ -18,6 +20,9 @@ final class HomeControllerTest extends WebTestCase
         self::assertSelectorExists('[data-testid="home-hero"] img[fetchpriority="high"]');
         self::assertNull($crawler->filter('[data-testid="home-hero"] img')->attr('loading'));
         self::assertSelectorCount(5, '[data-testid="carousel-slide"]');
+        self::assertSelectorTextContains('[data-testid="carousel-slide"]', 'Heliconia');
+        self::assertStringStartsWith('/assets/images/slide-1-1280', (string) $crawler->filter('[data-testid="carousel-slide"] img')->attr('src'));
+        self::assertSelectorNotExists('[data-testid="home-carousel-error"]');
         self::assertSelectorCount(3, '[data-testid="home-blog-card"]');
         self::assertSelectorCount(3, '[data-testid="home-blog-card"] time[datetime]');
     }
@@ -50,5 +55,39 @@ final class HomeControllerTest extends WebTestCase
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('[data-testid="home-blog-error"]', 'Impossible de charger les articles');
+    }
+
+    public function testHidesTheCarouselWhenThereIsNoSlide(): void
+    {
+        $client = self::createClient();
+        self::getContainer()->set(SlideRepository::class, new class implements SlideRepository {
+            public function findAll(): array
+            {
+                return [];
+            }
+        });
+        $client->request('GET', '/');
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorNotExists('[data-testid="home-carousel"]');
+        self::assertSelectorNotExists('[data-testid="home-carousel-error"]');
+        self::assertSelectorCount(3, '[data-testid="home-blog-card"]');
+    }
+
+    public function testShowsTheErrorWhenSlidesCannotBeLoaded(): void
+    {
+        $client = self::createClient();
+        self::getContainer()->set(SlideRepository::class, new class implements SlideRepository {
+            public function findAll(): array
+            {
+                throw new SlidesLoadException();
+            }
+        });
+        $client->request('GET', '/');
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('[data-testid="home-carousel-error"]', 'Impossible de charger le carrousel pour le moment.');
+        self::assertSelectorNotExists('[data-testid="home-carousel"]');
+        self::assertSelectorCount(3, '[data-testid="home-blog-card"]');
     }
 }

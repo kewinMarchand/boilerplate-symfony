@@ -4,27 +4,6 @@
 
 {% block body %}
     <article class="prose">
-        <h1>Mentions légales</h1>
-        <p>Les informations ci-dessous sont des valeurs d’exemple, explicitement fictives, à remplacer par celles de l’éditeur réel dans <code>config/packages/site.yaml</code>.</p>
-
-        <h2>Éditeur</h2>
-        <p>
-            {{ site.publisher.name }}<br>
-            {{ site.publisher.address }}<br>
-            SIRET : {{ site.publisher.siret }}<br>
-            Contact : <a href="mailto:{{ site.publisher.email }}">{{ site.publisher.email }}</a>
-        </p>
-
-        <h2>Directeur de la publication</h2>
-        <p>{{ site.publisher.director }}</p>
-
-        <h2>Hébergeur</h2>
-        <p>
-            {{ site.host.name }}<br>
-            {{ site.host.address }}
-        </p>
-
-        <h2>Propriété intellectuelle</h2>
-        <p>L’ensemble des contenus de ce site (textes, images, code) est la propriété de {{ site.publisher.name }}, sauf mention contraire. Toute reproduction ou représentation, totale ou partielle, sans autorisation écrite préalable est interdite.</p>
+        {{ include('legal/_page_content.html.twig', {fallback_title: 'Mentions légales'}) }}
     </article>
 {% endblock %}

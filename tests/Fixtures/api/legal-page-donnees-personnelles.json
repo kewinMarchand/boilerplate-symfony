@@ -1,0 +1,35 @@
+{
+    "slug": "donnees-personnelles",
+    "title": "Données personnelles",
+    "introduction": "",
+    "sections": [
+        {
+            "title": "Responsable de traitement",
+            "html": "<p>Exemple SAS (société fictive), 1 rue de l’Exemple, 13000 Marseille, représentée par Camille Exemple. Contact : <a href=\"mailto:contact@example.com\">contact@example.com</a>.</p>"
+        },
+        {
+            "title": "Finalité",
+            "html": "<p>Le formulaire de contact collecte votre nom, votre adresse e-mail et votre message, dans le seul but de vous répondre. Ces données ne sont ni cédées ni utilisées à des fins commerciales.</p>"
+        },
+        {
+            "title": "Base légale",
+            "html": "<p>Le traitement repose sur l'intérêt légitime de l'éditeur à répondre aux demandes qui lui sont adressées (article 6.1.f du RGPD).</p>"
+        },
+        {
+            "title": "Durée de conservation",
+            "html": "<p>Les messages sont conservés trois ans au plus à compter du dernier échange, puis supprimés.</p>"
+        },
+        {
+            "title": "Vos droits",
+            "html": "<p>Vous disposez sur vos données des droits suivants :</p>\n<ul>\n<li>accès ;</li>\n<li>rectification ;</li>\n<li>effacement ;</li>\n<li>opposition ;</li>\n<li>limitation du traitement.</li>\n</ul>\n<p>Pour les exercer, écrivez à <a href=\"mailto:contact@example.com\">contact@example.com</a>. Nous répondons dans un délai d'un mois.</p>"
+        },
+        {
+            "title": "Réclamation",
+            "html": "<p>Si vous estimez que vos droits ne sont pas respectés, vous pouvez adresser une réclamation à la <a href=\"https://www.cnil.fr/fr/plaintes\">Commission nationale de l'informatique et des libertés (CNIL)</a>.</p>"
+        },
+        {
+            "title": "Cookies et stockage local",
+            "html": "<p>Ce site ne dépose aucun cookie de mesure d'audience ni de publicité. Vos préférences d'affichage (mode accessibilité renforcée, thème clair ou sombre) sont enregistrées dans votre navigateur, sans jamais nous être transmises, jusqu'à ce que vous les changiez. Un cookie technique de session, exempté de consentement, peut être posé après l'envoi du formulaire de contact sans JavaScript, pour afficher la confirmation.</p>"
+        }
+    ]
+}

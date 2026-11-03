@@ -34,6 +34,14 @@ deptrac:
           collectors:
             - type: classLike
               value: '^App\\Blog\\Infrastructure\\'
+        - name: ContentDomain
+          collectors:
+            - type: classLike
+              value: '^App\\Content\\Domain\\'
+        - name: ContentInfrastructure
+          collectors:
+            - type: classLike
+              value: '^App\\Content\\Infrastructure\\'
         - name: ContactDomain
           collectors:
             - type: classLike
@@ -85,12 +93,14 @@ deptrac:
         CatalogUI: [CatalogDomain, CatalogApplication, SharedUI, Framework]
         BlogDomain: ~
         BlogInfrastructure: [BlogDomain, SharedInfrastructure, Framework, HttpClient]
+        ContentDomain: ~
+        ContentInfrastructure: [ContentDomain, SharedInfrastructure, Framework, HttpClient]
         ContactDomain: ~
         ContactInfrastructure: [ContactDomain, SharedInfrastructure, Framework, HttpClient]
         ContactUI: [ContactDomain, ContactInfrastructure, SharedUI, Framework]
         TaskDomain: ~
         TaskInfrastructure: [TaskDomain, SharedInfrastructure, Framework, HttpClient]
         TaskUI: [TaskDomain, TaskInfrastructure, SharedUI, Framework]
-        Site: [CatalogDomain, CatalogApplication, BlogDomain, ContactDomain, TaskDomain, SharedUI, Framework]
+        Site: [CatalogDomain, CatalogApplication, BlogDomain, ContentDomain, ContactDomain, TaskDomain, SharedUI, Framework]
         SharedUI: [Framework]
         SharedInfrastructure: [Framework, HttpClient]
