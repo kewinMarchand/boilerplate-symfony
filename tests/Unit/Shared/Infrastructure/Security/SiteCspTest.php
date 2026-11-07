@@ -19,6 +19,7 @@ final class SiteCspTest extends TestCase
         $csp = $this->policy(SiteCsp::subscriber('http://localhost:8091'));
 
         self::assertStringContainsString("connect-src 'self' http://localhost:8091", $csp);
+        self::assertStringContainsString("img-src 'self' data: https: http://localhost:8091", $csp);
         self::assertStringContainsString('report-uri /api/csp-report', $csp);
         self::assertStringNotContainsString('matomo', $csp);
     }

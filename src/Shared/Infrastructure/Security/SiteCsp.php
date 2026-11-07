@@ -16,12 +16,12 @@ final class SiteCsp
     private const string APP = 'boilerplate-symfony';
 
     /**
-     * Fabrique de l'abonné qui pose l'en-tête (config/services.yaml) : l'API, plus Matomo (script, appels, pixel) et GlitchTip
+     * Fabrique de l'abonné qui pose l'en-tête (config/services.yaml) : l'API, qui sert aussi les images de contenu, plus Matomo (script, appels, pixel) et GlitchTip
      * (envoi des erreurs du navigateur) quand ils sont configurés.
      */
     public static function subscriber(string $apiUrl, string $matomoUrl = '', string $glitchtipDsn = ''): CspResponseSubscriber
     {
-        return CspResponseSubscriber::create($apiUrl, self::extra($matomoUrl, $glitchtipDsn));
+        return CspResponseSubscriber::create($apiUrl, self::extra($apiUrl, $matomoUrl, $glitchtipDsn));
     }
 
     /** Ligne écrite au démarrage du conteneur (docker/startup.php), pour retrouver le bon fichier de log chez l'hébergeur. */
@@ -31,12 +31,12 @@ final class SiteCsp
     }
 
     /** @return array<string, list<string>> */
-    private static function extra(string $matomoUrl, string $glitchtipDsn): array
+    private static function extra(string $apiUrl, string $matomoUrl, string $glitchtipDsn): array
     {
-        $extra = [];
+        $extra = ['img-src' => [self::originOf($apiUrl)]];
         if ('' !== $matomoUrl) {
             $matomo = self::originOf($matomoUrl);
-            $extra = ['script-src' => [$matomo], 'connect-src' => [$matomo], 'img-src' => [$matomo]];
+            $extra = ['script-src' => [$matomo], 'connect-src' => [$matomo], 'img-src' => [...$extra['img-src'], $matomo]];
         }
         if ('' !== $glitchtipDsn) {
             $extra['connect-src'] = [...$extra['connect-src'] ?? [], self::originOf($glitchtipDsn)];
