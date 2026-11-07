@@ -7,8 +7,14 @@ namespace App\Tests\Functional;
 use App\Blog\Domain\ArticleDetail;
 use App\Blog\Domain\ArticleRepository;
 use App\Blog\Domain\ArticlesLoadException;
-use App\Content\Domain\SlideRepository;
-use App\Content\Domain\SlidesLoadException;
+use App\Catalog\Domain\CatalogQuery;
+use App\Catalog\Domain\CatalogRepository;
+use App\Catalog\Domain\CatalogResult;
+use App\Catalog\Domain\Category;
+use App\Catalog\Domain\CategoryTree;
+use App\Catalog\Domain\FeaturedProductsLoadException;
+use App\Catalog\Domain\ProductDetail;
+use App\Catalog\Infrastructure\Http\HttpCatalogRepository;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 final class HomeControllerTest extends WebTestCase
@@ -21,7 +27,8 @@ final class HomeControllerTest extends WebTestCase
         self::assertSelectorExists('[data-testid="home-hero"] img[fetchpriority="high"]');
         self::assertNull($crawler->filter('[data-testid="home-hero"] img')->attr('loading'));
         self::assertSelectorCount(5, '[data-testid="carousel-slide"]');
-        self::assertSelectorTextContains('[data-testid="carousel-slide"]', 'Heliconia');
+        self::assertSelectorTextContains('[data-testid="carousel-slide"]', 'Anthurium andreanum rouge');
+        self::assertSame('/produit/anthurium-andreanum-rouge', $crawler->filter('[data-testid="carousel-slide-link"]')->attr('href'));
         self::assertStringStartsWith('http://localhost:8090/media/', (string) $crawler->filter('[data-testid="carousel-slide"] img')->attr('src'));
         self::assertSelectorNotExists('[data-testid="home-carousel-error"]');
         self::assertSelectorCount(3, '[data-testid="home-blog-card"]');
@@ -68,15 +75,10 @@ final class HomeControllerTest extends WebTestCase
         self::assertSelectorTextContains('[data-testid="home-blog-error"]', 'Impossible de charger les articles');
     }
 
-    public function testHidesTheCarouselWhenThereIsNoSlide(): void
+    public function testHidesTheCarouselWithoutFeaturedProduct(): void
     {
         $client = self::createClient();
-        self::getContainer()->set(SlideRepository::class, new class implements SlideRepository {
-            public function findAll(): array
-            {
-                return [];
-            }
-        });
+        self::replaceFeatured(static fn (): array => []);
         $client->request('GET', '/');
 
         self::assertResponseIsSuccessful();
@@ -85,20 +87,59 @@ final class HomeControllerTest extends WebTestCase
         self::assertSelectorCount(3, '[data-testid="home-blog-card"]');
     }
 
-    public function testShowsTheErrorWhenSlidesCannotBeLoaded(): void
+    public function testShowsTheErrorWhenFeaturedProductsCannotBeLoaded(): void
     {
         $client = self::createClient();
-        self::getContainer()->set(SlideRepository::class, new class implements SlideRepository {
-            public function findAll(): array
-            {
-                throw new SlidesLoadException();
-            }
-        });
+        self::replaceFeatured(static fn (): array => throw new FeaturedProductsLoadException());
         $client->request('GET', '/');
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('[data-testid="home-carousel-error"]', 'Impossible de charger le carrousel pour le moment.');
         self::assertSelectorNotExists('[data-testid="home-carousel"]');
         self::assertSelectorCount(3, '[data-testid="home-blog-card"]');
+    }
+
+    /**
+     * Garde le dépôt réel (arbre de l'en-tête) et remplace seulement les produits à la une.
+     *
+     * @param \Closure(): list<\App\Catalog\Domain\Product> $featured
+     */
+    private static function replaceFeatured(\Closure $featured): void
+    {
+        // Une instance à part : le service du conteneur ne peut plus être remplacé une fois créé
+        $real = new HttpCatalogRepository(self::getContainer()->get('api.client'));
+        self::getContainer()->set(CatalogRepository::class, new readonly class($real, $featured) implements CatalogRepository {
+            /**
+             * @param \Closure(): list<\App\Catalog\Domain\Product> $featured
+             */
+            public function __construct(private CatalogRepository $real, private \Closure $featured)
+            {
+            }
+
+            public function categoryTree(): CategoryTree
+            {
+                return $this->real->categoryTree();
+            }
+
+            public function search(Category $category, CatalogQuery $query): CatalogResult
+            {
+                return $this->real->search($category, $query);
+            }
+
+            public function findProduct(string $slug): ?ProductDetail
+            {
+                return $this->real->findProduct($slug);
+            }
+
+            public function featured(): array
+            {
+                return ($this->featured)();
+            }
+
+            public function productSlugs(): array
+            {
+                return $this->real->productSlugs();
+            }
+        });
     }
 }

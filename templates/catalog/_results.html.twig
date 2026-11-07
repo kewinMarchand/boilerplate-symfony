@@ -89,7 +89,7 @@
                                     <div class="product__image product__image--empty"></div>
                                 {% endif %}
                                 <div class="product__body">
-                                    <h2 class="product__name">{{ product.name }}</h2>
+                                    <h2 class="product__name"><a class="product__link" href="{{ path('product', {slug: product.slug}) }}" data-turbo-frame="_top" data-testid="catalog-product-link">{{ product.name }}</a></h2>
                                     <p class="product__price" data-testid="catalog-product-price" data-price="{{ product.price.cents }}">{{ product.price|price }}</p>
                                     <dl class="product__details">
                                         <div><dt>Exposition</dt><dd>{{ product.exposure.label }}</dd></div>

@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %}
+
+{%- set breadcrumb = [{label: 'Catalogue', path: path('catalog')}] -%}
+{%- if detail -%}
+    {%- set product = detail.product -%}
+    {%- set category = detail.category -%}
+    {%- for step in detail.categoryPath -%}
+        {%- set breadcrumb = breadcrumb|merge([{label: step.name, path: path('catalog', {path: step.path})}]) -%}
+    {%- endfor -%}
+    {%- set url = site.url ~ path('product', {slug: product.slug}) -%}
+    {%- set image = product.image -%}
+    {%- set largest = image ? (image.sources|filter(source => source.type == 'image/webp')|first).srcset|split(', ')|last|split(' ')|first : null -%}
+    {%- set seo = seo_page({
+        title: product.name,
+        description: product.name ~ ' : exposition ' ~ product.exposure.label|lower ~ ', taille ' ~ product.size.value ~ ', ' ~ product.price|price ~ '. ' ~ (product.inStock ? 'En stock' : 'En rupture de stock') ~ ', rayon ' ~ (category ? category.name : 'catalogue') ~ '.',
+        breadcrumb: breadcrumb|merge([{label: product.name}]),
+        image: image ? {url: largest, width: image.width, height: image.height, alt: image.alt ?: product.name} : null,
+        json_ld: [{
+            '@context': 'https://schema.org',
+            '@type': 'Product',
+            name: product.name,
+            sku: product.slug,
+            url: url,
+            category: category ? category.name : null,
+            image: largest,
+            offers: {
+                '@type': 'Offer',
+                url: url,
+                priceCurrency: 'EUR',
+                price: (product.price.cents / 100)|number_format(2, '.', ''),
+                availability: 'https://schema.org/' ~ (product.inStock ? 'InStock' : 'OutOfStock'),
+            },
+        }|filter(value => value is not null)],
+    }|filter(value => value is not null)) -%}
+{%- else -%}
+    {%- set seo = seo_page({title: 'Produit', description: 'Fiche produit de la jardinerie tropicale ' ~ site.name ~ '.', breadcrumb: breadcrumb|merge([{label: 'Produit'}]), robots: 'noindex, follow'}) -%}
+{%- endif -%}
+
+{% block preload %}
+    {% if detail and detail.product.image %}
+        {% set first = detail.product.image.sources|first %}
+        <link rel="preload" as="image" type="{{ first.type }}" imagesrcset="{{ first.srcset }}" imagesizes="(min-width: 1440px) 680px, (min-width: 768px) 50vw, calc(100vw - 32px)" fetchpriority="high">
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    {% if detail %}
+        {% set product = detail.product %}
+        <article class="product-page" data-testid="product-page">
+            <div class="product-page__layout">
+                {% if product.image %}
+                    {{ include('shared/ui/_picture.html.twig', {image: product.image, sizes: '(min-width: 1440px) 680px, (min-width: 768px) 50vw, calc(100vw - 32px)', class: 'product-page__image', priority: true}) }}
+                {% endif %}
+                <div>
+                    <h1 data-testid="product-title">{{ product.name }}</h1>
+                    <p class="product-page__price" data-testid="product-price">{{ product.price|price }}</p>
+                    <dl class="product-page__features">
+                        <dt>Exposition</dt>
+                        <dd>{{ product.exposure.label }}</dd>
+                        <dt>Taille</dt>
+                        <dd>{{ product.size.value }}</dd>
+                        <dt>Disponibilité</dt>
+                        <dd>{% if product.inStock %}En stock{% else %}<span class="bui-badge bui-badge--error">Rupture de stock</span>{% endif %}</dd>
+                    </dl>
+                    {% if detail.category %}
+                        <p><a class="bui-link" href="{{ path('catalog', {path: detail.category.path}) }}">Voir les autres produits : {{ detail.category.name }}</a></p>
+                    {% endif %}
+                </div>
+            </div>
+        </article>
+    {% else %}
+        <h1>Produit</h1>
+        {{ include('shared/ui/_alert.html.twig', {variant: 'error', body: error, testid: 'product-error'}) }}
+    {% endif %}
+{% endblock %}

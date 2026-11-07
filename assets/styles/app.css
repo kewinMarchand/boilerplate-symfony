@@ -695,6 +695,7 @@ html:not(.js) .carousel__dots {
 }
 
 .carousel__slide {
+    position: relative;
     flex: 0 0 100%;
     min-width: 0;
     scroll-snap-align: start;
@@ -1329,4 +1330,68 @@ turbo-frame[aria-busy='true'] .product-list {
 
 :root[data-a11y-mode='enhanced'] a {
     text-decoration: underline;
+}
+
+/* Lien étiré sur toute la diapositive ou la carte produit : un seul lien, nommé par le titre */
+.carousel__link,
+.product__link {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+}
+
+.carousel__link::after,
+.product__link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+}
+
+.product {
+    position: relative;
+}
+
+/* Fiche produit : image à gauche, caractéristiques à droite à partir de 768 px */
+.product-page__layout {
+    display: grid;
+    gap: var(--space-8);
+    align-items: start;
+}
+
+@media (min-width: 768px) {
+    .product-page__layout {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+.product-page h1 {
+    overflow-wrap: break-word;
+}
+
+.product-page__image {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius);
+}
+
+.product-page__price {
+    font-size: 1.375rem;
+    font-weight: 700;
+}
+
+.product-page__features {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: var(--space-2) var(--space-6);
+    margin-block: var(--space-6);
+}
+
+.product-page__features dt {
+    font-weight: 700;
+}
+
+.product-page__features dd {
+    margin: 0;
 }

@@ -7,11 +7,13 @@ namespace App\Catalog\Infrastructure\Http;
 use App\Catalog\Domain\CatalogQuery;
 use App\Catalog\Domain\CatalogResult;
 use App\Catalog\Domain\Category;
+use App\Catalog\Domain\CategoryLink;
 use App\Catalog\Domain\CategoryTree;
 use App\Catalog\Domain\Exposure;
 use App\Catalog\Domain\FacetCounts;
 use App\Catalog\Domain\Price;
 use App\Catalog\Domain\Product;
+use App\Catalog\Domain\ProductDetail;
 use App\Catalog\Domain\ProductPage;
 use App\Catalog\Domain\ProductSort;
 use App\Catalog\Domain\Size;
@@ -73,6 +75,30 @@ final class CatalogTranslation
                 self::counts(array_map(static fn (Category $child): string => $child->slug, $category->children), $facets['category'] ?? null, 'slug'),
             ),
         );
+    }
+
+    /**
+     * Fiche d'un produit : chaque étape de `categoryPath` reçoit la valeur du paramètre d'URL du catalogue.
+     */
+    public static function detail(mixed $payload): ProductDetail
+    {
+        $data = ApiPayload::object($payload, 'product');
+        $slugs = [];
+        $path = [];
+        foreach (ApiPayload::objects($data['categoryPath'] ?? null, 'categoryPath') as $step) {
+            $slugs[] = ApiPayload::string($step, 'slug');
+            $path[] = new CategoryLink(ApiPayload::string($step, 'slug'), ApiPayload::string($step, 'name'), implode('/', $slugs));
+        }
+
+        return new ProductDetail(self::product($data), $path);
+    }
+
+    /**
+     * @return list<Product>
+     */
+    public static function products(mixed $payload): array
+    {
+        return array_map(self::product(...), ApiPayload::objects($payload, 'products'));
     }
 
     /**

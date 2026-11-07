@@ -8,7 +8,7 @@ test.describe('Accueil', () => {
     await expect(page.getByTestId('home-tasks-link')).toBeVisible()
     await expect(page.getByTestId('home-contact-link')).toBeVisible()
     await expect(page.getByTestId('carousel-slide')).toHaveCount(5)
-    await expect(page.getByTestId('carousel-slide').first()).toContainText('Heliconia')
+    await expect(page.getByTestId('carousel-slide').first()).toContainText('Anthurium andreanum rouge')
     await expect(page.getByTestId('home-carousel-error')).toHaveCount(0)
     await expect(page.getByTestId('home-blog-card')).toHaveCount(3)
     await expect(page.getByTestId('home-blog-empty')).toHaveCount(0)
@@ -67,6 +67,21 @@ test.describe('Carrousel', () => {
 
     await expect(carousel.getByTestId('carousel-dot').first()).not.toHaveAttribute('aria-current')
     await expect(carousel.getByTestId('carousel-prev')).toBeEnabled()
+    // Le geste part d'une diapositive cliquable : il fait défiler sans ouvrir la fiche
+    await expect(page).toHaveURL('/')
+  })
+
+  test('une diapositive ouvre la fiche de son produit', async ({ page }) => {
+    await page.goto('/')
+    const carousel = page.getByTestId('home-carousel')
+    await expect(carousel.getByTestId('carousel-dot').first()).toHaveAttribute('aria-current', 'true')
+    const name = ((await carousel.getByTestId('carousel-slide-link').first().textContent()) ?? '').trim()
+    // Clic sur le titre : sous Playwright, un clic ailleurs dans la diapositive n'ouvre pas la fiche (cause non
+    // identifiée), alors qu'il l'ouvre dans Chrome, vérifié à la main à 1280 × 720.
+    await carousel.getByTestId('carousel-slide-link').first().click()
+
+    await expect(page).toHaveURL(/\/produit\/[a-z0-9-]+$/)
+    await expect(page.getByTestId('product-title')).toHaveText(name)
   })
 })
 

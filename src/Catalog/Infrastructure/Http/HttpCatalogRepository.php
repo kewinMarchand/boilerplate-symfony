@@ -10,14 +10,22 @@ use App\Catalog\Domain\CatalogRepository;
 use App\Catalog\Domain\CatalogResult;
 use App\Catalog\Domain\Category;
 use App\Catalog\Domain\CategoryTree;
+use App\Catalog\Domain\FeaturedProductsLoadException;
 use App\Catalog\Domain\InvalidPriceException;
+use App\Catalog\Domain\ProductDetail;
+use App\Catalog\Domain\ProductLoadException;
+use App\Shared\Infrastructure\Http\ApiPayload;
 use App\Shared\Infrastructure\Http\InvalidApiPayloadException;
 use Symfony\Component\DependencyInjection\Attribute\Target;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\Exception\ExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final class HttpCatalogRepository implements CatalogRepository
 {
+    /** Plus grande page acceptée par l'API. */
+    private const int MAX_PAGE_SIZE = 48;
+
     private ?CategoryTree $tree = null;
 
     public function __construct(#[Target('api.client')] private readonly HttpClientInterface $apiClient)
@@ -43,6 +51,48 @@ final class HttpCatalogRepository implements CatalogRepository
 
             return CatalogTranslation::result($payload, $category, $query->page);
         } catch (ExceptionInterface|InvalidApiPayloadException|InvalidPriceException $exception) {
+            throw new CatalogLoadException($exception);
+        }
+    }
+
+    public function findProduct(string $slug): ?ProductDetail
+    {
+        try {
+            $response = $this->apiClient->request('GET', '/api/products/'.rawurlencode($slug));
+            if (Response::HTTP_NOT_FOUND === $response->getStatusCode()) {
+                return null;
+            }
+
+            return CatalogTranslation::detail($response->toArray());
+        } catch (ExceptionInterface|InvalidApiPayloadException|InvalidPriceException $exception) {
+            throw new ProductLoadException($exception);
+        }
+    }
+
+    public function featured(): array
+    {
+        try {
+            return CatalogTranslation::products($this->apiClient->request('GET', '/api/featured-products')->toArray());
+        } catch (ExceptionInterface|InvalidApiPayloadException|InvalidPriceException $exception) {
+            throw new FeaturedProductsLoadException($exception);
+        }
+    }
+
+    public function productSlugs(): array
+    {
+        $slugs = [];
+        try {
+            for ($page = 1;; ++$page) {
+                $payload = $this->apiClient->request('GET', '/api/products?page='.$page.'&itemsPerPage='.self::MAX_PAGE_SIZE)->toArray();
+                $data = ApiPayload::object($payload, 'products');
+                foreach (ApiPayload::objects($data['items'] ?? null, 'items') as $item) {
+                    $slugs[] = ApiPayload::string($item, 'slug');
+                }
+                if ($page >= ApiPayload::int($data, 'totalPages')) {
+                    return $slugs;
+                }
+            }
+        } catch (ExceptionInterface|InvalidApiPayloadException $exception) {
             throw new CatalogLoadException($exception);
         }
     }

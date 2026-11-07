@@ -13,7 +13,6 @@ services:
 
     App\Task\Domain\TaskRepository: '@App\Task\Infrastructure\Http\HttpTaskRepository'
     App\Blog\Domain\ArticleRepository: '@App\Blog\Infrastructure\Http\HttpArticleRepository'
-    App\Content\Domain\SlideRepository: '@App\Content\Infrastructure\Http\HttpSlideRepository'
     App\Content\Domain\LegalPageRepository: '@App\Content\Infrastructure\Http\HttpLegalPageRepository'
     App\Contact\Domain\ContactMessageSender: '@App\Contact\Infrastructure\Http\HttpContactMessageSender'
     App\Catalog\Domain\CatalogRepository: '@App\Catalog\Infrastructure\Http\HttpCatalogRepository'

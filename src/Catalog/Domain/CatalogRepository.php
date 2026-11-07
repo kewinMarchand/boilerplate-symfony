@@ -12,4 +12,29 @@ interface CatalogRepository
      * @throws CatalogLoadException
      */
     public function search(Category $category, CatalogQuery $query): CatalogResult;
+
+    /**
+     * Null si l'API ne connaît pas le produit (404).
+     *
+     * @throws ProductLoadException
+     */
+    public function findProduct(string $slug): ?ProductDetail;
+
+    /**
+     * Produits « À la une » : le carrousel de l'accueil.
+     *
+     * @return list<Product>
+     *
+     * @throws FeaturedProductsLoadException
+     */
+    public function featured(): array;
+
+    /**
+     * Slugs de tous les produits, page après page (sitemap).
+     *
+     * @return list<string>
+     *
+     * @throws CatalogLoadException
+     */
+    public function productSlugs(): array;
 }

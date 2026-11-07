@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Content\Domain;
+namespace App\Catalog\Domain;
 
-final class SlidesLoadException extends \RuntimeException
+final class FeaturedProductsLoadException extends \RuntimeException
 {
     public function __construct(?\Throwable $previous = null)
     {

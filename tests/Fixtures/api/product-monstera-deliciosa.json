@@ -1,0 +1,40 @@
+{
+    "id": 1,
+    "slug": "monstera-deliciosa",
+    "name": "Monstera deliciosa",
+    "categorySlug": "monstera",
+    "price": 3490,
+    "exposure": "mi-ombre",
+    "size": "M",
+    "inStock": true,
+    "image": {
+        "alt": "Monstera deliciosa",
+        "width": 800,
+        "height": 800,
+        "sources": [
+            {
+                "type": "image/avif",
+                "srcset": "http://localhost:8090/media/01272a8b6d3f8221cfe5a2a36aefcd35-400.avif 400w, http://localhost:8090/media/01272a8b6d3f8221cfe5a2a36aefcd35-640.avif 640w, http://localhost:8090/media/01272a8b6d3f8221cfe5a2a36aefcd35-800.avif 800w"
+            },
+            {
+                "type": "image/webp",
+                "srcset": "http://localhost:8090/media/01272a8b6d3f8221cfe5a2a36aefcd35-400.webp 400w, http://localhost:8090/media/01272a8b6d3f8221cfe5a2a36aefcd35-640.webp 640w, http://localhost:8090/media/01272a8b6d3f8221cfe5a2a36aefcd35-800.webp 800w"
+            }
+        ],
+        "src": "http://localhost:8090/media/01272a8b6d3f8221cfe5a2a36aefcd35-400.webp"
+    },
+    "categoryPath": [
+        {
+            "slug": "plantes-interieur",
+            "name": "Plantes d’intérieur"
+        },
+        {
+            "slug": "feuillages",
+            "name": "Feuillages"
+        },
+        {
+            "slug": "monstera",
+            "name": "Monstera"
+        }
+    ]
+}

@@ -6,6 +6,8 @@ namespace App\Site\UI;
 
 use App\Blog\Domain\ArticleRepository;
 use App\Blog\Domain\ArticlesLoadException;
+use App\Catalog\Domain\CatalogLoadException;
+use App\Catalog\Domain\CatalogRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -19,8 +21,15 @@ final class SeoController extends AbstractController
     }
 
     #[Route('/sitemap.xml', name: 'seo_sitemap', methods: ['GET'], format: 'xml')]
-    public function sitemap(ArticleRepository $articleRepository): Response
+    public function sitemap(ArticleRepository $articleRepository, CatalogRepository $catalogRepository): Response
     {
+        try {
+            $productSlugs = $catalogRepository->productSlugs();
+        } catch (CatalogLoadException) {
+            // API indisponible : le sitemap reste servi, sans les fiches produit
+            $productSlugs = [];
+        }
+
         try {
             $articles = $articleRepository->findLatest(\PHP_INT_MAX);
         } catch (ArticlesLoadException) {
@@ -28,7 +37,7 @@ final class SeoController extends AbstractController
             $articles = [];
         }
 
-        return $this->render('seo/sitemap.xml.twig', ['articles' => $articles]);
+        return $this->render('seo/sitemap.xml.twig', ['articles' => $articles, 'product_slugs' => $productSlugs]);
     }
 
     #[Route('/manifest.webmanifest', name: 'seo_manifest', methods: ['GET'])]

@@ -6,6 +6,9 @@
 {% for article in articles %}
     <url><loc>{{ site.url }}{{ path('article', {slug: article.slug}) }}</loc></url>
 {% endfor %}
+{% for slug in product_slugs %}
+    <url><loc>{{ site.url }}{{ path('product', {slug: slug}) }}</loc></url>
+{% endfor %}
 {% for categoryPath in catalog_paths() %}
     <url><loc>{{ site.url }}{{ path('catalog', {path: categoryPath.value}) }}</loc></url>
 {% endfor %}

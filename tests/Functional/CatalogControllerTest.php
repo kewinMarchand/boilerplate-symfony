@@ -92,6 +92,21 @@ final class CatalogControllerTest extends WebTestCase
             {
                 throw new CatalogLoadException();
             }
+
+            public function findProduct(string $slug): ?\App\Catalog\Domain\ProductDetail
+            {
+                return null;
+            }
+
+            public function featured(): array
+            {
+                return [];
+            }
+
+            public function productSlugs(): array
+            {
+                return [];
+            }
         });
         $client->request('GET', '/catalogue');
 

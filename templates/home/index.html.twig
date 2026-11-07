@@ -19,14 +19,19 @@
     </section>
 
     <div class="container main__content">
-        {% if slides_error %}
-            {{ include('shared/ui/_alert.html.twig', {variant: 'error', body: slides_error, testid: 'home-carousel-error'}) }}
-        {% elseif slides is not empty %}
+        {% if featured_error %}
+            {{ include('shared/ui/_alert.html.twig', {variant: 'error', body: featured_error, testid: 'home-carousel-error'}) }}
+        {% elseif featured is not empty %}
             {{ include('shared/carousel/_carousel.html.twig', {
                 id: 'home-carousel',
                 title: 'À la une',
                 testid: 'home-carousel',
-                slides: slides,
+                slides: featured|map(product => {
+                    image: product.image,
+                    title: product.name,
+                    text: product.price|price,
+                    href: path('product', {slug: product.slug}),
+                }),
             }) }}
         {% endif %}
 

@@ -9,6 +9,7 @@ export const ROUTES = [
   '/accessibilite',
   '/plan-du-site',
   '/blog/le-mode-accessibilite-renforcee',
+  '/produit/monstera-deliciosa',
 ] as const
 
 export const A11Y_MODES = ['standard', 'dark', 'enhanced'] as const

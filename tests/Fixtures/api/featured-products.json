@@ -1,0 +1,132 @@
+[
+    {
+        "id": 7,
+        "slug": "anthurium-andreanum-rouge",
+        "name": "Anthurium andreanum rouge",
+        "categorySlug": "anthurium",
+        "price": 2490,
+        "exposure": "mi-ombre",
+        "size": "M",
+        "inStock": true,
+        "image": {
+            "alt": "Anthurium andreanum rouge",
+            "width": 800,
+            "height": 800,
+            "sources": [
+                {
+                    "type": "image/avif",
+                    "srcset": "http://localhost:8090/media/8bd958a223da3057ae3103c5feb99f5f-400.avif 400w, http://localhost:8090/media/8bd958a223da3057ae3103c5feb99f5f-640.avif 640w, http://localhost:8090/media/8bd958a223da3057ae3103c5feb99f5f-800.avif 800w"
+                },
+                {
+                    "type": "image/webp",
+                    "srcset": "http://localhost:8090/media/8bd958a223da3057ae3103c5feb99f5f-400.webp 400w, http://localhost:8090/media/8bd958a223da3057ae3103c5feb99f5f-640.webp 640w, http://localhost:8090/media/8bd958a223da3057ae3103c5feb99f5f-800.webp 800w"
+                }
+            ],
+            "src": "http://localhost:8090/media/8bd958a223da3057ae3103c5feb99f5f-400.webp"
+        }
+    },
+    {
+        "id": 19,
+        "slug": "calliandra-haematocephala",
+        "name": "Calliandra haematocephala",
+        "categorySlug": "calliandra",
+        "price": 3490,
+        "exposure": "soleil",
+        "size": "M",
+        "inStock": true,
+        "image": {
+            "alt": "Calliandra haematocephala",
+            "width": 800,
+            "height": 800,
+            "sources": [
+                {
+                    "type": "image/avif",
+                    "srcset": "http://localhost:8090/media/8bd958a223da3057ae3103c5feb99f5f-400.avif 400w, http://localhost:8090/media/8bd958a223da3057ae3103c5feb99f5f-640.avif 640w, http://localhost:8090/media/8bd958a223da3057ae3103c5feb99f5f-800.avif 800w"
+                },
+                {
+                    "type": "image/webp",
+                    "srcset": "http://localhost:8090/media/8bd958a223da3057ae3103c5feb99f5f-400.webp 400w, http://localhost:8090/media/8bd958a223da3057ae3103c5feb99f5f-640.webp 640w, http://localhost:8090/media/8bd958a223da3057ae3103c5feb99f5f-800.webp 800w"
+                }
+            ],
+            "src": "http://localhost:8090/media/8bd958a223da3057ae3103c5feb99f5f-400.webp"
+        }
+    },
+    {
+        "id": 16,
+        "slug": "heliconia-rostrata",
+        "name": "Heliconia rostrata",
+        "categorySlug": "heliconia",
+        "price": 5490,
+        "exposure": "soleil",
+        "size": "L",
+        "inStock": true,
+        "image": {
+            "alt": "Heliconia rostrata",
+            "width": 800,
+            "height": 800,
+            "sources": [
+                {
+                    "type": "image/avif",
+                    "srcset": "http://localhost:8090/media/89ddd7bcf3769c06d11a97cbe4a6abf9-400.avif 400w, http://localhost:8090/media/89ddd7bcf3769c06d11a97cbe4a6abf9-640.avif 640w, http://localhost:8090/media/89ddd7bcf3769c06d11a97cbe4a6abf9-800.avif 800w"
+                },
+                {
+                    "type": "image/webp",
+                    "srcset": "http://localhost:8090/media/89ddd7bcf3769c06d11a97cbe4a6abf9-400.webp 400w, http://localhost:8090/media/89ddd7bcf3769c06d11a97cbe4a6abf9-640.webp 640w, http://localhost:8090/media/89ddd7bcf3769c06d11a97cbe4a6abf9-800.webp 800w"
+                }
+            ],
+            "src": "http://localhost:8090/media/89ddd7bcf3769c06d11a97cbe4a6abf9-400.webp"
+        }
+    },
+    {
+        "id": 23,
+        "slug": "nenuphar-bleu-du-nil",
+        "name": "Nénuphar bleu du Nil (Nymphaea caerulea)",
+        "categorySlug": "nenuphars",
+        "price": 2490,
+        "exposure": "soleil",
+        "size": "M",
+        "inStock": true,
+        "image": {
+            "alt": "Nénuphar bleu du Nil (Nymphaea caerulea)",
+            "width": 800,
+            "height": 800,
+            "sources": [
+                {
+                    "type": "image/avif",
+                    "srcset": "http://localhost:8090/media/d85dc326d003e5eea1af26313dd355f0-400.avif 400w, http://localhost:8090/media/d85dc326d003e5eea1af26313dd355f0-640.avif 640w, http://localhost:8090/media/d85dc326d003e5eea1af26313dd355f0-800.avif 800w"
+                },
+                {
+                    "type": "image/webp",
+                    "srcset": "http://localhost:8090/media/d85dc326d003e5eea1af26313dd355f0-400.webp 400w, http://localhost:8090/media/d85dc326d003e5eea1af26313dd355f0-640.webp 640w, http://localhost:8090/media/d85dc326d003e5eea1af26313dd355f0-800.webp 800w"
+                }
+            ],
+            "src": "http://localhost:8090/media/d85dc326d003e5eea1af26313dd355f0-400.webp"
+        }
+    },
+    {
+        "id": 10,
+        "slug": "strelitzia-reginae",
+        "name": "Strelitzia reginae, oiseau de paradis",
+        "categorySlug": "strelitzia",
+        "price": 4990,
+        "exposure": "soleil",
+        "size": "L",
+        "inStock": true,
+        "image": {
+            "alt": "Strelitzia reginae, oiseau de paradis",
+            "width": 800,
+            "height": 800,
+            "sources": [
+                {
+                    "type": "image/avif",
+                    "srcset": "http://localhost:8090/media/4c3556b372a95dd94612b8d3f5acbc36-400.avif 400w, http://localhost:8090/media/4c3556b372a95dd94612b8d3f5acbc36-640.avif 640w, http://localhost:8090/media/4c3556b372a95dd94612b8d3f5acbc36-800.avif 800w"
+                },
+                {
+                    "type": "image/webp",
+                    "srcset": "http://localhost:8090/media/4c3556b372a95dd94612b8d3f5acbc36-400.webp 400w, http://localhost:8090/media/4c3556b372a95dd94612b8d3f5acbc36-640.webp 640w, http://localhost:8090/media/4c3556b372a95dd94612b8d3f5acbc36-800.webp 800w"
+                }
+            ],
+            "src": "http://localhost:8090/media/4c3556b372a95dd94612b8d3f5acbc36-400.webp"
+        }
+    }
+]
