@@ -31,9 +31,10 @@
 }) -%}
 
 {% block preload %}
-    {% if result and result.page.items is not empty %}
-        {% set first = result.page.items|first %}
-        <link rel="preload" as="image" type="image/avif" imagesrcset="{{ asset('images/product-' ~ first.image ~ '-400.avif') }} 400w, {{ asset('images/product-' ~ first.image ~ '-800.avif') }} 800w" imagesizes="(min-width: 1024px) 290px, (min-width: 528px) 50vw, 100vw" fetchpriority="high">
+    {% set first_image = result and result.page.items is not empty ? (result.page.items|first).image : null %}
+    {% if first_image %}
+        {% set first = first_image.sources|first %}
+        <link rel="preload" as="image" type="{{ first.type }}" imagesrcset="{{ first.srcset }}" imagesizes="(min-width: 1024px) 290px, (min-width: 528px) 50vw, 100vw" fetchpriority="high">
     {% endif %}
 {% endblock %}
 

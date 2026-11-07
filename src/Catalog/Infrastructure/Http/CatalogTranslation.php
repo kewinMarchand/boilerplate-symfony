@@ -107,7 +107,7 @@ final class CatalogTranslation
             $exposure,
             $size,
             ApiPayload::bool($product, 'inStock'),
-            ApiPayload::int($product, 'image'),
+            ApiPayload::image($product, 'image'),
         );
     }
 

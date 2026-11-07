@@ -10,20 +10,30 @@ use PHPUnit\Framework\TestCase;
 
 final class SlideTranslationTest extends TestCase
 {
-    public function testTranslatesTheApiSlidesInOrderWithTheirVisual(): void
+    public function testTranslatesTheApiSlidesInOrderWithTheirImage(): void
     {
         $slides = SlideTranslation::slides(json_decode((string) file_get_contents(__DIR__.'/../../../../Fixtures/api/slides.json'), true, flags: \JSON_THROW_ON_ERROR));
 
         self::assertCount(5, $slides);
         self::assertSame('Heliconia', $slides[0]->title);
-        self::assertSame('slide-1', $slides[0]->image);
-        self::assertSame('slide-5', $slides[4]->image);
+        self::assertNotNull($slides[0]->image);
+        self::assertSame('Bractées rouges et jaunes d’un heliconia, en gros plan', $slides[0]->image->alt);
+        self::assertSame([1280, 720], [$slides[0]->image->width, $slides[0]->image->height]);
+        self::assertSame(['image/avif', 'image/webp'], array_map(static fn ($source): string => $source->type, $slides[0]->image->sources));
+        self::assertStringStartsWith('http://localhost:8090/media/', $slides[0]->image->src);
     }
 
-    public function testRejectsAVisualThatIsNotANumber(): void
+    public function testKeepsASlideWithoutImage(): void
+    {
+        $slides = SlideTranslation::slides([['id' => 1, 'slug' => 's', 'title' => 'T', 'text' => 'X', 'image' => null]]);
+
+        self::assertNull($slides[0]->image);
+    }
+
+    public function testRejectsAnImageThatIsNotAnObject(): void
     {
         $this->expectException(InvalidApiPayloadException::class);
 
-        SlideTranslation::slides([['id' => 1, 'slug' => 's', 'title' => 'T', 'text' => 'X', 'image' => 'slide-1']]);
+        SlideTranslation::slides([['id' => 1, 'slug' => 's', 'title' => 'T', 'text' => 'X', 'image' => 1]]);
     }
 }

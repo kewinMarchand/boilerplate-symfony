@@ -153,14 +153,14 @@
         <h2 id="sg-media">Médias et cartes</h2>
         <div class="styleguide__cards">
             <article class="bui-card">
-                <div class="bui-card__media">{{ include('shared/ui/_picture.html.twig', {name: 'blog-1', widths: [480, 960], sizes: '320px', class: 'card__image'}) }}</div>
+                <div class="bui-card__media">{{ include('shared/ui/_picture.html.twig', {name: 'hero', widths: [640, 1280], sizes: '320px', class: 'card__image'}) }}</div>
                 <div class="bui-card__body"><h3 class="bui-card__title">Carte de blog</h3><p class="card__excerpt">Extrait de l’article.</p><time class="card__date" datetime="2026-09-24">24/09/2026</time></div>
             </article>
             {% for view in ['grille', 'liste'] %}
                 <ul class="product-list product-list--{{ view }}" role="list">
                     <li class="product-list__item">
                         <article class="product">
-                            <img class="product__image" src="{{ asset('images/product-6-400.webp') }}" alt="Monstera deliciosa" width="400" height="400" loading="lazy">
+                            <div class="product__image product__image--empty"></div>
                             <div class="product__body">
                                 <h3 class="product__name">Carte produit ({{ view }})</h3>
                                 <p class="product__price">{{ 2990|price }}</p>

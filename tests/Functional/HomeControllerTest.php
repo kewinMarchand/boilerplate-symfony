@@ -21,7 +21,7 @@ final class HomeControllerTest extends WebTestCase
         self::assertNull($crawler->filter('[data-testid="home-hero"] img')->attr('loading'));
         self::assertSelectorCount(5, '[data-testid="carousel-slide"]');
         self::assertSelectorTextContains('[data-testid="carousel-slide"]', 'Heliconia');
-        self::assertStringStartsWith('/assets/images/slide-1-1280', (string) $crawler->filter('[data-testid="carousel-slide"] img')->attr('src'));
+        self::assertStringStartsWith('http://localhost:8090/media/', (string) $crawler->filter('[data-testid="carousel-slide"] img')->attr('src'));
         self::assertSelectorNotExists('[data-testid="home-carousel-error"]');
         self::assertSelectorCount(3, '[data-testid="home-blog-card"]');
         self::assertSelectorCount(3, '[data-testid="home-blog-card"] time[datetime]');

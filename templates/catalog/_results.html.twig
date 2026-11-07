@@ -78,12 +78,16 @@
                     {% for product in result.page.items %}
                         <li class="product-list__item">
                             <article class="product" id="{{ product.slug }}" data-testid="catalog-product">
-                                <picture>
-                                    {% for format in ['avif', 'webp'] %}
-                                        <source type="image/{{ format }}" sizes="(min-width: 1024px) 290px, (min-width: 528px) 50vw, 100vw" srcset="{{ asset('images/product-' ~ product.image ~ '-400.' ~ format) }} 400w, {{ asset('images/product-' ~ product.image ~ '-800.' ~ format) }} 800w">
-                                    {% endfor %}
-                                    <img class="product__image" src="{{ asset('images/product-' ~ product.image ~ '-800.webp') }}" alt="{{ product.name }}" width="800" height="800"{% if loop.first %} fetchpriority="high"{% elseif loop.index > 4 %} loading="lazy" decoding="async"{% endif %}>
-                                </picture>
+                                {% if product.image %}
+                                    <picture>
+                                        {% for source in product.image.sources %}
+                                            <source type="{{ source.type }}" sizes="(min-width: 1024px) 290px, (min-width: 528px) 50vw, 100vw" srcset="{{ source.srcset }}">
+                                        {% endfor %}
+                                        <img class="product__image" src="{{ product.image.src }}" alt="{{ product.image.alt }}" width="{{ product.image.width }}" height="{{ product.image.height }}"{% if loop.first %} fetchpriority="high"{% elseif loop.index > 4 %} loading="lazy" decoding="async"{% endif %}>
+                                    </picture>
+                                {% else %}
+                                    <div class="product__image product__image--empty"></div>
+                                {% endif %}
                                 <div class="product__body">
                                     <h2 class="product__name">{{ product.name }}</h2>
                                     <p class="product__price" data-testid="catalog-product-price" data-price="{{ product.price.cents }}">{{ product.price|price }}</p>

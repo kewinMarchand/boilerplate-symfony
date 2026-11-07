@@ -1,8 +1,9 @@
 # Règles de dépendance entre modules et couches (R12 de ARCHITECTURE-DDD.md).
-# Domain ne dépend que de lui-même (ni framework, ni autre couche, ni autre module). Application du
+# Domain ne dépend que de lui-même, plus Shared\Domain pour les modules qui exposent une image (ni framework, ni autre couche, ni autre module). Application du
 # Domain de son module. Infrastructure du Domain et de l'Application de son module, et des frameworks.
 # UI du Domain et de l'Application de son module, de Shared et des frameworks, et de l'Infrastructure
 # seulement pour les modules sans couche Application (forme réduite : Contact, Task).
+# Shared\Domain porte les valeurs du contrat partagées par les domaines (Image), sans dépendance.
 # Site compose les modules (Domain et Application), Shared ne dépend d'aucun module ni de Site.
 # Le client HTTP de l'API (HttpClient) n'est permis qu'aux couches Infrastructure.
 # make arch-selftest vérifie que des violations volontaires font bien échouer l'analyse.
@@ -70,6 +71,10 @@ deptrac:
           collectors:
             - type: classLike
               value: '^App\\Site\\'
+        - name: SharedDomain
+          collectors:
+            - type: classLike
+              value: '^App\\Shared\\Domain\\'
         - name: SharedUI
           collectors:
             - type: classLike
@@ -87,13 +92,13 @@ deptrac:
             - type: classLike
               value: '^(?!Symfony\\(Contracts|Component)\\HttpClient\\)(Symfony|Doctrine|Psr|Twig)\\'
     ruleset:
-        CatalogDomain: ~
+        CatalogDomain: [SharedDomain]
         CatalogApplication: [CatalogDomain]
         CatalogInfrastructure: [CatalogDomain, SharedInfrastructure, CatalogApplication, Framework, HttpClient]
         CatalogUI: [CatalogDomain, CatalogApplication, SharedUI, Framework]
-        BlogDomain: ~
+        BlogDomain: [SharedDomain]
         BlogInfrastructure: [BlogDomain, SharedInfrastructure, Framework, HttpClient]
-        ContentDomain: ~
+        ContentDomain: [SharedDomain]
         ContentInfrastructure: [ContentDomain, SharedInfrastructure, Framework, HttpClient]
         ContactDomain: ~
         ContactInfrastructure: [ContactDomain, SharedInfrastructure, Framework, HttpClient]
@@ -103,4 +108,5 @@ deptrac:
         TaskUI: [TaskDomain, TaskInfrastructure, SharedUI, Framework]
         Site: [CatalogDomain, CatalogApplication, BlogDomain, ContentDomain, ContactDomain, TaskDomain, SharedUI, Framework]
         SharedUI: [Framework]
-        SharedInfrastructure: [Framework, HttpClient]
+        SharedDomain: ~
+        SharedInfrastructure: [SharedDomain, Framework, HttpClient]

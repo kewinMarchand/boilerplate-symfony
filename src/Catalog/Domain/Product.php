@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Catalog\Domain;
 
+use App\Shared\Domain\Image;
+
 final readonly class Product
 {
     public function __construct(
@@ -15,7 +17,7 @@ final readonly class Product
         public Exposure $exposure,
         public Size $size,
         public bool $inStock,
-        public int $image,
+        public ?Image $image,
     ) {
     }
 }

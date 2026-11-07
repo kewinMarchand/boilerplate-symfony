@@ -21,7 +21,7 @@ final class ArticleTranslation
                 throw new InvalidApiPayloadException('publishedAt', 'une date AAAA-MM-JJ');
             }
 
-            return new Article(ApiPayload::id($article, 'id'), ApiPayload::string($article, 'title'), ApiPayload::string($article, 'excerpt'), $publishedAt);
+            return new Article(ApiPayload::id($article, 'id'), ApiPayload::string($article, 'title'), ApiPayload::string($article, 'excerpt'), $publishedAt, ApiPayload::image($article, 'image'));
         }, ApiPayload::objects($payload, 'articles'));
     }
 }

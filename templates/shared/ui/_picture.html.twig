@@ -1,14 +1,31 @@
 {#-
     Image responsive AVIF puis WebP.
-    name : préfixe dans assets/images (ex. 'hero'), widths : variantes disponibles, ratio 16:9,
+    image : objet image du contrat de l'API (App\Shared\Domain\Image), ou, pour une image livrée par le site,
+    name : préfixe dans assets/images (ex. 'hero') et widths : variantes disponibles, ratio 16:9, alt vide.
     sizes, class, loading ('lazy' par défaut), priority (true pour l'image LCP).
 -#}
 {%- set priority = priority|default(false) -%}
-{%- set largest = widths|last -%}
+{%- if image is defined -%}
+    {%- set sources = image.sources -%}
+    {%- set src = image.src -%}
+    {%- set alt = image.alt -%}
+    {%- set width = image.width -%}
+    {%- set height = image.height -%}
+{%- else -%}
+    {%- set sources = [] -%}
+    {%- for format in ['avif', 'webp'] -%}
+        {%- set srcset -%}{% for width in widths %}{{ asset('images/' ~ name ~ '-' ~ width ~ '.' ~ format) }} {{ width }}w{{ not loop.last ? ', ' }}{% endfor %}{%- endset -%}
+        {%- set sources = sources|merge([{type: 'image/' ~ format, srcset: srcset}]) -%}
+    {%- endfor -%}
+    {%- set width = widths|last -%}
+    {%- set src = asset('images/' ~ name ~ '-' ~ width ~ '.webp') -%}
+    {%- set alt = '' -%}
+    {%- set height = (width * 9 / 16)|round -%}
+{%- endif -%}
 <picture>
-    {%- for format in ['avif', 'webp'] %}
-        <source type="image/{{ format }}" sizes="{{ sizes }}" srcset="{% for width in widths %}{{ asset('images/' ~ name ~ '-' ~ width ~ '.' ~ format) }} {{ width }}w{{ not loop.last ? ', ' }}{% endfor %}">
+    {%- for source in sources %}
+        <source type="{{ source.type }}" sizes="{{ sizes }}" srcset="{{ source.srcset }}">
     {%- endfor %}
-    <img class="{{ class|default('') }}" src="{{ asset('images/' ~ name ~ '-' ~ largest ~ '.webp') }}" alt="" width="{{ largest }}" height="{{ (largest * 9 / 16)|round }}"
+    <img class="{{ class|default('') }}" src="{{ src }}" alt="{{ alt }}" width="{{ width }}" height="{{ height }}"
         {%- if priority %} fetchpriority="high"{% else %} loading="{{ loading|default('lazy') }}" decoding="async"{% endif %}>
 </picture>

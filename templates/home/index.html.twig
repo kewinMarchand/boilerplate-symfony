@@ -41,7 +41,7 @@
                     {% for article in articles %}
                         <li class="blog__item">
                             <article class="bui-card" data-testid="home-blog-card">
-                                <div class="bui-card__media">{{ include('shared/ui/_picture.html.twig', {name: 'blog-' ~ loop.index, widths: [480, 960], sizes: '(min-width: 1024px) 460px, (min-width: 640px) 50vw, 100vw', class: 'card__image'}) }}</div>
+                                {% if article.image %}<div class="bui-card__media">{{ include('shared/ui/_picture.html.twig', {image: article.image, sizes: '(min-width: 1024px) 460px, (min-width: 640px) 50vw, 100vw', class: 'card__image'}) }}</div>{% endif %}
                                 <div class="bui-card__body">
                                     <h3 class="bui-card__title">{{ article.title }}</h3>
                                     <p class="card__excerpt">{{ article.excerpt }}</p>

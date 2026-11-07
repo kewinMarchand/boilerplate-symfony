@@ -22,6 +22,16 @@ test.describe('Accueil', () => {
     await expect(image).toHaveAttribute('fetchpriority', 'high')
     await expect(image).not.toHaveAttribute('loading', 'lazy')
   })
+  test('affiche les illustrations des articles servies par l’API', async ({ page }) => {
+    await page.goto('/')
+    const image = page.getByTestId('home-blog-card').first().locator('img')
+    await image.scrollIntoViewIfNeeded()
+    // L'origine de l'API vient de API_URL du conteneur PHP, que le conteneur Playwright ne reçoit pas
+    await expect(image).toHaveAttribute('src', /^https?:\/\/[^/]+\/media\//)
+    await expect
+      .poll(() => image.evaluate((element: HTMLImageElement) => element.naturalWidth))
+      .toBeGreaterThan(0)
+  })
 })
 
 test.describe('Carrousel', () => {

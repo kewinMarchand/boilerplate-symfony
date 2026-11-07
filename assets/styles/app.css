@@ -1110,6 +1110,10 @@ turbo-frame[aria-busy='true'] .product-list {
     object-fit: cover;
 }
 
+.product__image--empty {
+    background: var(--color-surface);
+}
+
 .product__body {
     display: grid;
     gap: var(--space-2);

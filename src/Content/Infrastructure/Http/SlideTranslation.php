@@ -15,7 +15,7 @@ final class SlideTranslation
     public static function slides(mixed $payload): array
     {
         return array_map(static fn (array $slide): Slide => new Slide(
-            'slide-'.ApiPayload::int($slide, 'image'),
+            ApiPayload::image($slide, 'image'),
             ApiPayload::string($slide, 'title'),
             ApiPayload::string($slide, 'text'),
         ), ApiPayload::objects($payload, 'slides'));

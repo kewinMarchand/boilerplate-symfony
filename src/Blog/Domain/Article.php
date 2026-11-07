@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Blog\Domain;
 
+use App\Shared\Domain\Image;
+
 final readonly class Article
 {
     public function __construct(
@@ -11,6 +13,7 @@ final readonly class Article
         public string $title,
         public string $excerpt,
         public \DateTimeImmutable $publishedAt,
+        public ?Image $image,
     ) {
     }
 }
