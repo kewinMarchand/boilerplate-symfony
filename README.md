@@ -103,7 +103,7 @@ git cherry-pick <sha>
 | Sujet | Fichiers |
 | --- | --- |
 | Nom du projet et du paquet | `composer.json` (`name`, `description`), `package.json` (`name`, `description`), `compose.yaml` (`name:` du projet Compose, image `…:prod`), `compose.override.yaml` (image `…:dev`), `Makefile.qa.mk` (`LHCI_PROJECT`), `LICENSE`, titres de `README.md` et `CLAUDE.md` |
-| Config du site et identité | `config/packages/site.yaml` (nom, description, couleur du thème, navigation), `templates/seo/manifest.webmanifest.twig` (`short_name`), `src/Shared/UI/Seo/SeoPageFactory.php` (texte alternatif de l'image de partage), `templates/home/index.html.twig` (sur-titre et boutons du hero). Les diapositives du carrousel se modifient dans l'admin de l'API Platform (`GET /api/slides`, visuels `assets/images/slide-<n>-*`). Le nom du site est aussi vérifié par `tests/Functional/PagesTest.php` (`SITE`) et `tests/e2e/navigation.e2e.ts` |
+| Config du site et identité | `config/packages/site.yaml` (nom, description, couleur du thème, navigation), `templates/seo/manifest.webmanifest.twig` (`short_name`), `src/Shared/UI/Seo/SeoPageFactory.php` (texte alternatif de l'image de partage), `templates/home/index.html.twig` (sur-titre et boutons du hero). Les diapositives du carrousel se modifient dans l'admin de l'API Platform (`GET /api/slides`, images comprises). Le nom du site est aussi vérifié par `tests/Functional/PagesTest.php` (`SITE`) et `tests/e2e/navigation.e2e.ts` |
 | Ports | `Makefile` (`HTTP_PORT`, 8095), `compose.yaml` (port par défaut), `.env` (`SITE_URL`), `playwright.config.ts`, `Makefile.qa.mk` (`LHCI_PORT`, 3230) et `.lighthouserc.json` |
 | Logo et favicons | `assets/images/logo-mark.svg`, `public/favicon.ico`, `public/favicon.svg`, `public/apple-touch-icon.png`, `public/icon-192.png`, `public/icon-512.png`, `public/og-image.jpg` |
 | Pages légales | textes dans l'admin de l'API Platform (`GET /api/legal_pages/{slug}`), `config/packages/site.yaml` (`site.accessibility` une fois l'audit RGAA réalisé, pour l'état de conformité du lien du pied de page), section « Mesure d'audience » de `templates/legal/privacy.html.twig` |
@@ -139,7 +139,7 @@ git cherry-pick <sha>
    - dans `tests/Functional/HomeControllerTest.php`, retirer les tests du blog
    - côté Playwright, supprimer `tests/e2e/catalogue.e2e.ts`, `taches.e2e.ts` et `menu.e2e.ts`, et adapter `routes.ts`, `accueil.e2e.ts`, `breadcrumb.e2e.ts`, `pages.e2e.ts`, `layout.e2e.ts` et `tests/a11y/pages.a11y.ts`.
 6. **Lighthouse** : retirer `/catalogue`, `/catalogue/plantes-interieur/feuillages` et `/taches` de `.lighthouserc.json`.
-7. **Facultatif** : les images `assets/images/product-*` et `blog-*`, et les styles du catalogue dans `assets/styles/app.css`.
+7. **Facultatif** : les styles du catalogue dans `assets/styles/app.css`.
 
 Terminer par `make qa`, puis `make test-e2e test-a11y`. Déroulée sur une copie jetable du dépôt, cette procédure mène à un `make qa` vert : 0 violation deptrac, 7 violations volontaires sur 7 détectées, 40 tests PHPUnit.
 
