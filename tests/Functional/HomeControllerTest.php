@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional;
 
+use App\Blog\Domain\ArticleDetail;
 use App\Blog\Domain\ArticleRepository;
 use App\Blog\Domain\ArticlesLoadException;
 use App\Content\Domain\SlideRepository;
@@ -35,6 +36,11 @@ final class HomeControllerTest extends WebTestCase
             {
                 return [];
             }
+
+            public function find(string $slug): ?ArticleDetail
+            {
+                return null;
+            }
         });
         $client->request('GET', '/');
 
@@ -49,6 +55,11 @@ final class HomeControllerTest extends WebTestCase
             public function findLatest(int $limit): array
             {
                 throw new ArticlesLoadException();
+            }
+
+            public function find(string $slug): ?ArticleDetail
+            {
+                return null;
             }
         });
         $client->request('GET', '/');

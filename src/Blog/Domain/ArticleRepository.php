@@ -12,4 +12,11 @@ interface ArticleRepository
      * @throws ArticlesLoadException
      */
     public function findLatest(int $limit): array;
+
+    /**
+     * Null si l'API ne connaît pas l'article (404).
+     *
+     * @throws ArticleLoadException
+     */
+    public function find(string $slug): ?ArticleDetail;
 }

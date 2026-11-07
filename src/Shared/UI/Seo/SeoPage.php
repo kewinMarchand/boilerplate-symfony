@@ -20,6 +20,9 @@ final readonly class SeoPage
         public array $jsonLd,
         public ?string $prev = null,
         public ?string $next = null,
+        public int $imageWidth = 1200,
+        public int $imageHeight = 630,
+        public ?string $publishedTime = null,
     ) {
     }
 }

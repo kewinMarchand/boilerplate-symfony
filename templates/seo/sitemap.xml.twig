@@ -3,6 +3,9 @@
 {% for item in site.navigation.main|merge(site.navigation.legal) %}
     <url><loc>{{ site.url }}{{ path(item.route) }}</loc></url>
 {% endfor %}
+{% for article in articles %}
+    <url><loc>{{ site.url }}{{ path('article', {slug: article.slug}) }}</loc></url>
+{% endfor %}
 {% for categoryPath in catalog_paths() %}
     <url><loc>{{ site.url }}{{ path('catalog', {path: categoryPath.value}) }}</loc></url>
 {% endfor %}

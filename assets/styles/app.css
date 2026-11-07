@@ -871,10 +871,52 @@ fieldset {
     margin-top: var(--space-6);
 }
 
-/* HTML des pages légales venu de l'API, sans classe : listes alignées sur les paragraphes, liens comme bui-link */
+/* Carte d'article de l'accueil : lien étiré sur toute la carte, un seul lien, nommé par le titre */
+.blog__item .bui-card {
+    position: relative;
+}
+
+.card__link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+}
+
+/* Fiche article : colonne de lecture, image LCP en tête */
+.article {
+    max-width: 760px;
+}
+
+.article__date {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-small);
+}
+
+.article__image {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius);
+}
+
+.article__excerpt {
+    margin-block: var(--space-6);
+    font-size: var(--bui-font-size-lead);
+}
+
+.article__back {
+    margin-top: var(--space-8);
+}
+
+/* HTML des pages légales et des articles venu de l'API, sans classe : listes alignées sur les paragraphes, liens comme bui-link */
 .legal-html :is(ul, ol) {
     margin: 0 0 var(--space-4);
     padding-inline-start: var(--space-6);
+}
+
+.legal-html code {
+    font-family: ui-monospace, monospace;
+    font-size: 0.9em;
 }
 
 .legal-html a {

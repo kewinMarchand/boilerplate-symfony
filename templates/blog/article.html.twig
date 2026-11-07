@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{%- if detail -%}
+    {%- set article = detail.article -%}
+    {%- set url = site.url ~ path('article', {slug: article.slug}) -%}
+    {%- set image = article.image -%}
+    {%- set largest = image ? (image.sources|filter(source => source.type == 'image/webp')|first).srcset|split(', ')|last|split(' ')|first : null -%}
+    {%- set seo = seo_page({
+        title: article.title,
+        description: article.excerpt ?: article.title,
+        published_time: article.publishedAt|date('Y-m-d'),
+        image: image ? {url: largest, width: image.width, height: image.height, alt: image.alt ?: article.title} : null,
+        json_ld: [{
+            '@context': 'https://schema.org',
+            '@type': 'BlogPosting',
+            headline: article.title,
+            description: article.excerpt,
+            datePublished: article.publishedAt|date('Y-m-d'),
+            url: url,
+            image: largest,
+            inLanguage: 'fr-FR',
+        }|filter(value => value is not null)],
+    }|filter(value => value is not null)) -%}
+{%- else -%}
+    {%- set seo = seo_page({title: 'Article', description: 'Article du blog ' ~ site.name ~ '.', robots: 'noindex, follow'}) -%}
+{%- endif -%}
+
+{% block preload %}
+    {% if detail and detail.article.image %}
+        {% set first = detail.article.image.sources|first %}
+        <link rel="preload" as="image" type="{{ first.type }}" imagesrcset="{{ first.srcset }}" imagesizes="(min-width: 800px) 760px, calc(100vw - 32px)" fetchpriority="high">
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    {% if detail %}
+        {% set article = detail.article %}
+        {#- Le HTML vient de l'API, qui échappe le HTML saisi dans l'admin et retire les liens javascript: et data: : il est injecté tel quel. -#}
+        <article class="article prose" data-testid="article-page">
+            <h1 data-testid="article-title">{{ article.title }}</h1>
+            <p class="article__date">Publié le <time datetime="{{ article.publishedAt|date('Y-m-d') }}">{{ article.publishedAt|date('d/m/Y') }}</time></p>
+            {% if article.image %}
+                {{ include('shared/ui/_picture.html.twig', {image: article.image, sizes: '(min-width: 800px) 760px, calc(100vw - 32px)', class: 'article__image', priority: true}) }}
+            {% endif %}
+            {% if article.excerpt %}<p class="article__excerpt">{{ article.excerpt }}</p>{% endif %}
+            <div class="legal-html" data-testid="article-body">{{ detail.html|raw }}</div>
+            <p class="article__back"><a href="{{ path('home') }}">Retour à l’accueil</a></p>
+        </article>
+    {% else %}
+        <h1>Article</h1>
+        {{ include('shared/ui/_alert.html.twig', {variant: 'error', body: error, testid: 'article-error'}) }}
+    {% endif %}
+{% endblock %}

@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace App\Blog\Infrastructure\Http;
 
+use App\Blog\Domain\ArticleDetail;
+use App\Blog\Domain\ArticleLoadException;
 use App\Blog\Domain\ArticleRepository;
 use App\Blog\Domain\ArticlesLoadException;
 use App\Shared\Infrastructure\Http\InvalidApiPayloadException;
 use Symfony\Component\DependencyInjection\Attribute\Target;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\Exception\ExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -26,5 +29,19 @@ final readonly class HttpArticleRepository implements ArticleRepository
         }
 
         return \array_slice($articles, 0, $limit);
+    }
+
+    public function find(string $slug): ?ArticleDetail
+    {
+        try {
+            $response = $this->apiClient->request('GET', '/api/articles/'.rawurlencode($slug));
+            if (Response::HTTP_NOT_FOUND === $response->getStatusCode()) {
+                return null;
+            }
+
+            return ArticleTranslation::detail($response->toArray());
+        } catch (ExceptionInterface|InvalidApiPayloadException $exception) {
+            throw new ArticleLoadException($exception);
+        }
     }
 }

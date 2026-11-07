@@ -37,7 +37,9 @@ final readonly class SeoPageFactory
      *     json_ld?: list<array<string, mixed>>,
      *     prev?: string|null,
      *     next?: string|null,
-     * } $options chemins relatifs à l'URL du site
+     *     image?: array{url: string, width: int, height: int, alt: string},
+     *     published_time?: string,
+     * } $options chemins relatifs à l'URL du site ; image : adresse absolue (image servie par l'API) ; published_time : page d'article, AAAA-MM-JJ
      */
     public function create(array $options = []): SeoPage
     {
@@ -65,12 +67,15 @@ final readonly class SeoPageFactory
             $options['description'] ?? $this->site['description'],
             $canonical,
             $options['robots'] ?? 'index, follow',
-            $siteUrl.'/og-image.jpg',
-            $this->site['name'].' : jardin tropical luxuriant',
+            $options['image']['url'] ?? $siteUrl.'/og-image.jpg',
+            $options['image']['alt'] ?? $this->site['name'].' : jardin tropical luxuriant',
             $breadcrumb,
             array_map(static fn (array $data): string => json_encode($data, self::JSON_FLAGS), $jsonLd),
             isset($options['prev']) ? $siteUrl.$options['prev'] : null,
             isset($options['next']) ? $siteUrl.$options['next'] : null,
+            $options['image']['width'] ?? 1200,
+            $options['image']['height'] ?? 630,
+            $options['published_time'] ?? null,
         );
     }
 

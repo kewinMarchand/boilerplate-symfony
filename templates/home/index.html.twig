@@ -43,7 +43,7 @@
                             <article class="bui-card" data-testid="home-blog-card">
                                 {% if article.image %}<div class="bui-card__media">{{ include('shared/ui/_picture.html.twig', {image: article.image, sizes: '(min-width: 1024px) 460px, (min-width: 640px) 50vw, 100vw', class: 'card__image'}) }}</div>{% endif %}
                                 <div class="bui-card__body">
-                                    <h3 class="bui-card__title">{{ article.title }}</h3>
+                                    <h3 class="bui-card__title"><a class="card__link" href="{{ path('article', {slug: article.slug}) }}">{{ article.title }}</a></h3>
                                     <p class="card__excerpt">{{ article.excerpt }}</p>
                                     <time class="card__date" datetime="{{ article.publishedAt|date('Y-m-d') }}">{{ article.publishedAt|date('d/m/Y') }}</time>
                                 </div>

@@ -17,13 +17,14 @@
         {% if seo.prev %}<link rel="prev" href="{{ seo.prev }}">{% endif %}
         {% if seo.next %}<link rel="next" href="{{ seo.next }}">{% endif %}
         <meta name="theme-color" content="{{ site.theme_color }}">
-        <meta property="og:type" content="website">
+        <meta property="og:type" content="{{ seo.publishedTime ? 'article' : 'website' }}">
+        {% if seo.publishedTime %}<meta property="article:published_time" content="{{ seo.publishedTime }}">{% endif %}
         <meta property="og:site_name" content="{{ site.name }}">
         <meta property="og:title" content="{{ seo.title }}">
         <meta property="og:description" content="{{ seo.description }}">
         <meta property="og:image" content="{{ seo.image }}">
-        <meta property="og:image:width" content="1200">
-        <meta property="og:image:height" content="630">
+        <meta property="og:image:width" content="{{ seo.imageWidth }}">
+        <meta property="og:image:height" content="{{ seo.imageHeight }}">
         <meta property="og:image:alt" content="{{ seo.imageAlt }}">
         <meta property="og:locale" content="{{ site.locale }}">
         <meta name="twitter:card" content="summary_large_image">

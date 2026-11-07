@@ -32,6 +32,7 @@ final class ApiMockResponseFactory
         return match ($path) {
             '/api/tasks' => self::fixture('empty' === $scenario ? null : 'tasks'),
             '/api/articles' => self::fixture('empty' === $scenario ? null : 'articles'),
+            '/api/articles/un-carrousel-accessible-sans-dependance' => self::fixture('article-'.basename($path)),
             '/api/categories' => self::fixture('categories'),
             '/api/products' => self::fixture(match (true) {
                 'empty' === $scenario, isset($query['priceMax']) => 'products-empty',
