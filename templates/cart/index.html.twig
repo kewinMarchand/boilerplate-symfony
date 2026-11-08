@@ -8,7 +8,7 @@
     <div data-controller="cart">
         <div data-cart-target="content"></div>
         <template data-cart-target="empty">
-            <p data-testid="cart-empty">Votre panier est vide. <a class="bui-link" href="{{ path('catalog') }}">Parcourir le catalogue</a></p>
+            <p tabindex="-1" data-cart-empty data-testid="cart-empty">Votre panier est vide. <a class="bui-link" href="{{ path('catalog') }}">Parcourir le catalogue</a></p>
         </template>
         <template data-cart-target="summary">
             <ul class="cart-lines" role="list" data-cart-lines></ul>

@@ -28,8 +28,15 @@ export default class extends Controller {
         }
     }
 
+    // Le focus va au « Retirer » de la ligne qui prend la place, sinon de la précédente, sinon au panier vide :
+    // sans cela, il retombe en haut de la page. Le rendu est synchrone, déclenché par saveCart.
     remove(event) {
-        saveCart(removeItem(readCart(), event.currentTarget.closest('li').dataset.slug));
+        const row = event.currentTarget.closest('li');
+        const index = [...row.parentElement.children].indexOf(row);
+        saveCart(removeItem(readCart(), row.dataset.slug));
+
+        const buttons = this.contentTarget.querySelectorAll('[data-cart-lines] > li [data-field="remove"]');
+        (buttons[Math.min(index, buttons.length - 1)] ?? this.contentTarget.querySelector('[data-cart-empty]')).focus();
     }
 
     render() {
