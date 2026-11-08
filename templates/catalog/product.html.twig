@@ -19,6 +19,7 @@
             '@context': 'https://schema.org',
             '@type': 'Product',
             name: product.name,
+            description: detail.description is empty ? null : detail.description|join(' '),
             sku: product.slug,
             url: url,
             category: category ? category.name : null,
@@ -54,6 +55,13 @@
                 <div>
                     <h1 data-testid="product-title">{{ product.name }}</h1>
                     <p class="product-page__price" data-testid="product-price">{{ product.price|price }}</p>
+                    {% if detail.description is not empty %}
+                        <div data-testid="product-description">
+                            {% for paragraph in detail.description %}
+                                <p>{{ paragraph }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
                     <dl class="product-page__features">
                         <dt>Exposition</dt>
                         <dd>{{ product.exposure.label }}</dd>

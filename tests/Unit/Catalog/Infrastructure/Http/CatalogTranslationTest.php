@@ -48,6 +48,20 @@ final class CatalogTranslationTest extends TestCase
         self::assertSame(1, $result->page->pageCount);
     }
 
+    public function testSplitsTheProductDescriptionIntoParagraphsAtBlankLines(): void
+    {
+        $payload = self::payload('product-monstera-deliciosa');
+        self::assertIsArray($payload);
+
+        self::assertCount(2, CatalogTranslation::detail($payload)->description);
+
+        $payload['description'] = "Rustique.\n\n  \nRésiste au vent,\naux embruns.";
+        self::assertSame(['Rustique.', "Résiste au vent,\naux embruns."], CatalogTranslation::detail($payload)->description);
+
+        $payload['description'] = '';
+        self::assertSame([], CatalogTranslation::detail($payload)->description);
+    }
+
     public function testBuildsTheSearchQueryInTheLanguageOfTheApi(): void
     {
         $query = new CatalogQuery(

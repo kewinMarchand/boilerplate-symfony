@@ -78,7 +78,8 @@ final class CatalogTranslation
     }
 
     /**
-     * Fiche d'un produit : chaque étape de `categoryPath` reçoit la valeur du paramètre d'URL du catalogue.
+     * Fiche d'un produit : chaque étape de `categoryPath` reçoit la valeur du paramètre d'URL du catalogue,
+     * et la description est découpée en paragraphes aux lignes vides, comme le contrat les sépare.
      */
     public static function detail(mixed $payload): ProductDetail
     {
@@ -90,7 +91,9 @@ final class CatalogTranslation
             $path[] = new CategoryLink(ApiPayload::string($step, 'slug'), ApiPayload::string($step, 'name'), implode('/', $slugs));
         }
 
-        return new ProductDetail(self::product($data), $path);
+        $paragraphs = array_map(trim(...), preg_split('/\n\s*\n/', ApiPayload::string($data, 'description')) ?: []);
+
+        return new ProductDetail(self::product($data), $path, array_values(array_filter($paragraphs, static fn (string $paragraph): bool => '' !== $paragraph)));
     }
 
     /**
