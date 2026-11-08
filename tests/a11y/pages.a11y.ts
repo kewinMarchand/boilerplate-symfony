@@ -11,7 +11,7 @@ const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']
 const analyze = (page: Page) => new AxeBuilder({ page }).withTags(TAGS).exclude('.sf-toolbar').analyze()
 
 for (const mode of A11Y_MODES) {
-  for (const route of [...ROUTES, '/catalogue?exposition=soleil&taille=M&attr-feuillage=persistant', '/route-inexistante', '/panier', '/blog?rubrique=conseils', '/blog/un-carrousel-accessible-sans-dependance']) {
+  for (const route of [...ROUTES, '/catalogue?exposition=soleil&taille=M&attr-feuillage=persistant', '/contact?produit=monstera-deliciosa', '/route-inexistante', '/panier', '/blog?rubrique=conseils', '/blog/un-carrousel-accessible-sans-dependance']) {
     test(`la page ${route} en mode ${mode} ne présente aucune violation axe WCAG 2.1 AA`, async ({ page }) => {
       await useA11yMode(page, mode)
       await page.goto(route)

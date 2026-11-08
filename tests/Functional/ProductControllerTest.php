@@ -45,6 +45,24 @@ final class ProductControllerTest extends WebTestCase
         self::assertSame('/panier', $button->attr('data-add-to-cart-cart-url-value'));
     }
 
+    public function testOffersAnInquiryInsteadOfPricesAndCartWithoutOnlineSales(): void
+    {
+        $client = self::createClient();
+        $crawler = $client->request('GET', self::PRODUCT, server: ['HTTP_X_SCENARIO' => 'sans-vente']);
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorNotExists('[data-testid="product-price"]');
+        self::assertSelectorNotExists('[data-controller="add-to-cart"]');
+        $inquiry = $crawler->filter('[data-testid="product-inquiry"]');
+        self::assertSame('/contact?produit=monstera-deliciosa', $inquiry->attr('href'));
+        self::assertSame('Demande de renseignement sur Monstera deliciosa', $inquiry->text());
+        self::assertSelectorNotExists('[data-testid="product-similar"] .carousel__slide p');
+        $jsonLd = implode('', $crawler->filter('script[type="application/ld+json"]')->each(static fn ($node): string => $node->text()));
+        self::assertStringContainsString('"@type":"Product"', $jsonLd);
+        self::assertStringNotContainsString('"offers"', $jsonLd);
+        self::assertStringNotContainsString('34,90', (string) $crawler->filter('meta[name="description"]')->attr('content'));
+    }
+
     public function testShowsTheOtherProductsOfItsCategoryAfterTheProduct(): void
     {
         $client = self::createClient();

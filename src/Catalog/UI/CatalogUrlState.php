@@ -14,7 +14,8 @@ use Symfony\Component\HttpFoundation\HeaderUtils;
 
 /**
  * État du catalogue porté par la query string, seule source de vérité.
- * Les valeurs invalides sont ignorées, les valeurs par défaut absentes de l'URL.
+ * Les valeurs invalides sont ignorées, les valeurs par défaut absentes de l'URL. Sans vente en ligne, le filtre et les tris
+ * par prix sont ignorés comme une valeur invalide.
  */
 final readonly class CatalogUrlState
 {
@@ -26,7 +27,7 @@ final readonly class CatalogUrlState
     ) {
     }
 
-    public static function fromQueryString(?string $queryString): self
+    public static function fromQueryString(?string $queryString, bool $withPrices = true): self
     {
         /** @var array<string, list<string>> $params parseQuery() sans crochets : une liste de valeurs par clé */
         $params = null === $queryString || '' === $queryString ? [] : HeaderUtils::parseQuery($queryString, true);
@@ -35,8 +36,8 @@ final readonly class CatalogUrlState
         $filters = new ProductFilters(
             array_values(array_filter(Exposure::cases(), static fn (Exposure $case): bool => \in_array($case->value, $params['exposition'] ?? [], true))),
             array_values(array_filter(Size::cases(), static fn (Size $case): bool => \in_array($case->value, $params['taille'] ?? [], true))),
-            self::euros($first('prix_min')),
-            self::euros($first('prix_max')),
+            $withPrices ? self::euros($first('prix_min')) : null,
+            $withPrices ? self::euros($first('prix_max')) : null,
             '1' === $first('en_stock'),
             self::attributes($params),
         );
@@ -44,7 +45,7 @@ final readonly class CatalogUrlState
         return new self(
             new CatalogQuery(
                 $filters,
-                ProductSort::tryFrom((string) $first('tri')) ?? ProductSort::Relevance,
+                self::sort($first('tri'), $withPrices),
                 self::positiveInt($first('page'), 2) ?? 1,
             ),
             ListView::tryFrom((string) $first('vue')) ?? ListView::Grid,
@@ -180,6 +181,13 @@ final readonly class CatalogUrlState
         }
 
         return $attributes;
+    }
+
+    private static function sort(?string $value, bool $withPrices): ProductSort
+    {
+        $sort = ProductSort::tryFrom((string) $value) ?? ProductSort::Relevance;
+
+        return $withPrices || !$sort->byPrice() ? $sort : ProductSort::Relevance;
     }
 
     private static function euros(?string $value): ?Price

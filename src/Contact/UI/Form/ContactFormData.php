@@ -19,8 +19,11 @@ final class ContactFormData
     #[Assert\Length(min: 10, max: 5000, minMessage: 'Votre message doit contenir au moins 10 caractères.', maxMessage: 'Votre message ne doit pas dépasser 5000 caractères.', normalizer: 'trim')]
     public string $message = '';
 
+    /** Slug du produit d'une demande de renseignement, vérifié par l'API */
+    public ?string $product = null;
+
     public function toMessage(): ContactMessage
     {
-        return new ContactMessage($this->name, $this->email, $this->message);
+        return new ContactMessage($this->name, $this->email, $this->message, $this->product);
     }
 }

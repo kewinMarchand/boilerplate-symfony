@@ -29,6 +29,17 @@ final class CatalogUrlStateTest extends TestCase
         self::assertSame(2, $state->query->page);
     }
 
+    public function testIgnoresThePriceFilterAndSortsWithoutOnlineSales(): void
+    {
+        $state = CatalogUrlState::fromQueryString('exposition=soleil&prix_min=10&prix_max=50&tri=prix-desc', withPrices: false);
+
+        self::assertNull($state->query->filters->priceMin);
+        self::assertNull($state->query->filters->priceMax);
+        self::assertSame(ProductSort::Relevance, $state->query->sort);
+        self::assertSame('?exposition=soleil', $state->queryString());
+        self::assertSame(ProductSort::Name, CatalogUrlState::fromQueryString('tri=nom', withPrices: false)->query->sort);
+    }
+
     /**
      * @return iterable<string, array{string}>
      */

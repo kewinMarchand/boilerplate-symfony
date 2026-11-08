@@ -5,6 +5,7 @@
     "shareImage": null,
     "icon": null,
     "defaultColorScheme": "dark",
+    "salesEnabled": true,
     "theme": {
         "light": {
             "primary": "#c2410c",

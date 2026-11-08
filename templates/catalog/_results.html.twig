@@ -1,4 +1,5 @@
 {%- set filters = state.query.filters -%}
+{%- set sales_enabled = site_identity().salesEnabled -%}
 <div class="catalog__layout">
     {% if result %}
         {{ include('catalog/_filters.html.twig') }}
@@ -23,7 +24,7 @@
                 <div class="catalog__sort">
                     <label for="catalog-sort">Trier par</label>
                     <select id="catalog-sort" name="tri" form="catalog-filters-form" data-action="catalog#apply" data-testid="catalog-sort">
-                        {% for sort in enum('App\\Catalog\\Domain\\ProductSort').cases() %}
+                        {% for sort in enum('App\\Catalog\\Domain\\ProductSort').cases()|filter(sort => sales_enabled or not sort.byPrice) %}
                             <option value="{{ sort.value }}"{% if sort == state.query.sort %} selected{% endif %}>{{ sort.label }}</option>
                         {% endfor %}
                     </select>
@@ -96,7 +97,9 @@
                                 {% endif %}
                                 <div class="product__body">
                                     <h2 class="product__name"><a class="product__link" href="{{ path('product', {slug: product.slug}) }}" data-turbo-frame="_top" data-testid="catalog-product-link">{{ product.name }}</a></h2>
-                                    <p class="product__price" data-testid="catalog-product-price" data-price="{{ product.price.cents }}">{{ product.price|price }}</p>
+                                    {% if sales_enabled %}
+                                        <p class="product__price" data-testid="catalog-product-price" data-price="{{ product.price.cents }}">{{ product.price|price }}</p>
+                                    {% endif %}
                                     <dl class="product__details">
                                         <div><dt>Exposition</dt><dd>{{ product.exposure.label }}</dd></div>
                                         <div><dt>Taille</dt><dd>{{ product.size.label }}</dd></div>

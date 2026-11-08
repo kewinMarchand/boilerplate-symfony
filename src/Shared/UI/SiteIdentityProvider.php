@@ -32,12 +32,17 @@ final class SiteIdentityProvider
         return $this->identity ??= $this->load();
     }
 
+    public function salesEnabled(): bool
+    {
+        return $this->current()->salesEnabled;
+    }
+
     private function load(): SiteIdentity
     {
         try {
             return $this->repository->current();
         } catch (SiteIdentityLoadException) {
-            return new SiteIdentity($this->site['name'], $this->site['description'], null, 'auto', null, null, null);
+            return new SiteIdentity($this->site['name'], $this->site['description'], null, 'auto', null, null, null, true);
         }
     }
 }

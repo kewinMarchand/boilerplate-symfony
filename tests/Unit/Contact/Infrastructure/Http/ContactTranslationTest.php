@@ -18,6 +18,21 @@ final class ContactTranslationTest extends TestCase
         );
     }
 
+    public function testSendsTheProductOfAnInquiry(): void
+    {
+        self::assertSame(
+            ['name' => 'Ada', 'email' => 'ada@exemple.fr', 'message' => 'Bonjour', 'product' => 'monstera-deliciosa'],
+            ContactTranslation::request(new ContactMessage('Ada', 'ada@exemple.fr', 'Bonjour', 'monstera-deliciosa')),
+        );
+    }
+
+    public function testReadsTheInquiredProduct(): void
+    {
+        $product = ContactTranslation::product(['id' => 1, 'slug' => 'monstera-deliciosa', 'name' => 'Monstera deliciosa', 'price' => 3490]);
+
+        self::assertSame(['monstera-deliciosa', 'Monstera deliciosa'], [$product->slug, $product->name]);
+    }
+
     public function testReadsTheViolationsOfA422(): void
     {
         $payload = ['status' => 422, 'violations' => [

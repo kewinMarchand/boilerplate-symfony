@@ -16,5 +16,6 @@
     "shareImage": null,
     "icon": null,
     "defaultColorScheme": "auto",
+    "salesEnabled": true,
     "theme": null
 }

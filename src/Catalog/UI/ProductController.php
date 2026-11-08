@@ -8,6 +8,7 @@ use App\Catalog\Domain\CatalogLoadException;
 use App\Catalog\Domain\CatalogRepository;
 use App\Catalog\Domain\Product;
 use App\Catalog\Domain\ProductLoadException;
+use App\Shared\UI\SiteIdentityProvider;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -18,10 +19,11 @@ final class ProductController extends AbstractController
 
     /**
      * Fiche d'un produit lue dans l'API. Produit inconnu de l'API : 404. API en panne : titre de repli et erreur, en 503.
-     * Le bouton d'achat vient du module panier : la fiche reçoit son gabarit sans le connaître.
+     * Le bouton d'achat vient du module panier, ou la demande de renseignement du module contact quand la vente en ligne est
+     * coupée : la fiche reçoit son gabarit sans le connaître.
      */
     #[Route('/produit/{slug}', name: 'product', requirements: ['slug' => '[a-z0-9]+(?:-[a-z0-9]+)*'], methods: ['GET'])]
-    public function show(string $slug, CatalogRepository $catalogRepository): Response
+    public function show(string $slug, CatalogRepository $catalogRepository, SiteIdentityProvider $siteIdentity): Response
     {
         try {
             $detail = $catalogRepository->findProduct($slug);
@@ -36,7 +38,7 @@ final class ProductController extends AbstractController
         return $this->render('catalog/product.html.twig', [
             'detail' => $detail,
             'similar' => $this->similar($catalogRepository, $detail->product),
-            'purchase' => 'cart/_add_to_cart.html.twig',
+            'purchase' => $siteIdentity->salesEnabled() ? 'cart/_add_to_cart.html.twig' : 'contact/_inquiry_link.html.twig',
             'error' => null,
         ]);
     }

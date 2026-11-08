@@ -30,6 +30,17 @@ final class CartControllerTest extends WebTestCase
         self::assertSelectorNotExists('[data-testid="cart-count"]');
     }
 
+    public function testDisappearsWhenOnlineSalesAreOff(): void
+    {
+        $client = self::createClient(['debug' => false]);
+        $client->request('GET', '/panier', server: ['HTTP_X_SCENARIO' => 'sans-vente']);
+
+        self::assertResponseStatusCodeSame(404);
+
+        $client->request('GET', '/', server: ['HTTP_X_SCENARIO' => 'sans-vente']);
+        self::assertSelectorNotExists('[data-testid="cart-link"]');
+    }
+
     public function testStaysOutOfTheSitemap(): void
     {
         $client = self::createClient();

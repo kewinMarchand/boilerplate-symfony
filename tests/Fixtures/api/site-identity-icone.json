@@ -21,5 +21,6 @@
         "png512": "http://localhost:3232/media/icone-oraki-512.png"
     },
     "defaultColorScheme": "auto",
+    "salesEnabled": true,
     "theme": null
 }

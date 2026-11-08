@@ -69,20 +69,22 @@
             </details>
         {% endfor %}
 
-        <details class="facet" open>
-            <summary>Prix</summary>
-            <fieldset class="facet__price">
-                <legend class="bui-visually-hidden">Prix en euros</legend>
-                <div class="bui-field">
-                    <label class="bui-field__label" for="filter-price-min">Minimum (€)</label>
-                    <input class="bui-field__input" type="number" id="filter-price-min" name="prix_min" min="0" step="1" inputmode="numeric" value="{{ filters.priceMin ? filters.priceMin.euros }}" data-action="change->catalog#apply" data-testid="catalog-filter-price-min">
-                </div>
-                <div class="bui-field">
-                    <label class="bui-field__label" for="filter-price-max">Maximum (€)</label>
-                    <input class="bui-field__input" type="number" id="filter-price-max" name="prix_max" min="0" step="1" inputmode="numeric" value="{{ filters.priceMax ? filters.priceMax.euros }}" data-action="change->catalog#apply" data-testid="catalog-filter-price-max">
-                </div>
-            </fieldset>
-        </details>
+        {% if site_identity().salesEnabled %}
+            <details class="facet" open>
+                <summary>Prix</summary>
+                <fieldset class="facet__price">
+                    <legend class="bui-visually-hidden">Prix en euros</legend>
+                    <div class="bui-field">
+                        <label class="bui-field__label" for="filter-price-min">Minimum (€)</label>
+                        <input class="bui-field__input" type="number" id="filter-price-min" name="prix_min" min="0" step="1" inputmode="numeric" value="{{ filters.priceMin ? filters.priceMin.euros }}" data-action="change->catalog#apply" data-testid="catalog-filter-price-min">
+                    </div>
+                    <div class="bui-field">
+                        <label class="bui-field__label" for="filter-price-max">Maximum (€)</label>
+                        <input class="bui-field__input" type="number" id="filter-price-max" name="prix_max" min="0" step="1" inputmode="numeric" value="{{ filters.priceMax ? filters.priceMax.euros }}" data-action="change->catalog#apply" data-testid="catalog-filter-price-max">
+                    </div>
+                </fieldset>
+            </details>
+        {% endif %}
 
         <div class="bui-switch">
             <input class="bui-switch__input" type="checkbox" role="switch" id="filter-in-stock" name="en_stock" value="1"{% if filters.inStockOnly %} checked{% endif %} data-action="catalog#apply" data-testid="catalog-filter-in-stock">

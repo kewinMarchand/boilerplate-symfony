@@ -12,6 +12,47 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 final class ContactControllerTest extends WebTestCase
 {
+    public function testAnInquiryNamesTheProductAndSendsItWithTheMessage(): void
+    {
+        $client = self::createClient();
+        $client->disableReboot();
+        $sender = new class implements ContactMessageSender {
+            public ?ContactMessage $sent = null;
+
+            public function send(ContactMessage $message): void
+            {
+                $this->sent = $message;
+            }
+        };
+        self::getContainer()->set(ContactMessageSender::class, $sender);
+        $crawler = $client->request('GET', '/contact?produit=monstera-deliciosa');
+
+        self::assertSelectorTextSame('[data-testid="contact-product"]', 'Votre demande concerne : Monstera deliciosa');
+        self::assertSelectorExists('[data-testid="contact-product"] a[href="/produit/monstera-deliciosa"]');
+        self::assertSame('http://localhost/contact', $crawler->filter('link[rel="canonical"]')->attr('href'));
+
+        $client->submit($crawler->filter('[data-testid="contact-submit"]')->form(), [
+            'contact[name]' => 'Ada',
+            'contact[email]' => 'ada@exemple.fr',
+            'contact[message]' => 'Bonjour, ceci est un message.',
+        ], ['HTTP_ORIGIN' => 'http://localhost']);
+
+        self::assertSame('monstera-deliciosa', $sender->sent?->product);
+        self::assertResponseRedirects('/contact?produit=monstera-deliciosa', 303);
+        $client->followRedirect();
+        self::assertSelectorTextContains('[data-testid="contact-success"]', 'Votre demande de renseignement a bien été envoyée.');
+    }
+
+    public function testAnUnknownProductLeavesASimpleContactForm(): void
+    {
+        $client = self::createClient();
+        $crawler = $client->request('GET', '/contact?produit=produit-inconnu');
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorNotExists('[data-testid="contact-product"]');
+        self::assertSame('', $crawler->filter('#contact_product')->attr('value') ?? '');
+    }
+
     public function testInvalidSubmissionLinksEachErrorToItsField(): void
     {
         $client = $this->submit(['name' => '', 'email' => 'ada', 'message' => 'court']);

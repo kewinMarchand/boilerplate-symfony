@@ -29,6 +29,22 @@ final class CatalogControllerTest extends WebTestCase
         self::assertSame('http://localhost/catalogue?page=2', $crawler->filter('link[rel="next"]')->attr('href'));
     }
 
+    public function testShowsNoPriceNorPriceFilterOrSortWithoutOnlineSales(): void
+    {
+        $client = self::createClient();
+        $crawler = $client->request('GET', '/catalogue', server: ['HTTP_X_SCENARIO' => 'sans-vente']);
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorCount(12, '[data-testid="catalog-product"]');
+        self::assertSelectorNotExists('[data-testid="catalog-product-price"]');
+        self::assertSelectorNotExists('[data-testid="catalog-filter-price-min"]');
+        self::assertSelectorNotExists('[data-testid="catalog-filter-price-max"]');
+        self::assertSame(['pertinence', 'nom'], $crawler->filter('[data-testid="catalog-sort"] option')->each(static fn ($option): ?string => $option->attr('value')));
+
+        $client->request('GET', '/catalogue?prix_min=10&tri=prix-asc', server: ['HTTP_X_SCENARIO' => 'sans-vente']);
+        self::assertResponseRedirects('/catalogue', 301);
+    }
+
     public function testCategoryBranchListsItsProductsAndBreadcrumb(): void
     {
         $client = self::createClient();

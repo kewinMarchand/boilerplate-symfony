@@ -5,6 +5,9 @@
 {% block body %}
     <h1>Contact</h1>
     <p class="lead">Formulaire validé côté serveur par Symfony Validator, envoyé par Turbo et fonctionnel sans JavaScript.</p>
+    {% if product %}
+        <p data-testid="contact-product">Votre demande concerne : <a class="bui-link" href="{{ path('product', {slug: product.slug}) }}">{{ product.name }}</a></p>
+    {% endif %}
     {{ include('contact/_form.html.twig') }}
     <div id="contact-status" class="contact-status" aria-live="polite">
         {% for message in app.flashes('contact_success') %}

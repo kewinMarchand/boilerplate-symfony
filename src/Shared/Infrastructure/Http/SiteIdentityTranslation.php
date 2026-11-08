@@ -28,6 +28,7 @@ final class SiteIdentityTranslation
             null === ($identity['theme'] ?? null) ? null : self::theme(ApiPayload::object($identity['theme'], 'theme')),
             ApiPayload::image($identity, 'shareImage'),
             null === ($identity['icon'] ?? null) ? null : self::icon(ApiPayload::object($identity['icon'], 'icon')),
+            ApiPayload::bool($identity, 'salesEnabled'),
         );
     }
 

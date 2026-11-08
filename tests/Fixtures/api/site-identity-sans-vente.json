@@ -1,0 +1,10 @@
+{
+    "name": "Boilerplate",
+    "tagline": "Modèle de site avec boilerplates-ui, outillé pour la QA et les tests end-to-end.",
+    "logo": null,
+    "shareImage": null,
+    "icon": null,
+    "defaultColorScheme": "auto",
+    "salesEnabled": false,
+    "theme": null
+}

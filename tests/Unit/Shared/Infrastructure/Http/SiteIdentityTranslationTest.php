@@ -22,6 +22,20 @@ final class SiteIdentityTranslationTest extends TestCase
         self::assertNull($identity->theme);
         self::assertNull($identity->shareImage);
         self::assertNull($identity->icon);
+        self::assertTrue($identity->salesEnabled);
+    }
+
+    public function testTranslatesOnlineSalesTurnedOff(): void
+    {
+        self::assertFalse(SiteIdentityTranslation::identity(self::fixture('site-identity-sans-vente'))->salesEnabled);
+    }
+
+    public function testRejectsAMissingSalesSwitch(): void
+    {
+        $this->expectException(InvalidApiPayloadException::class);
+        $this->expectExceptionMessage('salesEnabled');
+
+        SiteIdentityTranslation::identity(self::fixture('site-identity', ['"salesEnabled": true,' => '']));
     }
 
     public function testTranslatesTheIconAndTheShareImage(): void

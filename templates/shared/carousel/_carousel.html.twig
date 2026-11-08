@@ -1,4 +1,4 @@
-{#- Carrousel agnostique : id, title, testid, slides = [{image (objet image du contrat, ou null), title, text, href facultatif : le titre devient un lien étiré sur la diapositive}] -#}
+{#- Carrousel agnostique : id, title, testid, slides = [{image (objet image du contrat, ou null), title, text (null : pas de ligne), href facultatif : le titre devient un lien étiré sur la diapositive}] -#}
 <section class="carousel" aria-roledescription="carrousel" aria-labelledby="{{ id }}-title" data-testid="{{ testid }}" data-controller="carousel">
     <div class="carousel__header">
         <h2 id="{{ id }}-title">{{ title }}</h2>
@@ -26,7 +26,7 @@
                             {{ slide.title }}
                         {%- endif -%}
                     </h3>
-                    <p>{{ slide.text }}</p>
+                    {% if slide.text %}<p>{{ slide.text }}</p>{% endif %}
                 </div>
             {% endfor %}
         </div>

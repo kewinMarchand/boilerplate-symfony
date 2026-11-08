@@ -15,6 +15,7 @@ services:
     App\Blog\Domain\ArticleRepository: '@App\Blog\Infrastructure\Http\HttpArticleRepository'
     App\Content\Domain\LegalPageRepository: '@App\Content\Infrastructure\Http\HttpLegalPageRepository'
     App\Contact\Domain\ContactMessageSender: '@App\Contact\Infrastructure\Http\HttpContactMessageSender'
+    App\Contact\Domain\InquiredProductRepository: '@App\Contact\Infrastructure\Http\HttpInquiredProductRepository'
     App\Catalog\Domain\CatalogRepository: '@App\Catalog\Infrastructure\Http\HttpCatalogRepository'
     App\Shared\Domain\SiteIdentityRepository: '@App\Shared\Infrastructure\Http\HttpSiteIdentityRepository'
     App\Shared\Domain\PageMetaRepository: '@App\Shared\Infrastructure\Http\HttpPageMetaRepository'

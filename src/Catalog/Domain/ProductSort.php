@@ -11,6 +11,11 @@ enum ProductSort: string
     case PriceDescending = 'prix-desc';
     case Name = 'nom';
 
+    public function byPrice(): bool
+    {
+        return self::PriceAscending === $this || self::PriceDescending === $this;
+    }
+
     public function label(): string
     {
         return match ($this) {

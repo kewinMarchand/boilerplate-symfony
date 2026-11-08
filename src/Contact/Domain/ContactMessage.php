@@ -10,6 +10,7 @@ final readonly class ContactMessage
         public string $name,
         public string $email,
         public string $message,
+        public ?string $product = null,
     ) {
     }
 }

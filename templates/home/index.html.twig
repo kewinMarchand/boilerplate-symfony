@@ -32,7 +32,7 @@
                 slides: featured|map(product => {
                     image: product.image,
                     title: product.name,
-                    text: product.price|price,
+                    text: site_identity().salesEnabled ? product.price|price : null,
                     href: path('product', {slug: product.slug}),
                 }),
             }) }}
