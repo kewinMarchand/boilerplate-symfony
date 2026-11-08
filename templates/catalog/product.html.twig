@@ -34,7 +34,7 @@
         }|filter(value => value is not null)],
     }|filter(value => value is not null)) -%}
 {%- else -%}
-    {%- set seo = seo_page({title: 'Produit', description: 'Fiche produit de la jardinerie tropicale ' ~ site.name ~ '.', breadcrumb: breadcrumb|merge([{label: 'Produit'}]), robots: 'noindex, follow'}) -%}
+    {%- set seo = seo_page({title: 'Produit', description: 'Fiche produit de la jardinerie tropicale ' ~ site_identity().name ~ '.', breadcrumb: breadcrumb|merge([{label: 'Produit'}]), robots: 'noindex, follow'}) -%}
 {%- endif -%}
 
 {% block preload %}

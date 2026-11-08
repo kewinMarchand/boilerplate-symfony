@@ -1,0 +1,36 @@
+{
+    "name": "Oraki",
+    "tagline": "Plantes rares et tropicales, livrées chez vous.",
+    "logo": null,
+    "defaultColorScheme": "dark",
+    "theme": {
+        "light": {
+            "primary": "#c2410c",
+            "primary-dark": "#923109",
+            "on-primary": "#ffffff",
+            "primary-surface-subtle": "#faf0ec",
+            "primary-surface": "#f4ddd3",
+            "primary-surface-strong": "#ebc2b1",
+            "secondary": "#0f766e",
+            "secondary-dark": "#0b5852",
+            "on-secondary": "#ffffff",
+            "secondary-surface-subtle": "#ecf4f3",
+            "secondary-surface": "#d4e6e5",
+            "secondary-surface-strong": "#b2d3d1"
+        },
+        "dark": {
+            "primary": "#da8d6d",
+            "primary-dark": "#e3aa92",
+            "on-primary": "#0f141d",
+            "primary-surface-subtle": "#1f1e23",
+            "primary-surface": "#272327",
+            "primary-surface-strong": "#362b2c",
+            "secondary": "#6fada8",
+            "secondary-dark": "#93c2be",
+            "on-secondary": "#0f141d",
+            "secondary-surface-subtle": "#172028",
+            "secondary-surface": "#1b262e",
+            "secondary-surface-strong": "#213137"
+        }
+    }
+}

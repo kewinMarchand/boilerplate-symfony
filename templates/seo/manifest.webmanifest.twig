@@ -1,10 +1,11 @@
+{%- set identity = site_identity() -%}
 {{ {
-    name: site.name,
-    short_name: 'Boilerplate',
+    name: identity.name,
+    short_name: identity.name,
     lang: 'fr',
     start_url: '/',
     display: 'standalone',
-    theme_color: site.theme_color,
+    theme_color: identity.theme ? identity.theme.light.primary : site.theme_color,
     background_color: '#ffffff',
     icons: [
         {src: '/icon-192.png', sizes: '192x192', type: 'image/png'},

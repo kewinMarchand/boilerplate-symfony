@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% set seo = seo_page({title: 'Déclaration d\'accessibilité', description: 'Déclaration d’accessibilité du site ' ~ site.name ~ ' selon le RGAA 4.1.2 : état de conformité, tests réalisés et voies de recours.'}) %}
+{% set seo = seo_page({title: 'Déclaration d\'accessibilité', description: 'Déclaration d’accessibilité du site ' ~ site_identity().name ~ ' selon le RGAA 4.1.2 : état de conformité, tests réalisés et voies de recours.'}) %}
 
 {% block body %}
     <article class="prose">

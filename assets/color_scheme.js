@@ -8,11 +8,7 @@ export const applyColorScheme = (root, scheme) => {
     root.dataset.colorScheme = scheme;
 
     try {
-        if (scheme === 'auto') {
-            globalThis.localStorage.removeItem(COLOR_SCHEME_KEY);
-        } else {
-            globalThis.localStorage.setItem(COLOR_SCHEME_KEY, scheme);
-        }
+        globalThis.localStorage.setItem(COLOR_SCHEME_KEY, scheme);
     } catch {
         // Stockage indisponible (navigation privée, cookies bloqués) : le choix vaut pour la page.
     }

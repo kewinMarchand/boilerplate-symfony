@@ -16,6 +16,7 @@ services:
     App\Content\Domain\LegalPageRepository: '@App\Content\Infrastructure\Http\HttpLegalPageRepository'
     App\Contact\Domain\ContactMessageSender: '@App\Contact\Infrastructure\Http\HttpContactMessageSender'
     App\Catalog\Domain\CatalogRepository: '@App\Catalog\Infrastructure\Http\HttpCatalogRepository'
+    App\Shared\Domain\SiteIdentityRepository: '@App\Shared\Infrastructure\Http\HttpSiteIdentityRepository'
 
     Kewinmarchand\Csp\Symfony\CspResponseSubscriber:
         factory: ['App\Shared\Infrastructure\Security\SiteCsp', 'subscriber']

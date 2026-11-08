@@ -3,8 +3,15 @@
 <header class="header" data-controller="mobile-menu">
     <div class="header__inner container">
         <a class="header__logo" href="{{ path('home') }}" data-testid="layout-logo"{% if app.current_route == 'home' %} aria-current="page"{% endif %}>
-            <img src="{{ asset('images/logo-mark.svg') }}" alt="" width="36" height="36">
-            <span>{{ site.name }}</span>
+            {%- set identity = site_identity() %}
+            {% if identity.logo %}
+                {%- set logo_width = (40 * identity.logo.width / identity.logo.height)|round %}
+                {%- set webp = identity.logo.sources|filter(source => source.type == 'image/webp')|first %}
+                <img class="header__logo-image" src="{{ identity.logo.src }}"{% if webp %} srcset="{{ webp.srcset }}" sizes="{{ logo_width }}px"{% endif %} alt="{{ identity.name }}" width="{{ logo_width }}" height="40" fetchpriority="high" data-testid="layout-logo-image">
+            {% else %}
+                <img src="{{ asset('images/logo-mark.svg') }}" alt="" width="36" height="36">
+                <span>{{ identity.name }}</span>
+            {% endif %}
         </a>
         <nav class="header__nav" aria-label="Navigation principale">
             <ul class="nav-list" role="list">

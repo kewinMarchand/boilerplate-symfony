@@ -43,7 +43,7 @@ test.describe('Thème', () => {
     await expect(page.getByTestId('color-scheme-toggle')).toHaveAccessibleName('Thème : sombre')
   })
 
-  test('« système » retire le choix mémorisé et remet auto', async ({ page }) => {
+  test('« système » écrit auto et le garde au rechargement', async ({ page }) => {
     await page.addInitScript(() => {
       if (!sessionStorage.getItem('init')) {
         sessionStorage.setItem('init', '1')
@@ -54,7 +54,7 @@ test.describe('Thème', () => {
     await expect(html(page)).toHaveAttribute('data-color-scheme', 'dark')
 
     await choose(page, 'auto')
-    expect(await page.evaluate(() => localStorage.getItem('color-scheme'))).toBeNull()
+    expect(await page.evaluate(() => localStorage.getItem('color-scheme'))).toBe('auto')
 
     await page.reload()
     await expect(html(page)).toHaveAttribute('data-color-scheme', 'auto')

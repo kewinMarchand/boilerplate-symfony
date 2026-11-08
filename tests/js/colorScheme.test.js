@@ -28,12 +28,12 @@ describe('applyColorScheme', () => {
     assert.equal(globalThis.localStorage.getItem('color-scheme'), 'dark')
   })
 
-  it('« système » remet auto et oublie le choix', () => {
+  it('« système » remet auto et le mémorise, pour l’emporter sur le défaut du site', () => {
     applyColorScheme(root, 'light')
     applyColorScheme(root, 'auto')
 
     assert.equal(root.dataset.colorScheme, 'auto')
-    assert.equal(globalThis.localStorage.getItem('color-scheme'), null)
+    assert.equal(globalThis.localStorage.getItem('color-scheme'), 'auto')
   })
 
   it('reste utilisable quand le stockage est indisponible', () => {

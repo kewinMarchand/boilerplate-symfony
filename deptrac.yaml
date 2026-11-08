@@ -3,7 +3,7 @@
 # Domain de son module. Infrastructure du Domain et de l'Application de son module, et des frameworks.
 # UI du Domain et de l'Application de son module, de Shared et des frameworks, et de l'Infrastructure
 # seulement pour les modules sans couche Application (forme réduite : Contact, Task).
-# Shared\Domain porte les valeurs du contrat partagées par les domaines (Image), sans dépendance.
+# Shared\Domain porte les valeurs du contrat partagées par les domaines (Image) et l'identité du site, lue par Shared\UI, sans dépendance.
 # Site compose les modules (Domain et Application), Shared ne dépend d'aucun module ni de Site.
 # Le client HTTP de l'API (HttpClient) n'est permis qu'aux couches Infrastructure.
 # make arch-selftest vérifie que des violations volontaires font bien échouer l'analyse.
@@ -112,6 +112,6 @@ deptrac:
         TaskUI: [TaskDomain, TaskInfrastructure, SharedUI, Framework]
         CartUI: [SharedUI, Framework]
         Site: [CatalogDomain, CatalogApplication, BlogDomain, ContentDomain, ContactDomain, TaskDomain, SharedUI, Framework]
-        SharedUI: [Framework]
+        SharedUI: [SharedDomain, Framework]
         SharedDomain: ~
         SharedInfrastructure: [SharedDomain, Framework, HttpClient]

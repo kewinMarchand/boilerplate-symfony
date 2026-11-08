@@ -13,7 +13,7 @@ test.describe('Navigation', () => {
   test('le logo mène à l’accueil et porte aria-current sur l’accueil', async ({ page }) => {
     await page.goto('/contact')
     const logo = page.getByTestId('layout-logo')
-    await expect(logo).toHaveAccessibleName('Boilerplate Symfony')
+    await expect(logo).toHaveAccessibleName('Boilerplate')
     await expect(logo).not.toHaveAttribute('aria-current')
 
     await logo.click()

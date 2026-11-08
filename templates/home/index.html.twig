@@ -9,8 +9,9 @@
         {{ include('shared/ui/_picture.html.twig', {name: 'hero', widths: [640, 1280, 1920], sizes: '100vw', class: 'hero__image', priority: true}) }}
         <div class="hero__content container">
             <p class="hero__eyebrow">Symfony 8.1, Twig, Stimulus, Turbo</p>
-            <h1 id="home-title" class="hero__title">{{ site.name }}</h1>
-            <p class="hero__lead">{{ site.description }}</p>
+            {%- set identity = site_identity() %}
+            <h1 id="home-title" class="hero__title">{{ identity.name }}</h1>
+            {% if identity.tagline %}<p class="hero__lead">{{ identity.tagline }}</p>{% endif %}
             <div class="hero__actions">
                 <a class="bui-button" href="{{ path('tasks') }}" data-testid="home-tasks-link">Voir la démo Turbo Frame</a>
                 <a class="bui-button bui-button--inverse" href="{{ path('contact') }}" data-testid="home-contact-link">Voir le formulaire</a>

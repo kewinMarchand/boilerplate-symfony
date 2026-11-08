@@ -1,0 +1,18 @@
+{
+    "name": "Oraki",
+    "tagline": "Plantes rares et tropicales, livrées chez vous.",
+    "logo": {
+        "alt": "Oraki",
+        "width": 400,
+        "height": 120,
+        "sources": [
+            {
+                "type": "image/webp",
+                "srcset": "http://localhost:3232/media/logo-oraki-200.webp 200w, http://localhost:3232/media/logo-oraki-400.webp 400w"
+            }
+        ],
+        "src": "http://localhost:3232/media/logo-oraki-200.webp"
+    },
+    "defaultColorScheme": "auto",
+    "theme": null
+}

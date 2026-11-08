@@ -22,7 +22,7 @@
         }|filter(value => value is not null)],
     }|filter(value => value is not null)) -%}
 {%- else -%}
-    {%- set seo = seo_page({title: 'Article', description: 'Article du blog ' ~ site.name ~ '.', robots: 'noindex, follow'}) -%}
+    {%- set seo = seo_page({title: 'Article', description: 'Article du blog ' ~ site_identity().name ~ '.', robots: 'noindex, follow'}) -%}
 {%- endif -%}
 
 {% block preload %}

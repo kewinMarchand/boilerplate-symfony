@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% set seo = seo_page({title: 'Plan du site', description: 'Plan du site ' ~ site.name ~ ' : liste de toutes les pages, navigation principale et informations légales.'}) %}
+{% set seo = seo_page({title: 'Plan du site', description: 'Plan du site ' ~ site_identity().name ~ ' : liste de toutes les pages, navigation principale et informations légales.'}) %}
 
 {% block body %}
     <article class="prose">

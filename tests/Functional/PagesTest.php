@@ -9,7 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 final class PagesTest extends WebTestCase
 {
-    private const string SITE = 'Boilerplate Symfony';
+    private const string SITE = 'Boilerplate';
 
     /**
      * @return iterable<string, array{string, string, string}>

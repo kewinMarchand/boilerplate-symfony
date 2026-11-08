@@ -8,7 +8,8 @@ use Symfony\Component\HttpClient\Response\MockResponse;
 
 /**
  * Remplace l'API en test par des réponses réelles capturées sur l'API (tests/Fixtures/api/),
- * avec X-Scenario comme l'API : `error` répond 500, `empty` répond une liste vide.
+ * avec X-Scenario comme l'API : `error` répond 500, `empty` répond une liste vide. `identite-logo` et `identite-couleurs`
+ * servent une identité du site avec logo ou avec couleurs, que l'API locale n'a pas par défaut.
  */
 final class ApiMockResponseFactory
 {
@@ -47,6 +48,11 @@ final class ApiMockResponseFactory
             '/api/contact_messages' => self::contact($options),
             '/api/featured-products' => self::fixture('empty' === $scenario ? null : 'featured-products'),
             '/api/products/monstera-deliciosa' => self::fixture('product-'.basename($path)),
+            '/api/site-identity' => self::fixture(match ($scenario) {
+                'identite-logo' => 'site-identity-logo',
+                'identite-couleurs' => 'site-identity-couleurs',
+                default => 'site-identity',
+            }),
             '/api/legal_pages/mentions-legales', '/api/legal_pages/donnees-personnelles', '/api/legal_pages/accessibilite' => self::fixture('legal-page-'.basename($path)),
             default => new MockResponse('{}', ['http_code' => 404]),
         };

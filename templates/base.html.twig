@@ -1,11 +1,12 @@
 {%- set seo = seo is defined ? seo : seo_page() -%}
+{%- set identity = site_identity() -%}
 <!DOCTYPE html>
-<html lang="fr" data-color-scheme="auto">
+<html lang="fr" data-color-scheme="{{ identity.defaultColorScheme }}">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="color-scheme" content="light dark">
-        <script>document.documentElement.classList.add('js');try{if(localStorage.getItem('a11y-mode')==='enhanced'){document.documentElement.dataset.a11yMode='enhanced'}var c=localStorage.getItem('color-scheme');if(c==='light'||c==='dark'){document.documentElement.dataset.colorScheme=c}}catch(e){}</script>
+        <script>document.documentElement.classList.add('js');try{if(localStorage.getItem('a11y-mode')==='enhanced'){document.documentElement.dataset.a11yMode='enhanced'}var c=localStorage.getItem('color-scheme');if(c==='auto'||c==='light'||c==='dark'){document.documentElement.dataset.colorScheme=c}}catch(e){}</script>
         <title>{{ seo.title }}</title>
         {% block preload %}{% endblock %}
         <meta name="description" content="{{ seo.description }}">
@@ -19,7 +20,7 @@
         <meta name="theme-color" content="{{ site.theme_color }}">
         <meta property="og:type" content="{{ seo.publishedTime ? 'article' : 'website' }}">
         {% if seo.publishedTime %}<meta property="article:published_time" content="{{ seo.publishedTime }}">{% endif %}
-        <meta property="og:site_name" content="{{ site.name }}">
+        <meta property="og:site_name" content="{{ identity.name }}">
         <meta property="og:title" content="{{ seo.title }}">
         <meta property="og:description" content="{{ seo.description }}">
         <meta property="og:image" content="{{ seo.image }}">
@@ -40,6 +41,11 @@
             <script type="application/ld+json">{{ json_ld|raw }}</script>
         {% endfor %}
         {% block importmap %}{{ importmap('app') }}{% endblock %}
+        {%- set theme_style = site_theme_style() %}
+        {% if theme_style %}
+            <meta name="csp-nonce" content="{{ theme_style.nonce }}">
+            <style nonce="{{ theme_style.nonce }}" data-testid="site-theme-style">{{ theme_style.css|raw }}</style>
+        {% endif %}
     </head>
     {%- set glitchtip_config = glitchtip() %}
     {%- set matomo_config = matomo() %}
