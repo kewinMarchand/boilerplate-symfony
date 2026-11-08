@@ -70,6 +70,14 @@
                         <dt>Disponibilité</dt>
                         <dd>{% if product.inStock %}En stock{% else %}<span class="bui-badge bui-badge--error">Rupture de stock</span>{% endif %}</dd>
                     </dl>
+                    {% if product.attributes is not empty %}
+                        <dl class="product-page__features" data-testid="product-attributes">
+                            {% for attribute in product.attributes %}
+                                <dt>{{ attribute.label }}</dt>
+                                <dd>{{ attribute.valueLabel }}{% if attribute.unit %}&nbsp;{{ attribute.unit }}{% endif %}</dd>
+                            {% endfor %}
+                        </dl>
+                    {% endif %}
                     {{ include(purchase, {item: {slug: product.slug, name: product.name, price: product.price.cents}, available: product.inStock}) }}
                     {% if detail.category %}
                         <p><a class="bui-link" href="{{ path('catalog', {path: detail.category.path}) }}">Voir les autres produits : {{ detail.category.name }}</a></p>

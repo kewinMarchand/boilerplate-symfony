@@ -38,6 +38,21 @@ test.describe('Fiche produit', () => {
     )
   })
 
+  test('affiche ses attributs dans une liste de définitions', async ({ page }) => {
+    await page.goto(PRODUCT)
+
+    const attributes = page.getByTestId('product-attributes')
+    await expect(attributes.locator('dt')).toHaveText(['Feuillage', 'Hauteur adulte'])
+    await expect(attributes.locator('dd')).toHaveText(['Persistant', /^300\scm$/])
+  })
+
+  test('n’affiche aucune liste d’attributs sans attribut renseigné', async ({ page }) => {
+    await page.goto('/produit/monstera-thai-constellation')
+
+    await expect(page.getByTestId('product-title')).toHaveText('Monstera Thai Constellation')
+    await expect(page.getByTestId('product-attributes')).toHaveCount(0)
+  })
+
   test('expose ses données structurées de produit', async ({ page }) => {
     await page.goto(PRODUCT)
 

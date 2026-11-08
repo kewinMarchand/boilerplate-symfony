@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Catalog\Infrastructure\Http;
 
+use App\Catalog\Domain\AttributeFacet;
+use App\Catalog\Domain\AttributeFacetValue;
 use App\Catalog\Domain\CatalogQuery;
 use App\Catalog\Domain\CatalogResult;
 use App\Catalog\Domain\Category;
@@ -13,6 +15,7 @@ use App\Catalog\Domain\Exposure;
 use App\Catalog\Domain\FacetCounts;
 use App\Catalog\Domain\Price;
 use App\Catalog\Domain\Product;
+use App\Catalog\Domain\ProductAttribute;
 use App\Catalog\Domain\ProductDetail;
 use App\Catalog\Domain\ProductPage;
 use App\Catalog\Domain\ProductSort;
@@ -22,7 +25,7 @@ use App\Shared\Infrastructure\Http\InvalidApiPayloadException;
 
 /**
  * Traduction entre le langage de l'API et le modèle du catalogue, dans les deux sens : paramètres de
- * recherche (centimes, `exposure[]`, `order[price]`) et réponses (arbre, page de produits, facettes).
+ * recherche (centimes, `exposure[]`, `attributes[<code>][]`, `order[price]`) et réponses (arbre, page de produits, facettes).
  */
 final class CatalogTranslation
 {
@@ -76,6 +79,7 @@ final class CatalogTranslation
                 self::counts(array_map(static fn (Exposure $case): string => $case->value, Exposure::cases()), $counts['exposure'] ?? null, 'value'),
                 self::counts(array_map(static fn (Size $case): string => $case->value, Size::cases()), $counts['size'] ?? null, 'value'),
                 self::counts(array_map(static fn (Category $child): string => $child->slug, $category->children), $counts['category'] ?? null, 'slug'),
+                self::attributeFacets($counts['attributes'] ?? []),
             ),
         );
     }
@@ -118,6 +122,11 @@ final class CatalogTranslation
             ...('' !== $category->slug ? [['category', $category->slug]] : []),
             ...array_map(static fn (Exposure $exposure): array => ['exposure[]', $exposure->value], $filters->exposures),
             ...array_map(static fn (Size $size): array => ['size[]', $size->value], $filters->sizes),
+            ...array_merge(...array_map(
+                static fn (string $code, array $values): array => array_map(static fn (string $value): array => ['attributes['.$code.'][]', $value], $values),
+                array_keys($filters->attributes),
+                $filters->attributes,
+            )),
             ...(null !== $filters->priceMin ? [['priceMin', (string) $filters->priceMin->cents]] : []),
             ...(null !== $filters->priceMax ? [['priceMax', (string) $filters->priceMax->cents]] : []),
             ...($filters->inStockOnly ? [['inStock', 'true']] : []),
@@ -165,6 +174,33 @@ final class CatalogTranslation
             $size,
             ApiPayload::bool($product, 'inStock'),
             ApiPayload::image($product, 'image'),
+            array_map(
+                static fn (array $attribute): ProductAttribute => new ProductAttribute(
+                    ApiPayload::string($attribute, 'code'),
+                    ApiPayload::string($attribute, 'label'),
+                    ApiPayload::string($attribute, 'valueLabel'),
+                    null === ($attribute['unit'] ?? null) ? null : ApiPayload::string($attribute, 'unit'),
+                ),
+                ApiPayload::objects($product['attributes'] ?? null, 'attributes'),
+            ),
+        );
+    }
+
+    /**
+     * @return list<AttributeFacet>
+     */
+    private static function attributeFacets(mixed $facets): array
+    {
+        return array_map(
+            static fn (array $facet): AttributeFacet => new AttributeFacet(
+                ApiPayload::string($facet, 'code'),
+                ApiPayload::string($facet, 'label'),
+                array_map(
+                    static fn (array $entry): AttributeFacetValue => new AttributeFacetValue(ApiPayload::string($entry, 'value'), ApiPayload::string($entry, 'label'), ApiPayload::int($entry, 'count')),
+                    ApiPayload::objects($facet['values'] ?? null, 'attributes.values'),
+                ),
+            ),
+            ApiPayload::objects($facets, 'attributes'),
         );
     }
 

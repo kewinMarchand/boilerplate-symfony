@@ -51,6 +51,24 @@
             </fieldset>
         </details>
 
+        {% for facet in facets.attributes %}
+            {% set checked_values = filters.attributes[facet.code] ?? [] %}
+            <details class="facet" open>
+                <summary>{{ facet.label }}</summary>
+                <fieldset>
+                    <legend class="bui-visually-hidden">{{ facet.label }}</legend>
+                    {% for entry in facet.values %}
+                        {% set checked = entry.value in checked_values %}
+                        {% set id = 'filter-attribute-' ~ facet.code ~ '-' ~ entry.value %}
+                        <div class="bui-checkbox">
+                            <input class="bui-checkbox__input" type="checkbox" id="{{ id }}" name="attr-{{ facet.code }}" value="{{ entry.value }}"{% if checked %} checked{% endif %}{% if entry.count == 0 and not checked %} disabled{% endif %} data-action="catalog#apply" data-testid="catalog-filter-attribute-{{ facet.code }}-{{ entry.value }}">
+                            <label class="bui-checkbox__label" for="{{ id }}">{{ entry.label }} <span class="facet__count">({{ entry.count }})</span></label>
+                        </div>
+                    {% endfor %}
+                </fieldset>
+            </details>
+        {% endfor %}
+
         <details class="facet" open>
             <summary>Prix</summary>
             <fieldset class="facet__price">

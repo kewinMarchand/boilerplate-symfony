@@ -37,6 +37,7 @@ final class CatalogUrlStateTest extends TestCase
         yield 'vide' => [''];
         yield 'facettes' => ['?exposition=soleil&exposition=mi-ombre&taille=S'];
         yield 'tout' => ['?exposition=ombre&taille=M&taille=L&prix_min=5&prix_max=80&en_stock=1&tri=nom&vue=liste&page=3'];
+        yield 'attributs' => ['?taille=S&attr-feuillage=persistant&attr-feuillage=caduc&attr-couleur=rouge&en_stock=1'];
     }
 
     #[DataProvider('canonicalQueries')]
@@ -58,6 +59,24 @@ final class CatalogUrlStateTest extends TestCase
         $state = CatalogUrlState::fromQueryString('taille=S&exposition=ombre&prix_min=&prix_max=&tri=');
 
         self::assertSame('?exposition=ombre&taille=S', $state->queryString());
+    }
+
+    public function testParsesAttributesInTheirOrderAndIgnoresMalformedOnes(): void
+    {
+        $state = CatalogUrlState::fromQueryString('attr-feuillage=persistant&attr-Couleur=rouge&attr-=x&attr-feuillage=persistant&attr-feuillage=Caduc&attr-hauteur=&prix_min=5&attr-couleur=rouge');
+
+        self::assertSame(['feuillage' => ['persistant'], 'couleur' => ['rouge']], $state->query->filters->attributes);
+        self::assertSame(3, $state->query->filters->activeCount());
+        self::assertSame('?attr-feuillage=persistant&attr-couleur=rouge&prix_min=5', $state->queryString());
+    }
+
+    public function testRemovingAFilterResetsThePageAndKeepsTheOtherAttributes(): void
+    {
+        $state = CatalogUrlState::fromQueryString('attr-feuillage=persistant&attr-feuillage=caduc&attr-couleur=rouge&page=2');
+
+        self::assertSame('?attr-feuillage=caduc&attr-couleur=rouge', $state->withoutAttribute('feuillage', 'persistant')->queryString());
+        self::assertSame('?attr-feuillage=persistant&attr-feuillage=caduc', $state->withoutAttribute('couleur', 'rouge')->queryString());
+        self::assertSame('?exposition=soleil&attr-couleur=rouge', CatalogUrlState::fromQueryString('attr-couleur=rouge&exposition=soleil&prix_min=5')->withoutPriceMin()->queryString());
     }
 
     public function testChangingFiltersResetsThePageAndKeepsTheView(): void

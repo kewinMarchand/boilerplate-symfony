@@ -52,6 +52,18 @@ final class CatalogControllerTest extends WebTestCase
         self::assertSelectorExists('[data-testid="catalog-filter-exposure-mi-ombre"][checked]');
     }
 
+    public function testAttributeFacetIsAFormFieldAndItsActiveValueAChip(): void
+    {
+        $client = self::createClient();
+        $client->request('GET', '/catalogue?attr-feuillage=caduc');
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorExists('input[name="attr-feuillage"][value="caduc"][checked][data-testid="catalog-filter-attribute-feuillage-caduc"]');
+        self::assertSelectorTextContains('label[for="filter-attribute-feuillage-persistant"]', 'Persistant (6)');
+        self::assertSelectorTextContains('[data-testid="catalog-active-filter"]', 'Retirer le filtre : Feuillage : Caduc');
+        self::assertSame('/catalogue', $client->getCrawler()->filter('[data-testid="catalog-active-filter"]')->attr('href'));
+    }
+
     public function testNonCanonicalQueriesAreRedirected(): void
     {
         $client = self::createClient();

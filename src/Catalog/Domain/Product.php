@@ -8,6 +8,9 @@ use App\Shared\Domain\Image;
 
 final readonly class Product
 {
+    /**
+     * @param list<ProductAttribute> $attributes ordonnés par position dans l'admin, vide si aucun n'est renseigné
+     */
     public function __construct(
         public string $id,
         public string $slug,
@@ -18,6 +21,7 @@ final readonly class Product
         public Size $size,
         public bool $inStock,
         public ?Image $image,
+        public array $attributes,
     ) {
     }
 }

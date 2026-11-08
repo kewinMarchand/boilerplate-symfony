@@ -49,6 +49,12 @@
                         {% for size in filters.sizes %}
                             {{ include('catalog/_active_filter.html.twig', {label: size.label, href: category_path ~ state.withoutSize(size).queryString()}) }}
                         {% endfor %}
+                        {% for code, values in filters.attributes %}
+                            {% set facet = result.facets.attribute(code) %}
+                            {% for value in values %}
+                                {{ include('catalog/_active_filter.html.twig', {label: (facet ? facet.label ~ ' : ' ~ (facet.valueLabel(value) ?? value) : value), href: category_path ~ state.withoutAttribute(code, value).queryString()}) }}
+                            {% endfor %}
+                        {% endfor %}
                         {% if filters.priceMin is not null %}
                             {{ include('catalog/_active_filter.html.twig', {label: 'Prix minimum ' ~ filters.priceMin.euros ~ ' €', href: category_path ~ state.withoutPriceMin().queryString()}) }}
                         {% endif %}

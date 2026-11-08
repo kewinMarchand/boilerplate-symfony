@@ -28,6 +28,7 @@ final class ProductControllerTest extends WebTestCase
         self::assertSelectorTextSame('[data-testid="product-title"]', 'Monstera deliciosa');
         self::assertSelectorTextContains('[data-testid="product-price"]', '34,90');
         self::assertSelectorCount(2, '[data-testid="product-description"] p');
+        self::assertSame(['Feuillage', 'Persistant', 'Hauteur adulte', "300\u{a0}cm"], $crawler->filter('[data-testid="product-attributes"] > *')->each(static fn ($node): string => $node->text()));
         self::assertSelectorExists('[data-testid="product-page"] img[fetchpriority="high"]');
         self::assertSelectorExists('[data-testid="layout-breadcrumb"] a[href="/catalogue/plantes-interieur/feuillages/monstera"]');
         $jsonLd = $crawler->filter('script[type="application/ld+json"]')->each(static fn ($node): string => $node->text());

@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Catalog\Infrastructure\Http;
 
+use App\Catalog\Domain\AttributeFacetValue;
 use App\Catalog\Domain\CatalogQuery;
 use App\Catalog\Domain\Category;
 use App\Catalog\Domain\CategoryPath;
 use App\Catalog\Domain\Exposure;
 use App\Catalog\Domain\Price;
+use App\Catalog\Domain\ProductAttribute;
 use App\Catalog\Domain\ProductFilters;
 use App\Catalog\Domain\ProductSort;
 use App\Catalog\Domain\Size;
@@ -38,6 +40,34 @@ final class CatalogTranslationTest extends TestCase
         self::assertSame(['soleil', 'mi-ombre', 'ombre'], array_keys($result->facets->exposures));
         self::assertSame(['S', 'M', 'L'], array_keys($result->facets->sizes));
         self::assertSame(['plantes-interieur' => 12, 'plantes-exterieur' => 9, 'plantes-aquatiques' => 3], $result->facets->categories);
+    }
+
+    public function testTranslatesTheAttributeFacetsWithTheirValuesInOrder(): void
+    {
+        $result = CatalogTranslation::result(self::payload('products'), self::payload('product-facets'), new Category('', 'Catalogue'), 1);
+
+        $facet = $result->facets->attribute('feuillage');
+        self::assertNotNull($facet);
+        self::assertSame('Feuillage', $facet->label);
+        self::assertSame(
+            [['persistant', 'Persistant', 6], ['caduc', 'Caduc', 2]],
+            array_map(static fn (AttributeFacetValue $value): array => [$value->value, $value->label, $value->count], $facet->values),
+        );
+        self::assertSame('Caduc', $facet->valueLabel('caduc'));
+        self::assertNull($facet->valueLabel('inconnu'));
+        self::assertNull($result->facets->attribute('hauteur-adulte'));
+        self::assertSame([], CatalogTranslation::result([], ['totalItems' => 0], new Category('', 'Catalogue'), 1)->facets->attributes);
+    }
+
+    public function testTranslatesTheProductAttributesWithTheirUnit(): void
+    {
+        $product = CatalogTranslation::detail(self::payload('product-monstera-deliciosa'))->product;
+
+        self::assertEquals(
+            [new ProductAttribute('feuillage', 'Feuillage', 'Persistant', null), new ProductAttribute('hauteur-adulte', 'Hauteur adulte', '300', 'cm')],
+            $product->attributes,
+        );
+        self::assertSame([], CatalogTranslation::products(self::payload('featured-products'))[0]->attributes);
     }
 
     public function testAnEmptyResultStillHasOnePage(): void
@@ -74,18 +104,18 @@ final class CatalogTranslationTest extends TestCase
     public function testBuildsTheSearchQueryInTheLanguageOfTheApi(): void
     {
         $query = new CatalogQuery(
-            new ProductFilters([Exposure::Sun, Exposure::Shade], [Size::Large], Price::fromEuros(10), Price::fromEuros(50), true),
+            new ProductFilters([Exposure::Sun, Exposure::Shade], [Size::Large], Price::fromEuros(10), Price::fromEuros(50), true, ['feuillage' => ['persistant', 'caduc'], 'couleur' => ['rouge']]),
             ProductSort::PriceDescending,
             2,
         );
 
         self::assertSame(
-            'category=feuillages&exposure%5B%5D=soleil&exposure%5B%5D=ombre&size%5B%5D=L&priceMin=1000&priceMax=5000&inStock=true&order%5Bprice%5D=desc&page=2&itemsPerPage=12',
+            'category=feuillages&exposure%5B%5D=soleil&exposure%5B%5D=ombre&size%5B%5D=L&attributes%5Bfeuillage%5D%5B%5D=persistant&attributes%5Bfeuillage%5D%5B%5D=caduc&attributes%5Bcouleur%5D%5B%5D=rouge&priceMin=1000&priceMax=5000&inStock=true&order%5Bprice%5D=desc&page=2&itemsPerPage=12',
             CatalogTranslation::searchQuery(new Category('feuillages', 'Feuillages'), $query),
         );
         self::assertSame('page=1&itemsPerPage=12', CatalogTranslation::searchQuery(new Category('', 'Catalogue'), new CatalogQuery()));
         self::assertSame(
-            'category=feuillages&exposure%5B%5D=soleil&exposure%5B%5D=ombre&size%5B%5D=L&priceMin=1000&priceMax=5000&inStock=true',
+            'category=feuillages&exposure%5B%5D=soleil&exposure%5B%5D=ombre&size%5B%5D=L&attributes%5Bfeuillage%5D%5B%5D=persistant&attributes%5Bfeuillage%5D%5B%5D=caduc&attributes%5Bcouleur%5D%5B%5D=rouge&priceMin=1000&priceMax=5000&inStock=true',
             CatalogTranslation::facetsQuery(new Category('feuillages', 'Feuillages'), $query),
         );
     }

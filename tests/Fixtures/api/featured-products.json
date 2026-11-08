@@ -23,7 +23,8 @@
                 }
             ],
             "src": "http://localhost:8090/media/8bd958a223da3057ae3103c5feb99f5f-400.webp"
-        }
+        },
+        "attributes": []
     },
     {
         "id": 19,
@@ -49,7 +50,8 @@
                 }
             ],
             "src": "http://localhost:8090/media/8bd958a223da3057ae3103c5feb99f5f-400.webp"
-        }
+        },
+        "attributes": []
     },
     {
         "id": 16,
@@ -75,7 +77,8 @@
                 }
             ],
             "src": "http://localhost:8090/media/89ddd7bcf3769c06d11a97cbe4a6abf9-400.webp"
-        }
+        },
+        "attributes": []
     },
     {
         "id": 23,
@@ -101,7 +104,8 @@
                 }
             ],
             "src": "http://localhost:8090/media/d85dc326d003e5eea1af26313dd355f0-400.webp"
-        }
+        },
+        "attributes": []
     },
     {
         "id": 10,
@@ -127,6 +131,7 @@
                 }
             ],
             "src": "http://localhost:8090/media/4c3556b372a95dd94612b8d3f5acbc36-400.webp"
-        }
+        },
+        "attributes": []
     }
 ]

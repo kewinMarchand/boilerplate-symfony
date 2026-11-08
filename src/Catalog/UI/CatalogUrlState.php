@@ -18,6 +18,8 @@ use Symfony\Component\HttpFoundation\HeaderUtils;
  */
 final readonly class CatalogUrlState
 {
+    private const string ATTRIBUTE_PREFIX = 'attr-';
+
     public function __construct(
         public CatalogQuery $query = new CatalogQuery(),
         public ListView $view = ListView::Grid,
@@ -36,6 +38,7 @@ final readonly class CatalogUrlState
             self::euros($first('prix_min')),
             self::euros($first('prix_max')),
             '1' === $first('en_stock'),
+            self::attributes($params),
         );
 
         return new self(
@@ -54,6 +57,11 @@ final readonly class CatalogUrlState
         $pairs = [
             ...array_map(static fn (Exposure $exposure): array => ['exposition', $exposure->value], $filters->exposures),
             ...array_map(static fn (Size $size): array => ['taille', $size->value], $filters->sizes),
+            ...array_merge(...array_map(
+                static fn (string $code, array $values): array => array_map(static fn (string $value): array => [self::ATTRIBUTE_PREFIX.$code, $value], $values),
+                array_keys($filters->attributes),
+                $filters->attributes,
+            )),
             ...(null !== $filters->priceMin ? [['prix_min', (string) $filters->priceMin->euros()]] : []),
             ...(null !== $filters->priceMax ? [['prix_max', (string) $filters->priceMax->euros()]] : []),
             ...($filters->inStockOnly ? [['en_stock', '1']] : []),
@@ -100,7 +108,7 @@ final readonly class CatalogUrlState
 
         return $this->withFilters(new ProductFilters(
             array_values(array_filter($filters->exposures, static fn (Exposure $value): bool => $value !== $exposure)),
-            $filters->sizes, $filters->priceMin, $filters->priceMax, $filters->inStockOnly,
+            $filters->sizes, $filters->priceMin, $filters->priceMax, $filters->inStockOnly, $filters->attributes,
         ));
     }
 
@@ -111,7 +119,19 @@ final readonly class CatalogUrlState
         return $this->withFilters(new ProductFilters(
             $filters->exposures,
             array_values(array_filter($filters->sizes, static fn (Size $value): bool => $value !== $size)),
-            $filters->priceMin, $filters->priceMax, $filters->inStockOnly,
+            $filters->priceMin, $filters->priceMax, $filters->inStockOnly, $filters->attributes,
+        ));
+    }
+
+    public function withoutAttribute(string $code, string $value): self
+    {
+        $filters = $this->query->filters;
+        $attributes = $filters->attributes;
+        $attributes[$code] = array_values(array_filter($attributes[$code] ?? [], static fn (string $checked): bool => $checked !== $value));
+
+        return $this->withFilters(new ProductFilters(
+            $filters->exposures, $filters->sizes, $filters->priceMin, $filters->priceMax, $filters->inStockOnly,
+            array_filter($attributes, static fn (array $values): bool => [] !== $values),
         ));
     }
 
@@ -119,21 +139,47 @@ final readonly class CatalogUrlState
     {
         $filters = $this->query->filters;
 
-        return $this->withFilters(new ProductFilters($filters->exposures, $filters->sizes, null, $filters->priceMax, $filters->inStockOnly));
+        return $this->withFilters(new ProductFilters($filters->exposures, $filters->sizes, null, $filters->priceMax, $filters->inStockOnly, $filters->attributes));
     }
 
     public function withoutPriceMax(): self
     {
         $filters = $this->query->filters;
 
-        return $this->withFilters(new ProductFilters($filters->exposures, $filters->sizes, $filters->priceMin, null, $filters->inStockOnly));
+        return $this->withFilters(new ProductFilters($filters->exposures, $filters->sizes, $filters->priceMin, null, $filters->inStockOnly, $filters->attributes));
     }
 
     public function withoutInStock(): self
     {
         $filters = $this->query->filters;
 
-        return $this->withFilters(new ProductFilters($filters->exposures, $filters->sizes, $filters->priceMin, $filters->priceMax, false));
+        return $this->withFilters(new ProductFilters($filters->exposures, $filters->sizes, $filters->priceMin, $filters->priceMax, false, $filters->attributes));
+    }
+
+    /**
+     * Les codes et valeurs ne sont connus de l'API qu'à la requête : seule leur forme est vérifiée ici, l'API ignore les inconnus.
+     * Ordre d'apparition gardé (celui des facettes, donc du formulaire), doublons retirés.
+     *
+     * @param array<string, list<string>> $params
+     *
+     * @return array<string, list<string>>
+     */
+    private static function attributes(array $params): array
+    {
+        $attributes = [];
+        foreach ($params as $key => $values) {
+            $code = substr((string) $key, \strlen(self::ATTRIBUTE_PREFIX));
+            if (!str_starts_with((string) $key, self::ATTRIBUTE_PREFIX) || 1 !== preg_match('/^[a-z][a-z0-9-]{0,39}$/', $code)) {
+                continue;
+            }
+
+            $valid = array_values(array_unique(array_filter($values, static fn (string $value): bool => 1 === preg_match('/^[a-z0-9][a-z0-9-]{0,39}$/', $value))));
+            if ([] !== $valid) {
+                $attributes[$code] = $valid;
+            }
+        }
+
+        return $attributes;
     }
 
     private static function euros(?string $value): ?Price
