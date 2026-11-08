@@ -1549,6 +1549,12 @@ turbo-frame[aria-busy='true'] .product-list {
     border-radius: var(--radius);
 }
 
+/* Le fond d'une image en échec suit l'arrondi de l'image (les cartes l'arrondissent déjà par overflow: hidden) */
+.bui-picture:has(> .carousel__image, > .article__image, > .product-page__image),
+.product-gallery__thumb .bui-picture {
+    border-radius: var(--radius);
+}
+
 .product-page__price {
     font-size: 1.375rem;
     font-weight: 700;
