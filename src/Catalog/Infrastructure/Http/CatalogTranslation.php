@@ -32,18 +32,20 @@ final class CatalogTranslation
     }
 
     /**
-     * Query string de GET /api/products, clés répétées à la manière de l'API (`exposure[]=…`).
+     * Query string de GET /api/product-facets : les filtres, en centimes et en clés répétées à la manière de l'API (`exposure[]=…`).
+     */
+    public static function facetsQuery(Category $category, CatalogQuery $query): string
+    {
+        return self::queryString(self::filterPairs($category, $query));
+    }
+
+    /**
+     * Query string de GET /api/products : les mêmes filtres, plus le tri et la page.
      */
     public static function searchQuery(Category $category, CatalogQuery $query): string
     {
-        $filters = $query->filters;
-        $pairs = [
-            ...('' !== $category->slug ? [['category', $category->slug]] : []),
-            ...array_map(static fn (Exposure $exposure): array => ['exposure[]', $exposure->value], $filters->exposures),
-            ...array_map(static fn (Size $size): array => ['size[]', $size->value], $filters->sizes),
-            ...(null !== $filters->priceMin ? [['priceMin', (string) $filters->priceMin->cents]] : []),
-            ...(null !== $filters->priceMax ? [['priceMax', (string) $filters->priceMax->cents]] : []),
-            ...($filters->inStockOnly ? [['inStock', 'true']] : []),
+        return self::queryString([
+            ...self::filterPairs($category, $query),
             ...match ($query->sort) {
                 ProductSort::Relevance => [],
                 ProductSort::PriceAscending => [['order[price]', 'asc']],
@@ -52,27 +54,28 @@ final class CatalogTranslation
             },
             ['page', (string) $query->page],
             ['itemsPerPage', (string) CatalogQuery::PER_PAGE],
-        ];
-
-        return implode('&', array_map(static fn (array $pair): string => rawurlencode($pair[0]).'='.rawurlencode($pair[1]), $pairs));
+        ]);
     }
 
-    public static function result(mixed $payload, Category $category, int $page): CatalogResult
+    /**
+     * Nombre de pages calculé depuis le total des facettes, au moins une.
+     */
+    public static function result(mixed $products, mixed $facets, Category $category, int $page): CatalogResult
     {
-        $data = ApiPayload::object($payload, 'products');
-        $facets = ApiPayload::object($data['facets'] ?? null, 'facets');
+        $counts = ApiPayload::object($facets, 'facets');
+        $total = ApiPayload::int($counts, 'totalItems');
 
         return new CatalogResult(
             new ProductPage(
-                array_map(self::product(...), ApiPayload::objects($data['items'] ?? null, 'items')),
-                ApiPayload::int($data, 'totalItems'),
+                self::products($products),
+                $total,
                 $page,
-                max(1, ApiPayload::int($data, 'totalPages')),
+                max(1, (int) ceil($total / CatalogQuery::PER_PAGE)),
             ),
             new FacetCounts(
-                self::counts(array_map(static fn (Exposure $case): string => $case->value, Exposure::cases()), $facets['exposure'] ?? null, 'value'),
-                self::counts(array_map(static fn (Size $case): string => $case->value, Size::cases()), $facets['size'] ?? null, 'value'),
-                self::counts(array_map(static fn (Category $child): string => $child->slug, $category->children), $facets['category'] ?? null, 'slug'),
+                self::counts(array_map(static fn (Exposure $case): string => $case->value, Exposure::cases()), $counts['exposure'] ?? null, 'value'),
+                self::counts(array_map(static fn (Size $case): string => $case->value, Size::cases()), $counts['size'] ?? null, 'value'),
+                self::counts(array_map(static fn (Category $child): string => $child->slug, $category->children), $counts['category'] ?? null, 'slug'),
             ),
         );
     }
@@ -102,6 +105,31 @@ final class CatalogTranslation
     public static function products(mixed $payload): array
     {
         return array_map(self::product(...), ApiPayload::objects($payload, 'products'));
+    }
+
+    /**
+     * @return list<array{string, string}>
+     */
+    private static function filterPairs(Category $category, CatalogQuery $query): array
+    {
+        $filters = $query->filters;
+
+        return [
+            ...('' !== $category->slug ? [['category', $category->slug]] : []),
+            ...array_map(static fn (Exposure $exposure): array => ['exposure[]', $exposure->value], $filters->exposures),
+            ...array_map(static fn (Size $size): array => ['size[]', $size->value], $filters->sizes),
+            ...(null !== $filters->priceMin ? [['priceMin', (string) $filters->priceMin->cents]] : []),
+            ...(null !== $filters->priceMax ? [['priceMax', (string) $filters->priceMax->cents]] : []),
+            ...($filters->inStockOnly ? [['inStock', 'true']] : []),
+        ];
+    }
+
+    /**
+     * @param list<array{string, string}> $pairs
+     */
+    private static function queryString(array $pairs): string
+    {
+        return implode('&', array_map(static fn (array $pair): string => rawurlencode($pair[0]).'='.rawurlencode($pair[1]), $pairs));
     }
 
     /**

@@ -48,9 +48,10 @@ final class HttpCatalogRepository implements CatalogRepository
     public function search(Category $category, CatalogQuery $query): CatalogResult
     {
         try {
-            $payload = $this->apiClient->request('GET', '/api/products?'.CatalogTranslation::searchQuery($category, $query))->toArray();
+            $products = $this->apiClient->request('GET', '/api/products?'.CatalogTranslation::searchQuery($category, $query));
+            $facets = $this->apiClient->request('GET', '/api/product-facets?'.CatalogTranslation::facetsQuery($category, $query));
 
-            return CatalogTranslation::result($payload, $category, $query->page);
+            return CatalogTranslation::result($products->toArray(), $facets->toArray(), $category, $query->page);
         } catch (ExceptionInterface|InvalidApiPayloadException|InvalidPriceException $exception) {
             throw new CatalogLoadException($exception);
         }
@@ -84,7 +85,7 @@ final class HttpCatalogRepository implements CatalogRepository
         try {
             $payload = $this->apiClient->request('GET', '/api/products?category='.rawurlencode($product->categorySlug).'&itemsPerPage='.($limit + 1))->toArray();
             $others = array_filter(
-                CatalogTranslation::products(ApiPayload::object($payload, 'products')['items'] ?? null),
+                CatalogTranslation::products($payload),
                 static fn (Product $other): bool => $other->slug !== $product->slug,
             );
 
@@ -99,12 +100,11 @@ final class HttpCatalogRepository implements CatalogRepository
         $slugs = [];
         try {
             for ($page = 1;; ++$page) {
-                $payload = $this->apiClient->request('GET', '/api/products?page='.$page.'&itemsPerPage='.self::MAX_PAGE_SIZE)->toArray();
-                $data = ApiPayload::object($payload, 'products');
-                foreach (ApiPayload::objects($data['items'] ?? null, 'items') as $item) {
+                $items = ApiPayload::objects($this->apiClient->request('GET', '/api/products?page='.$page.'&itemsPerPage='.self::MAX_PAGE_SIZE)->toArray(), 'products');
+                foreach ($items as $item) {
                     $slugs[] = ApiPayload::string($item, 'slug');
                 }
-                if ($page >= ApiPayload::int($data, 'totalPages')) {
+                if (\count($items) < self::MAX_PAGE_SIZE) {
                     return $slugs;
                 }
             }

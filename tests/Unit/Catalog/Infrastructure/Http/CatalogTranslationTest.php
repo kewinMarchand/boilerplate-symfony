@@ -29,7 +29,7 @@ final class CatalogTranslationTest extends TestCase
     public function testTranslatesAProductPageWithPricesInCentsAndEveryFacetValue(): void
     {
         $root = CatalogTranslation::tree(self::payload('categories'))->root;
-        $result = CatalogTranslation::result(self::payload('products'), $root, 1);
+        $result = CatalogTranslation::result(self::payload('products'), self::payload('product-facets'), $root, 1);
 
         self::assertSame(24, $result->page->total);
         self::assertSame(2, $result->page->pageCount);
@@ -42,10 +42,19 @@ final class CatalogTranslationTest extends TestCase
 
     public function testAnEmptyResultStillHasOnePage(): void
     {
-        $result = CatalogTranslation::result(self::payload('products-empty'), new Category('', 'Catalogue'), 1);
+        $result = CatalogTranslation::result(self::payload('products-empty'), self::payload('product-facets-empty'), new Category('', 'Catalogue'), 1);
 
         self::assertSame(0, $result->page->total);
         self::assertSame(1, $result->page->pageCount);
+    }
+
+    public function testComputesThePageCountFromTheFacetTotal(): void
+    {
+        $result = CatalogTranslation::result([], ['totalItems' => 25], new Category('', 'Catalogue'), 3);
+
+        self::assertSame(25, $result->page->total);
+        self::assertSame(3, $result->page->page);
+        self::assertSame(3, $result->page->pageCount);
     }
 
     public function testSplitsTheProductDescriptionIntoParagraphsAtBlankLines(): void
@@ -75,19 +84,22 @@ final class CatalogTranslationTest extends TestCase
             CatalogTranslation::searchQuery(new Category('feuillages', 'Feuillages'), $query),
         );
         self::assertSame('page=1&itemsPerPage=12', CatalogTranslation::searchQuery(new Category('', 'Catalogue'), new CatalogQuery()));
+        self::assertSame(
+            'category=feuillages&exposure%5B%5D=soleil&exposure%5B%5D=ombre&size%5B%5D=L&priceMin=1000&priceMax=5000&inStock=true',
+            CatalogTranslation::facetsQuery(new Category('feuillages', 'Feuillages'), $query),
+        );
     }
 
     public function testRejectsAnUnknownExposure(): void
     {
         $payload = self::payload('products');
         self::assertIsArray($payload);
-        self::assertIsArray($payload['items']);
-        self::assertIsArray($payload['items'][0]);
-        $payload['items'][0]['exposure'] = 'lune';
+        self::assertIsArray($payload[0]);
+        $payload[0]['exposure'] = 'lune';
 
         $this->expectException(InvalidApiPayloadException::class);
 
-        CatalogTranslation::result($payload, new Category('', 'Catalogue'), 1);
+        CatalogTranslation::result($payload, self::payload('product-facets'), new Category('', 'Catalogue'), 1);
     }
 
     private static function payload(string $name): mixed
