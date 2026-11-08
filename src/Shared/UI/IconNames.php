@@ -28,6 +28,7 @@ final class IconNames
         'moon',
         'person-standing',
         'rotate-cw',
+        'shopping-cart',
         'sliders-horizontal',
         'sun',
         'triangle-alert',

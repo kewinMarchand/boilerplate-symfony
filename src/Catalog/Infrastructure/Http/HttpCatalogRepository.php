@@ -12,6 +12,7 @@ use App\Catalog\Domain\Category;
 use App\Catalog\Domain\CategoryTree;
 use App\Catalog\Domain\FeaturedProductsLoadException;
 use App\Catalog\Domain\InvalidPriceException;
+use App\Catalog\Domain\Product;
 use App\Catalog\Domain\ProductDetail;
 use App\Catalog\Domain\ProductLoadException;
 use App\Shared\Infrastructure\Http\ApiPayload;
@@ -75,6 +76,21 @@ final class HttpCatalogRepository implements CatalogRepository
             return CatalogTranslation::products($this->apiClient->request('GET', '/api/featured-products')->toArray());
         } catch (ExceptionInterface|InvalidApiPayloadException|InvalidPriceException $exception) {
             throw new FeaturedProductsLoadException($exception);
+        }
+    }
+
+    public function similar(Product $product, int $limit): array
+    {
+        try {
+            $payload = $this->apiClient->request('GET', '/api/products?category='.rawurlencode($product->categorySlug).'&itemsPerPage='.($limit + 1))->toArray();
+            $others = array_filter(
+                CatalogTranslation::products(ApiPayload::object($payload, 'products')['items'] ?? null),
+                static fn (Product $other): bool => $other->slug !== $product->slug,
+            );
+
+            return \array_slice(array_values($others), 0, $limit);
+        } catch (ExceptionInterface|InvalidApiPayloadException|InvalidPriceException $exception) {
+            throw new CatalogLoadException($exception);
         }
     }
 

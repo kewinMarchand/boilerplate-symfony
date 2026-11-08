@@ -1,0 +1,6 @@
+{#- Lien du panier dans l'en-tête. Le compteur et la fin du nom accessible (« , 3 articles ») sont posés par le contrôleur cart-link : le panier n'existe que dans le navigateur. -#}
+<a class="cart-link" href="{{ path('cart') }}" data-controller="cart-link" data-testid="cart-link">
+    {{- include('shared/ui/_icon.html.twig', {name: 'shopping-cart'}) -}}
+    <span class="cart-link__label">Panier</span>
+    <span data-cart-link-target="count"></span>
+</a>

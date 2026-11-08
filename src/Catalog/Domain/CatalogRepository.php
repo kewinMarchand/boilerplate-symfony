@@ -30,6 +30,15 @@ interface CatalogRepository
     public function featured(): array;
 
     /**
+     * Autres produits de la catégorie du produit, sans lui : le carrousel de la fiche.
+     *
+     * @return list<Product>
+     *
+     * @throws CatalogLoadException
+     */
+    public function similar(Product $product, int $limit): array;
+
+    /**
      * Slugs de tous les produits, page après page (sitemap).
      *
      * @return list<string>

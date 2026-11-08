@@ -50,7 +50,7 @@
         {%- if matomo_config %} data-matomo-script-url-value="{{ matomo_config.scriptUrl }}" data-matomo-tracker-url-value="{{ matomo_config.trackerUrl }}" data-matomo-site-id-value="{{ matomo_config.siteId }}" data-action="turbo:frame-load@document->matomo#trackPageView"{% endif %}>
         <div class="app-shell">
             {{ include('shared/layout/_skip_link.html.twig') }}
-            {{ include('shared/layout/_header.html.twig') }}
+            {{ include('shared/layout/_header.html.twig', {cart_link: include('cart/_cart_link.html.twig')}) }}
             <main id="main" class="main" tabindex="-1">
                 {% block main %}
                     <div class="container main__content">

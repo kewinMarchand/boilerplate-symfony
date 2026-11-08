@@ -103,6 +103,11 @@ final class CatalogControllerTest extends WebTestCase
                 return [];
             }
 
+            public function similar(\App\Catalog\Domain\Product $product, int $limit): array
+            {
+                return [];
+            }
+
             public function productSlugs(): array
             {
                 return [];

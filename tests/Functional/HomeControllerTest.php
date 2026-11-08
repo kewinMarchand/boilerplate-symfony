@@ -136,6 +136,11 @@ final class HomeControllerTest extends WebTestCase
                 return ($this->featured)();
             }
 
+            public function similar(\App\Catalog\Domain\Product $product, int $limit): array
+            {
+                return $this->real->similar($product, $limit);
+            }
+
             public function productSlugs(): array
             {
                 return $this->real->productSlugs();

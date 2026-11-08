@@ -1,0 +1,7 @@
+{#- Bouton d'ajout de la fiche produit : item = {slug, name, price en centimes}, available. Posé par le contrôleur add-to-cart, absent sans JavaScript. -#}
+<div class="add-to-cart" data-controller="add-to-cart" data-add-to-cart-item-value="{{ item|json_encode }}" data-add-to-cart-cart-url-value="{{ path('cart') }}">
+    <template data-add-to-cart-target="template">
+        <button type="button" class="bui-button" data-action="add-to-cart#add" data-testid="add-to-cart"{% if not available %} disabled{% endif %}>Ajouter au panier</button>
+        <p role="status" data-add-to-cart-target="status" data-testid="add-to-cart-status"></p>
+    </template>
+</div>

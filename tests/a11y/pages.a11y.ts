@@ -11,16 +11,28 @@ const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']
 const analyze = (page: Page) => new AxeBuilder({ page }).withTags(TAGS).exclude('.sf-toolbar').analyze()
 
 for (const mode of A11Y_MODES) {
-  for (const route of [...ROUTES, '/catalogue?exposition=soleil&taille=M', '/route-inexistante']) {
+  for (const route of [...ROUTES, '/catalogue?exposition=soleil&taille=M', '/route-inexistante', '/panier']) {
     test(`la page ${route} en mode ${mode} ne présente aucune violation axe WCAG 2.1 AA`, async ({ page }) => {
       await useA11yMode(page, mode)
       await page.goto(route)
       await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
       if (route === '/taches') await expect(page.getByTestId('tasks-list')).toBeVisible()
+      if (route === '/panier') await expect(page.getByTestId('cart-empty')).toBeVisible()
 
       expect((await analyze(page)).violations).toEqual([])
     })
   }
+
+  test(`le panier rempli en mode ${mode} ne présente aucune violation axe`, async ({ page }) => {
+    await useA11yMode(page, mode)
+    await page.goto('/produit/monstera-deliciosa')
+    await page.getByTestId('add-to-cart').click()
+    await expect(page.getByTestId('cart-count')).toHaveText('1')
+    await page.goto('/panier')
+    await expect(page.getByTestId('cart-line')).toHaveCount(1)
+
+    expect((await analyze(page)).violations).toEqual([])
+  })
 
   test(`le menu de navigation ouvert en mode ${mode} ne présente aucune violation axe`, async ({ page, isMobile }) => {
     await useA11yMode(page, mode)

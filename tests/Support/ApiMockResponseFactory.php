@@ -36,7 +36,7 @@ final class ApiMockResponseFactory
             '/api/categories' => self::fixture('categories'),
             '/api/products' => self::fixture(match (true) {
                 'empty' === $scenario, isset($query['priceMax']) => 'products-empty',
-                \in_array($query['category'] ?? null, ['feuillages', 'plantes-aquatiques'], true) => 'products-'.self::scalar($query['category']),
+                \in_array($query['category'] ?? null, ['feuillages', 'monstera', 'plantes-aquatiques'], true) => 'products-'.self::scalar($query['category']),
                 default => 'products',
             }),
             '/api/contact_messages' => self::contact($options),

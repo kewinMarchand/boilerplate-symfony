@@ -67,6 +67,10 @@ deptrac:
           collectors:
             - type: classLike
               value: '^App\\Task\\UI\\'
+        - name: CartUI
+          collectors:
+            - type: classLike
+              value: '^App\\Cart\\UI\\'
         - name: Site
           collectors:
             - type: classLike
@@ -106,6 +110,7 @@ deptrac:
         TaskDomain: ~
         TaskInfrastructure: [TaskDomain, SharedInfrastructure, Framework, HttpClient]
         TaskUI: [TaskDomain, TaskInfrastructure, SharedUI, Framework]
+        CartUI: [SharedUI, Framework]
         Site: [CatalogDomain, CatalogApplication, BlogDomain, ContentDomain, ContactDomain, TaskDomain, SharedUI, Framework]
         SharedUI: [Framework]
         SharedDomain: ~

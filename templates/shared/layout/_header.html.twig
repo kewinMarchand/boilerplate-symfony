@@ -1,3 +1,4 @@
+{#- cart_link : lien du panier, fourni par le layout du site (le socle ne connaît pas le module panier) -#}
 {% set tree = catalog_tree() %}
 <header class="header" data-controller="mobile-menu">
     <div class="header__inner container">
@@ -19,6 +20,7 @@
             </ul>
         </nav>
         <div class="header__actions">
+            {{ cart_link }}
             <button type="button" class="bui-button bui-button--inverse mobile-menu-toggle" aria-label="Menu" aria-expanded="false" aria-controls="mobile-menu" data-mobile-menu-target="toggle" data-action="mobile-menu#open" data-testid="layout-mobile-menu-toggle">
                 {{ include('shared/ui/_icon.html.twig', {name: 'menu'}) }}
                 <span class="header__action-label">Menu</span>

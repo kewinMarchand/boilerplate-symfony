@@ -70,12 +70,26 @@
                         <dt>Disponibilité</dt>
                         <dd>{% if product.inStock %}En stock{% else %}<span class="bui-badge bui-badge--error">Rupture de stock</span>{% endif %}</dd>
                     </dl>
+                    {{ include(purchase, {item: {slug: product.slug, name: product.name, price: product.price.cents}, available: product.inStock}) }}
                     {% if detail.category %}
                         <p><a class="bui-link" href="{{ path('catalog', {path: detail.category.path}) }}">Voir les autres produits : {{ detail.category.name }}</a></p>
                     {% endif %}
                 </div>
             </div>
         </article>
+        {% if similar is not empty %}
+            {{ include('shared/carousel/_carousel.html.twig', {
+                id: 'product-similar',
+                title: 'Produits similaires',
+                testid: 'product-similar',
+                slides: similar|map(other => {
+                    image: other.image,
+                    title: other.name,
+                    text: other.price|price,
+                    href: path('product', {slug: other.slug}),
+                }),
+            }) }}
+        {% endif %}
     {% else %}
         <h1>Produit</h1>
         {{ include('shared/ui/_alert.html.twig', {variant: 'error', body: error, testid: 'product-error'}) }}
