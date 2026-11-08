@@ -841,6 +841,10 @@ html:not(.js) .carousel__dots {
         height: 100%;
     }
 
+    .blog__item:first-child .bui-picture {
+        height: 100%;
+    }
+
     .blog__item:first-child .bui-card__body {
         flex: none;
     }

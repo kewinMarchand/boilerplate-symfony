@@ -1,6 +1,6 @@
 {#-
     Image responsive AVIF puis WebP.
-    image : objet image du contrat de l'API (App\Shared\Domain\Image), ou, pour une image livrée par le site,
+    image : objet image du contrat de l'API (App\Shared\Domain\Image, fond de remplacement bui-picture s'il échoue), ou, pour une image livrée par le site,
     name : préfixe dans assets/images (ex. 'hero') et widths : variantes disponibles, ratio 16:9, alt vide.
     sizes, class, loading ('lazy' par défaut), priority (true pour l'image LCP), decorative (true : alt vide, image nommée par son parent).
 -#}
@@ -22,7 +22,7 @@
     {%- set alt = '' -%}
     {%- set height = (width * 9 / 16)|round -%}
 {%- endif -%}
-<picture>
+<picture{% if image is defined %} class="bui-picture"{% endif %}>
     {%- for source in sources %}
         <source type="{{ source.type }}" sizes="{{ sizes }}" srcset="{{ source.srcset }}">
     {%- endfor %}

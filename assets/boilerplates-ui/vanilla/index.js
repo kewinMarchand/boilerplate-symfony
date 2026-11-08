@@ -1,4 +1,5 @@
 /* Généré par `make ui` depuis @kewinmarchand/boilerplates-ui, ne pas modifier à la main. */
+export { initImageFallback } from './imageFallback.js'
 export { closeMenu, initMenus, openMenu } from './menu.js'
 export { initModals, openModal } from './modal.js'
 export { initTables, sortTable } from './table.js'

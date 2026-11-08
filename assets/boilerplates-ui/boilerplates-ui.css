@@ -1112,6 +1112,26 @@
   }
 }
 @layer components {
+  .bui-picture {
+    display: block;
+  }
+
+  /* Fond neutre sans URL : l'image en échec garde sa place, invisible, et son alt reste exposé. */
+  .bui-picture[data-image-error] {
+    background-color: var(--bui-color-surface-muted);
+    background-image: repeating-linear-gradient(
+      135deg,
+      var(--bui-color-border-subtle) 0 2px,
+      transparent 2px 16px
+    );
+    box-shadow: inset 0 0 0 1px var(--bui-color-border-subtle);
+  }
+
+  .bui-picture[data-image-error] > img {
+    opacity: 0;
+  }
+}
+@layer components {
   .bui-modal {
     width: min(var(--bui-container-modal), calc(100% - 2 * var(--bui-space-4)));
     max-height: calc(100% - 2 * var(--bui-space-4));

@@ -86,7 +86,7 @@
                         <li class="product-list__item">
                             <article class="product" id="{{ product.slug }}" data-testid="catalog-product">
                                 {% if product.image %}
-                                    <picture>
+                                    <picture class="bui-picture">
                                         {% for source in product.image.sources %}
                                             <source type="{{ source.type }}" sizes="(min-width: 1024px) 290px, (min-width: 528px) 50vw, 100vw" srcset="{{ source.srcset }}">
                                         {% endfor %}
