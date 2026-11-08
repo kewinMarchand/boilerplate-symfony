@@ -4,8 +4,9 @@ LHCI_PORT := 3230
 # (tests/e2e/observability.e2e.ts), jamais une instance réelle.
 OBSERVABILITY_ENV := GLITCHTIP_DSN=http://clefactice@localhost:3231/1 MATOMO_URL=http://matomo.test/ MATOMO_SITE_ID=1
 # Phase @identite : le site lit une fausse API (tests/e2e/fixtures/fake-api.js) qui sert l'identité avec logo ou couleurs
-# et relaie le reste à l'API réelle, dont la base n'est jamais modifiée.
+# et relaie le reste à l'API réelle choisie par API_URL (8091 en CI), dont la base n'est jamais modifiée.
 IDENTITY_ENV := API_URL=http://localhost:3232
+IDENTITY_TARGET := $(or $(API_URL),http://localhost:8090)
 
 qa: lint lint-js arch arch-selftest icons-check ui-check format-check typecheck test-unit ## QA rapide : lint, ordre des imports JS, architecture, sprite d'icônes, format, analyse statique, tests unitaires
 
@@ -65,7 +66,7 @@ test-e2e: ## Tests end-to-end desktop et mobile : image de production, puis avec
 	$(OBSERVABILITY_ENV) $(UP_PROD)
 	$(RUN_NODE) yarn playwright test tests/e2e --grep @observabilite
 	$(IDENTITY_ENV) $(UP_PROD)
-	$(RUN_NODE) sh -c 'node tests/e2e/fixtures/fake-api.js & yarn playwright test tests/e2e --grep @identite'
+	$(COMPOSE) run --rm -e API_TARGET=$(IDENTITY_TARGET) node sh -c 'node tests/e2e/fixtures/fake-api.js & yarn playwright test tests/e2e --grep @identite'
 	$(UP_DEV)
 	$(RUN_NODE) yarn playwright test tests/e2e --grep @dev
 
