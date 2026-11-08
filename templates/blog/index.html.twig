@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{%- set sizes = '(min-width: 1024px) calc((min(100vw, 1440px) - 64px) / 3), (min-width: 768px) 50vw, 100vw' -%}
+{%- set seo = seo_page({
+    title: 'Blog',
+    description: 'Tous les articles du blog ' ~ site_identity().name ~ ' : accessibilité, rendu côté serveur et composants d’interface, du plus récent au plus ancien.',
+    json_ld: [{
+        '@context': 'https://schema.org',
+        '@type': 'Blog',
+        name: 'Blog ' ~ site_identity().name,
+        url: site.url ~ path('blog'),
+        inLanguage: 'fr-FR',
+        blogPost: articles|map(article => {
+            '@type': 'BlogPosting',
+            headline: article.title,
+            url: site.url ~ path('article', {slug: article.slug}),
+            datePublished: article.publishedAt|date('Y-m-d'),
+        }),
+    }],
+}) -%}
+
+{% block preload %}
+    {% if articles is not empty and (articles|first).image %}
+        {% set first = (articles|first).image.sources|first %}
+        <link rel="preload" as="image" type="{{ first.type }}" imagesrcset="{{ first.srcset }}" imagesizes="{{ sizes }}" fetchpriority="high">
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    <h1>Blog</h1>
+    {% if error %}
+        {% embed 'shared/ui/_alert.html.twig' with {variant: 'error', body: error, testid: 'blog-error'} %}
+            {% block action %}
+                <a class="bui-button bui-button--outline" href="{{ path('blog') }}" data-testid="blog-retry">
+                    {{ include('shared/ui/_icon.html.twig', {name: 'rotate-cw'}) }}
+                    <span>Réessayer</span>
+                </a>
+            {% endblock %}
+        {% endembed %}
+    {% elseif articles is empty %}
+        {{ include('shared/ui/_alert.html.twig', {body: 'Aucun article pour l’instant. Revenez bientôt.', testid: 'blog-empty'}) }}
+    {% else %}
+        <ul class="blog-list" role="list" data-testid="blog-list">
+            {% for article in articles %}
+                <li>{{ include('blog/_card.html.twig', {article: article, testid: 'blog-card', sizes: sizes, priority: loop.first, heading: 'h2'}) }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}

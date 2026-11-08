@@ -13,6 +13,38 @@ final class ArticleControllerTest extends WebTestCase
 {
     private const string ARTICLE = '/blog/un-carrousel-accessible-sans-dependance';
 
+    public function testListsEveryArticleFromTheApi(): void
+    {
+        $client = self::createClient();
+        $crawler = $client->request('GET', '/blog');
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorCount(3, '[data-testid="blog-list"] [data-testid="blog-card"]');
+        self::assertSame('/blog/le-mode-accessibilite-renforcee', $crawler->filter('[data-testid="blog-card"] a')->first()->attr('href'));
+        self::assertSelectorExists('[data-testid="blog-card"] img[fetchpriority="high"]');
+        self::assertSelectorCount(3, '[data-testid="blog-card"] h2');
+    }
+
+    public function testListShowsAFriendlyMessageWhenThereIsNoArticle(): void
+    {
+        $client = self::createClient();
+        $client->request('GET', '/blog', server: ['HTTP_X_SCENARIO' => 'empty']);
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorExists('[data-testid="blog-empty"]');
+        self::assertSelectorNotExists('[data-testid="blog-card"]');
+    }
+
+    public function testListShowsTheErrorWithARetryWhenTheApiIsDown(): void
+    {
+        $client = self::createClient();
+        $client->request('GET', '/blog', server: ['HTTP_X_SCENARIO' => 'error']);
+
+        self::assertResponseStatusCodeSame(503);
+        self::assertSelectorTextContains('[data-testid="blog-error"]', 'Impossible de charger les articles');
+        self::assertSelectorExists('[data-testid="blog-retry"][href="/blog"]');
+    }
+
     public function testShowsTheArticleReadFromTheApi(): void
     {
         $client = self::createClient();
@@ -24,7 +56,9 @@ final class ArticleControllerTest extends WebTestCase
         self::assertSelectorTextContains('[data-testid="article-body"] h2', 'Partir du défilement natif');
         self::assertSelectorCount(3, '[data-testid="article-body"] li');
         self::assertSelectorExists('[data-testid="article-page"] img[fetchpriority="high"]');
-        self::assertSelectorTextContains('[data-testid="layout-breadcrumb"]', 'Un carrousel accessible sans dépendance');
+        self::assertSelectorTextSame('[data-testid="layout-breadcrumb"] a[href="/blog"]', 'Blog');
+        self::assertSelectorTextContains('[data-testid="layout-breadcrumb"] [aria-current="page"]', 'Un carrousel accessible sans dépendance');
+        self::assertSelectorTextSame('[data-testid="article-page"] a[href="/blog"]', 'Tous les articles');
         self::assertSelectorExists('meta[property="og:type"][content="article"]');
     }
 

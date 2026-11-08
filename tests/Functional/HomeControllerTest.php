@@ -55,6 +55,30 @@ final class HomeControllerTest extends WebTestCase
         self::assertSelectorNotExists('[data-testid="home-blog-card"]');
     }
 
+    public function testAsksOnlyForTheThreeLatestArticles(): void
+    {
+        $client = self::createClient();
+        $repository = new class implements ArticleRepository {
+            public ?int $limit = null;
+
+            public function findLatest(int $limit): array
+            {
+                $this->limit = $limit;
+
+                return [];
+            }
+
+            public function find(string $slug): ?ArticleDetail
+            {
+                return null;
+            }
+        };
+        self::getContainer()->set(ArticleRepository::class, $repository);
+        $client->request('GET', '/');
+
+        self::assertSame(3, $repository->limit);
+    }
+
     public function testShowsTheErrorWhenArticlesCannotBeLoaded(): void
     {
         $client = self::createClient();

@@ -14,6 +14,7 @@ parameters:
             main:
                 - { route: home, label: Accueil }
                 - { route: catalog, label: Catalogue }
+                - { route: blog, label: Blog }
                 - { route: tasks, label: Tâches }
                 - { route: contact, label: Contact }
             legal:

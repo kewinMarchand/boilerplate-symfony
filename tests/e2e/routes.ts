@@ -8,6 +8,7 @@ export const ROUTES = [
   '/donnees-personnelles',
   '/accessibilite',
   '/plan-du-site',
+  '/blog',
   '/blog/le-mode-accessibilite-renforcee',
   '/produit/monstera-deliciosa',
 ] as const

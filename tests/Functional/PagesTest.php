@@ -19,6 +19,7 @@ final class PagesTest extends WebTestCase
         yield 'accueil' => ['/', self::SITE, self::SITE];
         yield 'catalogue' => ['/catalogue', 'Catalogue', 'Catalogue · '.self::SITE];
         yield 'sous-catégorie' => ['/catalogue/plantes-interieur/feuillages', 'Feuillages', 'Feuillages · Catalogue · '.self::SITE];
+        yield 'blog' => ['/blog', 'Blog', 'Blog · '.self::SITE];
         yield 'tâches' => ['/taches', 'Tâches', 'Tâches · '.self::SITE];
         yield 'contact' => ['/contact', 'Contact', 'Contact · '.self::SITE];
         yield 'mentions légales' => ['/mentions-legales', 'Mentions légales', 'Mentions légales · '.self::SITE];

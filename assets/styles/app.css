@@ -856,6 +856,28 @@ html:not(.js) .carousel__dots {
     }
 }
 
+.blog__all {
+    margin-top: var(--space-4);
+}
+
+.blog-list {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-4);
+}
+
+@media (min-width: 768px) {
+    .blog-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1024px) {
+    .blog-list {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
 @container (min-width: 360px) {
     .card__body {
         padding: var(--space-6);
@@ -952,8 +974,8 @@ fieldset {
     margin-top: var(--space-6);
 }
 
-/* Carte d'article de l'accueil : lien étiré sur toute la carte, un seul lien, nommé par le titre */
-.blog__item .bui-card {
+/* Carte d'article : lien étiré sur toute la carte, un seul lien, nommé par le titre */
+.article-card {
     position: relative;
 }
 

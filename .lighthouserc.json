@@ -11,6 +11,7 @@
         "http://127.0.0.1:3230/donnees-personnelles",
         "http://127.0.0.1:3230/accessibilite",
         "http://127.0.0.1:3230/plan-du-site",
+        "http://127.0.0.1:3230/blog",
         "http://127.0.0.1:3230/blog/le-mode-accessibilite-renforcee",
         "http://127.0.0.1:3230/produit/monstera-deliciosa"
       ],

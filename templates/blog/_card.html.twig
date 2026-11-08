@@ -1,0 +1,10 @@
+{#- Carte d'article, commune à l'accueil et au blog : un seul lien, étiré sur la carte depuis le titre. article, testid, sizes, priority (image LCP), heading (niveau du titre, h3 par défaut). -#}
+<article class="bui-card article-card" data-testid="{{ testid }}">
+    {% if article.image %}<div class="bui-card__media">{{ include('shared/ui/_picture.html.twig', {image: article.image, sizes: sizes, class: 'card__image', priority: priority|default(false)}) }}</div>{% endif %}
+    <div class="bui-card__body">
+        {%- set heading = heading|default('h3') %}
+        <{{ heading }} class="bui-card__title"><a class="card__link" href="{{ path('article', {slug: article.slug}) }}">{{ article.title }}</a></{{ heading }}>
+        <p class="card__excerpt">{{ article.excerpt }}</p>
+        <time class="card__date" datetime="{{ article.publishedAt|date('Y-m-d') }}">{{ article.publishedAt|date('d/m/Y') }}</time>
+    </div>
+</article>

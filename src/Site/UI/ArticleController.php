@@ -6,12 +6,26 @@ namespace App\Site\UI;
 
 use App\Blog\Domain\ArticleLoadException;
 use App\Blog\Domain\ArticleRepository;
+use App\Blog\Domain\ArticlesLoadException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 final class ArticleController extends AbstractController
 {
+    /**
+     * Liste de tous les articles lue dans l'API, du plus récent au plus ancien. API en panne : erreur avec relance, en 503.
+     */
+    #[Route('/blog', name: 'blog', methods: ['GET'])]
+    public function list(ArticleRepository $articleRepository): Response
+    {
+        try {
+            return $this->render('blog/index.html.twig', ['articles' => $articleRepository->findLatest(\PHP_INT_MAX), 'error' => null]);
+        } catch (ArticlesLoadException $exception) {
+            return $this->render('blog/index.html.twig', ['articles' => [], 'error' => $exception->getMessage()], new Response(status: Response::HTTP_SERVICE_UNAVAILABLE));
+        }
+    }
+
     /**
      * Fiche d'un article lue dans l'API. Article inconnu de l'API : 404. API en panne : titre de repli et erreur, en 503.
      */

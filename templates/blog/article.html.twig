@@ -8,6 +8,7 @@
     {%- set seo = seo_page({
         title: article.title,
         description: article.excerpt ?: article.title,
+        breadcrumb: [{label: 'Blog', path: path('blog')}, {label: article.title}],
         published_time: article.publishedAt|date('Y-m-d'),
         image: image ? {url: largest, width: image.width, height: image.height, alt: image.alt ?: article.title} : null,
         json_ld: [{
@@ -22,7 +23,7 @@
         }|filter(value => value is not null)],
     }|filter(value => value is not null)) -%}
 {%- else -%}
-    {%- set seo = seo_page({title: 'Article', description: 'Article du blog ' ~ site_identity().name ~ '.', robots: 'noindex, follow'}) -%}
+    {%- set seo = seo_page({title: 'Article', description: 'Article du blog ' ~ site_identity().name ~ '.', breadcrumb: [{label: 'Blog', path: path('blog')}, {label: 'Article'}], robots: 'noindex, follow'}) -%}
 {%- endif -%}
 
 {% block preload %}
@@ -44,7 +45,7 @@
             {% endif %}
             {% if article.excerpt %}<p class="article__excerpt">{{ article.excerpt }}</p>{% endif %}
             <div class="legal-html" data-testid="article-body">{{ detail.html|raw }}</div>
-            <p class="article__back"><a href="{{ path('home') }}">Retour à l’accueil</a></p>
+            <p class="article__back"><a href="{{ path('blog') }}">Tous les articles</a></p>
         </article>
     {% else %}
         <h1>Article</h1>
