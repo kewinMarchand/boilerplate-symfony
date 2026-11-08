@@ -1,0 +1,54 @@
+{
+    "id": 2,
+    "slug": "monstera-adansonii",
+    "name": "Monstera adansonii",
+    "categorySlug": "monstera",
+    "price": 1990,
+    "exposure": "mi-ombre",
+    "size": "S",
+    "inStock": true,
+    "image": {
+        "alt": "Monstera adansonii",
+        "width": 800,
+        "height": 800,
+        "sources": [
+            {
+                "type": "image/avif",
+                "srcset": "http://localhost:8090/media/a32d6e246a7553a3f0304c6fc434a220-400.avif 400w, http://localhost:8090/media/a32d6e246a7553a3f0304c6fc434a220-640.avif 640w, http://localhost:8090/media/a32d6e246a7553a3f0304c6fc434a220-800.avif 800w"
+            },
+            {
+                "type": "image/webp",
+                "srcset": "http://localhost:8090/media/a32d6e246a7553a3f0304c6fc434a220-400.webp 400w, http://localhost:8090/media/a32d6e246a7553a3f0304c6fc434a220-640.webp 640w, http://localhost:8090/media/a32d6e246a7553a3f0304c6fc434a220-800.webp 800w"
+            }
+        ],
+        "src": "http://localhost:8090/media/a32d6e246a7553a3f0304c6fc434a220-400.webp"
+    },
+    "categoryPath": [
+        {
+            "slug": "plantes-interieur",
+            "name": "Plantes d’intérieur"
+        },
+        {
+            "slug": "feuillages",
+            "name": "Feuillages"
+        },
+        {
+            "slug": "monstera",
+            "name": "Monstera"
+        }
+    ],
+    "description": "Feuillage léger, percé de nombreux trous ovales. Ce petit monstera retombe joliment d’une suspension ou grimpe le long d’un tuteur.\n\nIl aime l’humidité : vaporisez ses feuilles en période de chauffage.",
+    "attributes": [
+        {
+            "code": "feuillage",
+            "label": "Feuillage",
+            "type": "choice",
+            "value": "persistant",
+            "valueLabel": "Persistant",
+            "unit": null
+        }
+    ],
+    "gallery": [],
+    "metaTitle": "",
+    "metaDescription": ""
+}

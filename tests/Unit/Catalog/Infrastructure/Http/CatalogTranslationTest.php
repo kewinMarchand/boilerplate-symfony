@@ -101,6 +101,17 @@ final class CatalogTranslationTest extends TestCase
         self::assertSame([], CatalogTranslation::detail($payload)->description);
     }
 
+    public function testTranslatesTheGalleryInOrderAndTheMetadata(): void
+    {
+        $detail = CatalogTranslation::detail(self::payload('product-monstera-deliciosa'));
+
+        self::assertCount(2, $detail->gallery);
+        self::assertSame([800, 800], [$detail->gallery[0]->width, $detail->gallery[0]->height]);
+        self::assertStringContainsString('a32d6e246a7553a3f0304c6fc434a220', $detail->gallery[0]->src);
+        self::assertSame(['', ''], [$detail->metaTitle, $detail->metaDescription]);
+        self::assertSame([], CatalogTranslation::detail(self::payload('product-monstera-adansonii'))->gallery);
+    }
+
     public function testBuildsTheSearchQueryInTheLanguageOfTheApi(): void
     {
         $query = new CatalogQuery(

@@ -38,11 +38,17 @@ test.describe('Catalogue', () => {
     await expect(page.getByTestId('catalog-results-count')).toHaveText('2 produits')
     await expect(page.getByTestId('catalog-active-filter')).toHaveAccessibleName('Retirer le filtre : Feuillage : Caduc')
 
-    await page.getByTestId('catalog-filter-attribute-feuillage-persistant').check()
+    const persistant = page.getByTestId('catalog-filter-attribute-feuillage-persistant')
+    await persistant.check()
     await expect(page).toHaveURL(/\/catalogue\?attr-feuillage=persistant&attr-feuillage=caduc$/)
     await expect(page.getByTestId('catalog-results-count')).toHaveText('8 produits')
 
-    if (isMobile) await page.keyboard.press('Escape')
+    if (isMobile) {
+      // Échap n'est écouté que dans le panneau : attendre que le focus y soit rendu après le rechargement du cadre
+      await expect(persistant).toBeFocused()
+      await page.keyboard.press('Escape')
+      await expect(page.getByTestId('catalog-filters')).toBeHidden()
+    }
     await page.getByTestId('catalog-clear-filters').click()
     await expect(page).toHaveURL(/\/catalogue$/)
   })

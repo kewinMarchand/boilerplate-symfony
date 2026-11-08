@@ -34,6 +34,12 @@ test.describe('Accueil', () => {
       .poll(() => image.evaluate((element: HTMLImageElement) => element.naturalWidth))
       .toBeGreaterThan(0)
   })
+
+  test('chaque carte d’article porte sa rubrique en sur-titre', async ({ page }) => {
+    await page.goto('/')
+
+    await expect(page.getByTestId('home-blog-card').getByTestId('article-section')).toHaveText(['Actualités', 'Conseils', 'Conseils'])
+  })
 })
 
 test.describe('Carrousel', () => {

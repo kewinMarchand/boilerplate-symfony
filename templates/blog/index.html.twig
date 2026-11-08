@@ -2,6 +2,7 @@
 
 {%- set sizes = '(min-width: 1024px) calc((min(100vw, 1440px) - 64px) / 3), (min-width: 768px) 50vw, 100vw' -%}
 {%- set seo = seo_page({
+    page: 'blog',
     title: 'Blog',
     description: 'Tous les articles du blog ' ~ site_identity().name ~ ' : accessibilité, rendu côté serveur et composants d’interface, du plus récent au plus ancien.',
     json_ld: [{
@@ -28,6 +29,16 @@
 
 {% block body %}
     <h1>Blog</h1>
+    {% if sections is not empty %}
+        <nav aria-label="Rubriques" data-testid="blog-sections">
+            <ul class="bui-chip-list chips" role="list">
+                <li><a class="bui-chip" href="{{ path('blog') }}" data-testid="blog-section-link"{% if section is null %} aria-current="page"{% endif %}>Toutes</a></li>
+                {% for item in sections %}
+                    <li><a class="bui-chip" href="{{ path('blog', {rubrique: item.slug}) }}" data-testid="blog-section-link"{% if item.slug == section %} aria-current="page"{% endif %}>{{ item.name }}</a></li>
+                {% endfor %}
+            </ul>
+        </nav>
+    {% endif %}
     {% if error %}
         {% embed 'shared/ui/_alert.html.twig' with {variant: 'error', body: error, testid: 'blog-error'} %}
             {% block action %}
@@ -38,7 +49,7 @@
             {% endblock %}
         {% endembed %}
     {% elseif articles is empty %}
-        {{ include('shared/ui/_alert.html.twig', {body: 'Aucun article pour l’instant. Revenez bientôt.', testid: 'blog-empty'}) }}
+        {{ include('shared/ui/_alert.html.twig', {body: section is null ? 'Aucun article pour l’instant. Revenez bientôt.' : 'Aucun article dans cette rubrique pour l’instant.', testid: 'blog-empty'}) }}
     {% else %}
         <ul class="blog-list" role="list" data-testid="blog-list">
             {% for article in articles %}

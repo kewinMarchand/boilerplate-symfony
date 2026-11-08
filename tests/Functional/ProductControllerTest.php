@@ -129,4 +129,48 @@ final class ProductControllerTest extends WebTestCase
         self::assertResponseStatusCodeSame(503);
         self::assertSelectorTextContains('[data-testid="product-error"]', 'Impossible de charger ce produit pour le moment.');
     }
+
+    public function testShowsTheGalleryWithTheMainImageFirst(): void
+    {
+        $client = self::createClient();
+        $crawler = $client->request('GET', self::PRODUCT);
+
+        $thumbs = $crawler->filter('[data-testid="product-gallery"] [data-testid="product-gallery-thumb"]');
+        self::assertSame(['Voir l’image 1 sur 3', 'Voir l’image 2 sur 3', 'Voir l’image 3 sur 3'], $thumbs->each(static fn ($thumb): ?string => $thumb->attr('aria-label')));
+        self::assertSame(['true', null, null], $thumbs->each(static fn ($thumb): ?string => $thumb->attr('aria-current')));
+        self::assertStringEndsWith('01272a8b6d3f8221cfe5a2a36aefcd35-800.webp', (string) $thumbs->first()->attr('href'));
+        self::assertSame('a', $thumbs->first()->nodeName());
+        self::assertSelectorCount(3, '[data-testid="product-gallery-thumb"] img[loading="lazy"][alt=""]');
+        self::assertSelectorCount(1, '[data-testid="product-gallery"] img[fetchpriority="high"]');
+    }
+
+    public function testWithoutGalleryShowsTheMainImageAlone(): void
+    {
+        $client = self::createClient();
+        $client->request('GET', '/produit/monstera-adansonii');
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorNotExists('[data-testid="product-gallery"]');
+        self::assertSelectorExists('[data-testid="product-page"] img[fetchpriority="high"]');
+    }
+
+    public function testTheMetadataEnteredInTheAdminReplaceTheComputedOnes(): void
+    {
+        $client = self::createClient();
+        $crawler = $client->request('GET', self::PRODUCT, server: ['HTTP_X_SCENARIO' => 'metas']);
+
+        self::assertPageTitleSame('Titre saisi dans l’admin');
+        self::assertStringStartsWith('Description saisie dans l’admin', (string) $crawler->filter('meta[name="description"]')->attr('content'));
+        self::assertSame('Titre saisi dans l’admin', $crawler->filter('meta[property="og:title"]')->attr('content'));
+        self::assertSelectorTextSame('[data-testid="product-title"]', 'Monstera deliciosa');
+    }
+
+    public function testWithoutMetadataKeepsTheComputedTitleAndDescription(): void
+    {
+        $client = self::createClient();
+        $crawler = $client->request('GET', self::PRODUCT);
+
+        self::assertPageTitleSame('Monstera deliciosa · Boilerplate');
+        self::assertStringStartsWith('Monstera deliciosa : exposition mi-ombre', (string) $crawler->filter('meta[name="description"]')->attr('content'));
+    }
 }

@@ -12,7 +12,8 @@
     {%- set largest = image ? (image.sources|filter(source => source.type == 'image/webp')|first).srcset|split(', ')|last|split(' ')|first : null -%}
     {%- set seo = seo_page({
         title: product.name,
-        description: product.name ~ ' : exposition ' ~ product.exposure.label|lower ~ ', taille ' ~ product.size.value ~ ', ' ~ product.price|price ~ '. ' ~ (product.inStock ? 'En stock' : 'En rupture de stock') ~ ', rayon ' ~ (category ? category.name : 'catalogue') ~ '.',
+        meta_title: detail.metaTitle,
+        description: detail.metaDescription ?: product.name ~ ' : exposition ' ~ product.exposure.label|lower ~ ', taille ' ~ product.size.value ~ ', ' ~ product.price|price ~ '. ' ~ (product.inStock ? 'En stock' : 'En rupture de stock') ~ ', rayon ' ~ (category ? category.name : 'catalogue') ~ '.',
         breadcrumb: breadcrumb|merge([{label: product.name}]),
         image: image ? {url: largest, width: image.width, height: image.height, alt: image.alt ?: product.name} : null,
         json_ld: [{
@@ -49,8 +50,29 @@
         {% set product = detail.product %}
         <article class="product-page" data-testid="product-page">
             <div class="product-page__layout">
-                {% if product.image %}
-                    {{ include('shared/ui/_picture.html.twig', {image: product.image, sizes: '(min-width: 1440px) 680px, (min-width: 768px) 50vw, calc(100vw - 32px)', class: 'product-page__image', priority: true}) }}
+                {%- set image_sizes = '(min-width: 1440px) 680px, (min-width: 768px) 50vw, calc(100vw - 32px)' %}
+                {% if detail.gallery is not empty %}
+                    {%- set images = (product.image ? [product.image] : [])|merge(detail.gallery) %}
+                    <div class="product-gallery" data-testid="product-gallery" data-controller="product-gallery">
+                        <div data-product-gallery-target="main">
+                            {{ include('shared/ui/_picture.html.twig', {image: images|first, sizes: image_sizes, class: 'product-page__image', priority: true}) }}
+                        </div>
+                        {% for image in images %}
+                            <template data-product-gallery-target="image">{{ include('shared/ui/_picture.html.twig', {image: image, sizes: image_sizes, class: 'product-page__image'}) }}</template>
+                        {% endfor %}
+                        <ul class="product-gallery__thumbs" role="list">
+                            {% for image in images %}
+                                <li>
+                                    <a class="product-gallery__thumb" href="{{ image.sources is empty ? image.src : (image.sources|last).srcset|split(', ')|last|split(' ')|first }}" aria-label="Voir l’image {{ loop.index }} sur {{ images|length }}"
+                                        {%- if loop.first %} aria-current="true"{% endif %} data-testid="product-gallery-thumb" data-product-gallery-target="thumb" data-action="click->product-gallery#show keydown->product-gallery#move">
+                                        {{- include('shared/ui/_picture.html.twig', {image: image, sizes: '80px', decorative: true}) -}}
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% elseif product.image %}
+                    {{ include('shared/ui/_picture.html.twig', {image: product.image, sizes: image_sizes, class: 'product-page__image', priority: true}) }}
                 {% endif %}
                 <div>
                     <h1 data-testid="product-title">{{ product.name }}</h1>

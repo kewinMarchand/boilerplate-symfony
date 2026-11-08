@@ -2,6 +2,9 @@
 <article class="bui-card article-card" data-testid="{{ testid }}">
     {% if article.image %}<div class="bui-card__media">{{ include('shared/ui/_picture.html.twig', {image: article.image, sizes: sizes, class: 'card__image', priority: priority|default(false)}) }}</div>{% endif %}
     <div class="bui-card__body">
+        {%- if article.section %}
+        <p class="card__section" data-testid="article-section">{{ article.section.name }}</p>
+        {%- endif %}
         {%- set heading = heading|default('h3') %}
         <{{ heading }} class="bui-card__title"><a class="card__link" href="{{ path('article', {slug: article.slug}) }}">{{ article.title }}</a></{{ heading }}>
         <p class="card__excerpt">{{ article.excerpt }}</p>

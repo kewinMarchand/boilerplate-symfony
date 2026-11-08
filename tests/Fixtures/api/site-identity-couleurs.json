@@ -2,6 +2,8 @@
     "name": "Oraki",
     "tagline": "Plantes rares et tropicales, livrées chez vous.",
     "logo": null,
+    "shareImage": null,
+    "icon": null,
     "defaultColorScheme": "dark",
     "theme": {
         "light": {

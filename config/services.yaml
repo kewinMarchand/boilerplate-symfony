@@ -17,6 +17,7 @@ services:
     App\Contact\Domain\ContactMessageSender: '@App\Contact\Infrastructure\Http\HttpContactMessageSender'
     App\Catalog\Domain\CatalogRepository: '@App\Catalog\Infrastructure\Http\HttpCatalogRepository'
     App\Shared\Domain\SiteIdentityRepository: '@App\Shared\Infrastructure\Http\HttpSiteIdentityRepository'
+    App\Shared\Domain\PageMetaRepository: '@App\Shared\Infrastructure\Http\HttpPageMetaRepository'
 
     Kewinmarchand\Csp\Symfony\CspResponseSubscriber:
         factory: ['App\Shared\Infrastructure\Security\SiteCsp', 'subscriber']

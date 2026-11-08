@@ -20,15 +20,25 @@ final readonly class HttpArticleRepository implements ArticleRepository
     {
     }
 
-    public function findLatest(int $limit): array
+    public function findLatest(int $limit, ?string $section = null): array
     {
         try {
-            $articles = ArticleTranslation::articles($this->apiClient->request('GET', '/api/articles')->toArray());
+            $query = null === $section ? [] : ['query' => ['section' => $section]];
+            $articles = ArticleTranslation::articles($this->apiClient->request('GET', '/api/articles', $query)->toArray());
         } catch (ExceptionInterface|InvalidApiPayloadException $exception) {
             throw new ArticlesLoadException($exception);
         }
 
         return \array_slice($articles, 0, $limit);
+    }
+
+    public function sections(): array
+    {
+        try {
+            return ArticleTranslation::terms($this->apiClient->request('GET', '/api/article-sections')->toArray());
+        } catch (ExceptionInterface|InvalidApiPayloadException $exception) {
+            throw new ArticlesLoadException($exception);
+        }
     }
 
     public function find(string $slug): ?ArticleDetail

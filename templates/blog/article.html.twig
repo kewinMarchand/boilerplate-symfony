@@ -7,7 +7,8 @@
     {%- set largest = image ? (image.sources|filter(source => source.type == 'image/webp')|first).srcset|split(', ')|last|split(' ')|first : null -%}
     {%- set seo = seo_page({
         title: article.title,
-        description: article.excerpt ?: article.title,
+        meta_title: detail.metaTitle,
+        description: detail.metaDescription ?: article.excerpt ?: article.title,
         breadcrumb: [{label: 'Blog', path: path('blog')}, {label: article.title}],
         published_time: article.publishedAt|date('Y-m-d'),
         image: image ? {url: largest, width: image.width, height: image.height, alt: image.alt ?: article.title} : null,
@@ -39,11 +40,29 @@
         {#- Le HTML vient de l'API, qui échappe le HTML saisi dans l'admin et retire les liens javascript: et data: : il est injecté tel quel. -#}
         <article class="article prose" data-testid="article-page">
             <h1 data-testid="article-title">{{ article.title }}</h1>
+            {% if article.section or article.format %}
+                <p class="article__terms">
+                    {%- if article.section %}<span data-testid="article-section"><span class="bui-visually-hidden">Rubrique : </span>{{ article.section.name }}</span>{% endif -%}
+                    {%- if article.format %}<span data-testid="article-format"><span class="bui-visually-hidden">Format : </span>{{ article.format.name }}</span>{% endif -%}
+                </p>
+            {% endif %}
             <p class="article__date">Publié le <time datetime="{{ article.publishedAt|date('Y-m-d') }}">{{ article.publishedAt|date('d/m/Y') }}</time></p>
             {% if article.image %}
                 {{ include('shared/ui/_picture.html.twig', {image: article.image, sizes: '(min-width: 800px) 760px, calc(100vw - 32px)', class: 'article__image', priority: true}) }}
             {% endif %}
             {% if article.excerpt %}<p class="article__excerpt">{{ article.excerpt }}</p>{% endif %}
+            {% if article.audio %}
+                <figure class="article__audio">
+                    <figcaption id="article-audio-caption">
+                        Version audio, <time datetime="{{ article.audio.isoDuration }}" data-testid="article-audio-duration">{{ article.audio.readableDuration }}</time>
+                        {%- if article.speaker %}. <span data-testid="article-audio-speaker">{{ article.speaker }}</span>{% endif %}
+                    </figcaption>
+                    <audio controls preload="none" aria-labelledby="article-audio-caption" data-testid="article-audio">
+                        <source src="{{ article.audio.src }}" type="{{ article.audio.type }}">
+                        <a class="bui-link" href="{{ article.audio.src }}">Télécharger la version audio</a>
+                    </audio>
+                </figure>
+            {% endif %}
             <div class="legal-html" data-testid="article-body">{{ detail.html|raw }}</div>
             <p class="article__back"><a href="{{ path('blog') }}">Tous les articles</a></p>
         </article>

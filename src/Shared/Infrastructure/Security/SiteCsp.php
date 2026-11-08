@@ -16,7 +16,7 @@ final class SiteCsp
     private const string APP = 'boilerplate-symfony';
 
     /**
-     * Fabrique de l'abonné qui pose l'en-tête (config/services.yaml) : l'API, qui sert aussi les images de contenu, plus Matomo (script, appels, pixel) et GlitchTip
+     * Fabrique de l'abonné qui pose l'en-tête (config/services.yaml) : l'API, qui sert aussi les images et l'audio de contenu, plus Matomo (script, appels, pixel) et GlitchTip
      * (envoi des erreurs du navigateur) quand ils sont configurés.
      */
     public static function subscriber(string $apiUrl, string $matomoUrl = '', string $glitchtipDsn = ''): CspResponseSubscriber
@@ -33,10 +33,11 @@ final class SiteCsp
     /** @return array<string, list<string>> */
     private static function extra(string $apiUrl, string $matomoUrl, string $glitchtipDsn): array
     {
-        $extra = ['img-src' => [self::originOf($apiUrl)]];
+        $api = self::originOf($apiUrl);
+        $extra = ['img-src' => [$api], 'media-src' => [$api]];
         if ('' !== $matomoUrl) {
             $matomo = self::originOf($matomoUrl);
-            $extra = ['script-src' => [$matomo], 'connect-src' => [$matomo], 'img-src' => [...$extra['img-src'], $matomo]];
+            $extra = [...$extra, 'script-src' => [$matomo], 'connect-src' => [$matomo], 'img-src' => [$api, $matomo]];
         }
         if ('' !== $glitchtipDsn) {
             $extra['connect-src'] = [...$extra['connect-src'] ?? [], self::originOf($glitchtipDsn)];

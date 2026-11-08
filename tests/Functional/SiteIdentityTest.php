@@ -88,4 +88,62 @@ final class SiteIdentityTest extends WebTestCase
         self::assertIsArray($manifest);
         self::assertSame(['Oraki', 'Oraki', '#c2410c'], [$manifest['name'], $manifest['short_name'], $manifest['theme_color']]);
     }
+
+    public function testWithoutIconNorShareImageTheSiteFilesAreServed(): void
+    {
+        $client = self::createClient();
+        $crawler = $client->request('GET', '/contact');
+
+        self::assertSame('/favicon.ico', $crawler->filter('link[rel="icon"]')->first()->attr('href'));
+        self::assertSame('/apple-touch-icon.png', $crawler->filter('link[rel="apple-touch-icon"]')->attr('href'));
+        self::assertStringEndsWith('/og-image.jpg', (string) $crawler->filter('meta[property="og:image"]')->attr('content'));
+    }
+
+    public function testWithIconAndShareImageTheApiFilesAreServed(): void
+    {
+        $client = self::createClient();
+        $crawler = $client->request('GET', '/contact', server: ['HTTP_X_SCENARIO' => 'identite-icone']);
+
+        $icons = $crawler->filter('link[rel="icon"]');
+        self::assertCount(1, $icons);
+        self::assertSame(['http://localhost:3232/media/icone-oraki-32.png', 'image/png', '32x32'], [$icons->attr('href'), $icons->attr('type'), $icons->attr('sizes')]);
+        self::assertSame('http://localhost:3232/media/icone-oraki-180.png', $crawler->filter('link[rel="apple-touch-icon"]')->attr('href'));
+        self::assertSame('http://localhost:3232/media/partage-oraki-1200.webp', $crawler->filter('meta[property="og:image"]')->attr('content'));
+        self::assertSame('http://localhost:3232/media/partage-oraki-1200.webp', $crawler->filter('meta[name="twitter:image"]')->attr('content'));
+        self::assertSame('Serre de plantes tropicales Oraki', $crawler->filter('meta[property="og:image:alt"]')->attr('content'));
+    }
+
+    public function testThePageImageWinsOverTheShareImage(): void
+    {
+        $client = self::createClient();
+        $crawler = $client->request('GET', '/produit/monstera-deliciosa', server: ['HTTP_X_SCENARIO' => 'identite-icone']);
+
+        self::assertStringEndsWith('01272a8b6d3f8221cfe5a2a36aefcd35-800.webp', (string) $crawler->filter('meta[property="og:image"]')->attr('content'));
+    }
+
+    public function testTheManifestIconsComeFromTheApiWhenSet(): void
+    {
+        $client = self::createClient();
+        $client->request('GET', '/manifest.webmanifest', server: ['HTTP_X_SCENARIO' => 'identite-icone']);
+        $withIcon = json_decode((string) $client->getResponse()->getContent(), true, flags: \JSON_THROW_ON_ERROR);
+        $client->request('GET', '/manifest.webmanifest');
+        $withoutIcon = json_decode((string) $client->getResponse()->getContent(), true, flags: \JSON_THROW_ON_ERROR);
+
+        self::assertIsArray($withIcon);
+        self::assertIsArray($withIcon['icons']);
+        self::assertIsArray($withoutIcon);
+        self::assertIsArray($withoutIcon['icons']);
+        self::assertSame(['http://localhost:3232/media/icone-oraki-192.png', 'http://localhost:3232/media/icone-oraki-512.png'], array_column($withIcon['icons'], 'src'));
+        self::assertSame(['/icon-192.png', '/icon-512.png'], array_column($withoutIcon['icons'], 'src'));
+    }
+
+    public function testTheOrganizationLogoIsTheApiIconWhenSet(): void
+    {
+        $client = self::createClient();
+        $withIcon = $client->request('GET', '/', server: ['HTTP_X_SCENARIO' => 'identite-icone']);
+        self::assertStringContainsString('"logo":"http://localhost:3232/media/icone-oraki-512.png"', $withIcon->filter('script[type="application/ld+json"]')->first()->text());
+
+        $withoutIcon = $client->request('GET', '/');
+        self::assertMatchesRegularExpression('#"logo":"https?://[^"]+/icon-512\.png"#', $withoutIcon->filter('script[type="application/ld+json"]')->first()->text());
+    }
 }

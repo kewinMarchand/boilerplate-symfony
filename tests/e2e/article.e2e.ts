@@ -25,7 +25,7 @@ test.describe('Fiche article', () => {
     await expect(page.getByTestId('article-title')).toHaveText(
       'Un carrousel accessible sans dépendance',
     )
-    await expect(page.getByTestId('article-page').locator('time')).toHaveAttribute(
+    await expect(page.getByTestId('article-page').locator('time').first()).toHaveAttribute(
       'datetime',
       '2026-09-22',
     )
@@ -72,5 +72,26 @@ test.describe('Fiche article', () => {
     const response = await page.goto('/blog/article-inconnu')
 
     expect(response?.status()).toBe(404)
+  })
+
+  test('affiche la rubrique, le format et le lecteur audio avec sa durée et son intervenant', async ({ page }) => {
+    await page.goto('/blog/un-carrousel-accessible-sans-dependance')
+
+    await expect(page.getByTestId('article-page').getByTestId('article-section')).toHaveText('Rubrique : Conseils')
+    await expect(page.getByTestId('article-format')).toHaveCount(0)
+    const audio = page.getByTestId('article-audio')
+    await expect(audio).toHaveAttribute('controls', '')
+    await expect(audio).toHaveAttribute('preload', 'none')
+    await expect(audio).not.toHaveAttribute('autoplay')
+    expect(await audio.evaluate((element: HTMLAudioElement) => element.paused)).toBe(true)
+    await expect(page.getByTestId('article-audio-duration')).toHaveText('4 s')
+    await expect(page.getByTestId('article-audio-speaker')).toHaveText('Présenté par Hina Teriierooiterai')
+  })
+
+  test('affiche le format sans lecteur audio quand l’article n’en a pas', async ({ page }) => {
+    await page.goto('/blog/pourquoi-rendre-le-contenu-cote-serveur')
+
+    await expect(page.getByTestId('article-format')).toHaveText('Format : Guide')
+    await expect(page.getByTestId('article-audio')).toHaveCount(0)
   })
 })

@@ -19,6 +19,33 @@ final class ArticleTranslationTest extends TestCase
         self::assertSame('2026-10-01', $articles[0]->publishedAt->format('Y-m-d'));
     }
 
+    public function testTranslatesTheSectionTheFormatAndTheAudio(): void
+    {
+        [$latest, $withAudio, $guide] = ArticleTranslation::articles(self::payload('articles'));
+
+        self::assertSame('Actualités', $latest->section?->name);
+        self::assertNull($latest->format);
+        self::assertNull($latest->audio);
+        self::assertSame('', $latest->speaker);
+        self::assertSame(['guide', 'Guide'], [$guide->format?->slug, $guide->format?->name]);
+        self::assertSame('audio/mpeg', $withAudio->audio?->type);
+        self::assertSame(4, $withAudio->audio->durationSeconds);
+        self::assertSame('Présenté par Hina Teriierooiterai', $withAudio->speaker);
+    }
+
+    public function testTranslatesTheDetailWithItsMetadata(): void
+    {
+        $detail = ArticleTranslation::detail(self::payload('article-un-carrousel-accessible-sans-dependance'));
+
+        self::assertSame('conseils', $detail->article->section?->slug);
+        self::assertSame(['', ''], [$detail->metaTitle, $detail->metaDescription]);
+    }
+
+    public function testTranslatesTheSectionsInOrder(): void
+    {
+        self::assertSame(['Conseils', 'Actualités'], array_map(static fn ($section): string => $section->name, ArticleTranslation::terms(self::payload('article-sections'))));
+    }
+
     public function testRejectsAMalformedDate(): void
     {
         $this->expectException(InvalidApiPayloadException::class);

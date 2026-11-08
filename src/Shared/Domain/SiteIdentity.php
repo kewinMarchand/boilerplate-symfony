@@ -6,7 +6,7 @@ namespace App\Shared\Domain;
 
 /**
  * Identité du site administrée dans l'API (section 22 de la spec commune) : nom, accroche, logo, thème servi par défaut
- * et couleurs de marque, null tant qu'aucune n'est saisie.
+ * et couleurs de marque, null tant qu'aucune n'est saisie, plus l'image de partage et l'icône (section 26 et 22).
  */
 final readonly class SiteIdentity
 {
@@ -19,6 +19,8 @@ final readonly class SiteIdentity
         public ?Image $logo,
         public string $defaultColorScheme,
         public ?SiteTheme $theme,
+        public ?Image $shareImage,
+        public ?SiteIcon $icon,
     ) {
     }
 }

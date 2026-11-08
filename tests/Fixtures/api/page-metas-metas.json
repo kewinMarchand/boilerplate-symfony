@@ -1,0 +1,42 @@
+[
+    {
+        "page": "home",
+        "title": "",
+        "description": ""
+    },
+    {
+        "page": "catalog",
+        "title": "",
+        "description": ""
+    },
+    {
+        "page": "blog",
+        "title": "Le blog du modèle : rendu serveur et accessibilité",
+        "description": "Conseils et actualités du modèle : rendu serveur, accessibilité, composants sans dépendance."
+    },
+    {
+        "page": "contact",
+        "title": "",
+        "description": ""
+    },
+    {
+        "page": "sitemap",
+        "title": "",
+        "description": ""
+    },
+    {
+        "page": "legal-notice",
+        "title": "",
+        "description": ""
+    },
+    {
+        "page": "privacy",
+        "title": "",
+        "description": ""
+    },
+    {
+        "page": "accessibility",
+        "title": "",
+        "description": ""
+    }
+]

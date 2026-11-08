@@ -37,7 +37,7 @@ final class SiteIdentityProvider
         try {
             return $this->repository->current();
         } catch (SiteIdentityLoadException) {
-            return new SiteIdentity($this->site['name'], $this->site['description'], null, 'auto', null);
+            return new SiteIdentity($this->site['name'], $this->site['description'], null, 'auto', null, null, null);
         }
     }
 }

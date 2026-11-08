@@ -15,6 +15,10 @@ final readonly class Article
         public string $excerpt,
         public \DateTimeImmutable $publishedAt,
         public ?Image $image,
+        public ?ArticleTerm $section,
+        public ?ArticleTerm $format,
+        public ?ArticleAudio $audio,
+        public string $speaker,
     ) {
     }
 }

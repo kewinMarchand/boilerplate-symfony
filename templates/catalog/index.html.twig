@@ -10,6 +10,7 @@
 {%- endfor -%}
 {%- set page_suffix = page > 1 ? ', page ' ~ page : '' -%}
 {%- set seo = seo_page({
+    page: categoryPath.isRoot and page == 1 ? 'catalog' : null,
     title: (categoryPath.isRoot ? 'Catalogue' : category.name ~ ' · Catalogue') ~ page_suffix,
     description: 'Jardinerie tropicale fictive : ' ~ (categoryPath.isRoot ? 'tout le catalogue' : category.name|lower) ~ ', à filtrer par exposition, taille, prix et disponibilité. Livraison et conseils d’entretien.',
     breadcrumb: breadcrumb,

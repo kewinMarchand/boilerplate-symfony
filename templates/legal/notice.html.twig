@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% set seo = seo_page({title: 'Mentions légales', description: 'Mentions légales du site ' ~ site_identity().name ~ ' : éditeur, directeur de la publication, hébergeur et propriété intellectuelle.'}) %}
+{% set seo = seo_page({page: 'legal-notice', title: 'Mentions légales', description: 'Mentions légales du site ' ~ site_identity().name ~ ' : éditeur, directeur de la publication, hébergeur et propriété intellectuelle.'}) %}
 
 {% block body %}
     <article class="prose">

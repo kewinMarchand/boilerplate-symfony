@@ -2,13 +2,13 @@
     Image responsive AVIF puis WebP.
     image : objet image du contrat de l'API (App\Shared\Domain\Image), ou, pour une image livrée par le site,
     name : préfixe dans assets/images (ex. 'hero') et widths : variantes disponibles, ratio 16:9, alt vide.
-    sizes, class, loading ('lazy' par défaut), priority (true pour l'image LCP).
+    sizes, class, loading ('lazy' par défaut), priority (true pour l'image LCP), decorative (true : alt vide, image nommée par son parent).
 -#}
 {%- set priority = priority|default(false) -%}
 {%- if image is defined -%}
     {%- set sources = image.sources -%}
     {%- set src = image.src -%}
-    {%- set alt = image.alt -%}
+    {%- set alt = decorative|default(false) ? '' : image.alt -%}
     {%- set width = image.width -%}
     {%- set height = image.height -%}
 {%- else -%}

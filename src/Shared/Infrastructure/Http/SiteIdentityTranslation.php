@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Shared\Infrastructure\Http;
 
+use App\Shared\Domain\SiteIcon;
 use App\Shared\Domain\SiteIdentity;
 use App\Shared\Domain\SiteTheme;
 
@@ -25,6 +26,21 @@ final class SiteIdentityTranslation
             ApiPayload::image($identity, 'logo'),
             $colorScheme,
             null === ($identity['theme'] ?? null) ? null : self::theme(ApiPayload::object($identity['theme'], 'theme')),
+            ApiPayload::image($identity, 'shareImage'),
+            null === ($identity['icon'] ?? null) ? null : self::icon(ApiPayload::object($identity['icon'], 'icon')),
+        );
+    }
+
+    /**
+     * @param array<string, mixed> $icon
+     */
+    private static function icon(array $icon): SiteIcon
+    {
+        return new SiteIcon(
+            ApiPayload::string($icon, 'png32'),
+            ApiPayload::string($icon, 'png180'),
+            ApiPayload::string($icon, 'png192'),
+            ApiPayload::string($icon, 'png512'),
         );
     }
 

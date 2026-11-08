@@ -8,8 +8,9 @@ use Symfony\Component\HttpClient\Response\MockResponse;
 
 /**
  * Remplace l'API en test par des réponses réelles capturées sur l'API (tests/Fixtures/api/),
- * avec X-Scenario comme l'API : `error` répond 500, `empty` répond une liste vide. `identite-logo` et `identite-couleurs`
- * servent une identité du site avec logo ou avec couleurs, que l'API locale n'a pas par défaut.
+ * avec X-Scenario comme l'API : `error` répond 500, `empty` répond une liste vide. `identite-logo`, `identite-couleurs` et
+ * `identite-icone` servent une identité du site avec logo, avec couleurs ou avec icône et image de partage, et `metas` une
+ * fiche produit ou article avec métadonnées saisies et un titre saisi pour le blog, que l'API locale n'a pas par défaut.
  */
 final class ApiMockResponseFactory
 {
@@ -32,8 +33,19 @@ final class ApiMockResponseFactory
 
         return match ($path) {
             '/api/tasks' => self::fixture('empty' === $scenario ? null : 'tasks'),
-            '/api/articles' => self::fixture('empty' === $scenario ? null : 'articles'),
-            '/api/articles/un-carrousel-accessible-sans-dependance' => self::fixture('article-'.basename($path)),
+            '/api/articles' => self::fixture(match (true) {
+                'empty' === $scenario => null,
+                !isset($query['section']) => 'articles',
+                'conseils' === $query['section'] => 'articles-conseils',
+                default => null,
+            }),
+            '/api/article-sections' => self::fixture('empty' === $scenario ? null : 'article-sections'),
+            '/api/page-metas' => self::fixture(match ($scenario) {
+                'empty' => null,
+                'metas' => 'page-metas-metas',
+                default => 'page-metas',
+            }),
+            '/api/articles/un-carrousel-accessible-sans-dependance' => self::fixture('article-'.basename($path), 'metas' === $scenario),
             '/api/categories' => self::fixture('categories'),
             '/api/products' => self::fixture(match (true) {
                 'empty' === $scenario, isset($query['priceMax']) => 'products-empty',
@@ -47,10 +59,12 @@ final class ApiMockResponseFactory
             }),
             '/api/contact_messages' => self::contact($options),
             '/api/featured-products' => self::fixture('empty' === $scenario ? null : 'featured-products'),
-            '/api/products/monstera-deliciosa' => self::fixture('product-'.basename($path)),
+            '/api/products/monstera-deliciosa' => self::fixture('product-'.basename($path), 'metas' === $scenario),
+            '/api/products/monstera-adansonii' => self::fixture('product-'.basename($path)),
             '/api/site-identity' => self::fixture(match ($scenario) {
                 'identite-logo' => 'site-identity-logo',
                 'identite-couleurs' => 'site-identity-couleurs',
+                'identite-icone' => 'site-identity-icone',
                 default => 'site-identity',
             }),
             '/api/legal_pages/mentions-legales', '/api/legal_pages/donnees-personnelles', '/api/legal_pages/accessibilite' => self::fixture('legal-page-'.basename($path)),
@@ -58,9 +72,17 @@ final class ApiMockResponseFactory
         };
     }
 
-    private static function fixture(?string $name): MockResponse
+    /**
+     * @param bool $withMetas fiche avec les métadonnées de metas.json à la place des chaînes vides capturées
+     */
+    private static function fixture(?string $name, bool $withMetas = false): MockResponse
     {
-        return new MockResponse(null === $name ? '[]' : (string) file_get_contents(self::FIXTURES.$name.'.json'), [
+        $body = null === $name ? '[]' : (string) file_get_contents(self::FIXTURES.$name.'.json');
+        if ($withMetas) {
+            $body = (string) json_encode([...(array) json_decode($body, true), ...(array) json_decode((string) file_get_contents(self::FIXTURES.'metas.json'), true)]);
+        }
+
+        return new MockResponse($body, [
             'response_headers' => ['content-type' => 'application/json'],
         ]);
     }

@@ -20,6 +20,17 @@ final class SiteIdentityTranslationTest extends TestCase
         self::assertNull($identity->logo);
         self::assertSame('auto', $identity->defaultColorScheme);
         self::assertNull($identity->theme);
+        self::assertNull($identity->shareImage);
+        self::assertNull($identity->icon);
+    }
+
+    public function testTranslatesTheIconAndTheShareImage(): void
+    {
+        $identity = SiteIdentityTranslation::identity(self::fixture('site-identity-icone'));
+
+        self::assertSame('http://localhost:3232/media/icone-oraki-32.png', $identity->icon?->png32);
+        self::assertSame('http://localhost:3232/media/icone-oraki-512.png', $identity->icon->png512);
+        self::assertSame([1200, 630], [$identity->shareImage?->width, $identity->shareImage?->height]);
     }
 
     public function testTranslatesTheLogo(): void

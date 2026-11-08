@@ -106,8 +106,27 @@ final class ApiPayload
         if (null === ($object[$key] ?? null)) {
             return null;
         }
-        $image = self::object($object[$key], $key);
 
+        return self::imageOf(self::object($object[$key], $key), $key);
+    }
+
+    /**
+     * Liste d'objets `image` du contrat, dans l'ordre de l'API.
+     *
+     * @param array<string, mixed> $object
+     *
+     * @return list<Image>
+     */
+    public static function images(array $object, string $key): array
+    {
+        return array_map(static fn (array $image): Image => self::imageOf($image, $key.'[]'), self::objects($object[$key] ?? null, $key));
+    }
+
+    /**
+     * @param array<string, mixed> $image
+     */
+    private static function imageOf(array $image, string $key): Image
+    {
         return new Image(
             self::string($image, 'alt'),
             self::int($image, 'width'),

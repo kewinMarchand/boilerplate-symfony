@@ -1,5 +1,7 @@
 {% extends 'base.html.twig' %}
 
+{%- set seo = seo_page({page: 'home'}) -%}
+
 {% block preload %}
     <link rel="preload" as="image" type="image/avif" imagesrcset="{{ asset('images/hero-640.avif') }} 640w, {{ asset('images/hero-1280.avif') }} 1280w, {{ asset('images/hero-1920.avif') }} 1920w" imagesizes="100vw" fetchpriority="high">
 {% endblock %}

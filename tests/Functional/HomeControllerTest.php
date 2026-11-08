@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional;
 
+use App\Blog\Domain\Article;
 use App\Blog\Domain\ArticleDetail;
 use App\Blog\Domain\ArticleRepository;
 use App\Blog\Domain\ArticlesLoadException;
@@ -39,7 +40,12 @@ final class HomeControllerTest extends WebTestCase
     {
         $client = self::createClient();
         self::getContainer()->set(ArticleRepository::class, new class implements ArticleRepository {
-            public function findLatest(int $limit): array
+            public function findLatest(int $limit, ?string $section = null): array
+            {
+                return [];
+            }
+
+            public function sections(): array
             {
                 return [];
             }
@@ -61,10 +67,15 @@ final class HomeControllerTest extends WebTestCase
         $repository = new class implements ArticleRepository {
             public ?int $limit = null;
 
-            public function findLatest(int $limit): array
+            public function findLatest(int $limit, ?string $section = null): array
             {
                 $this->limit = $limit;
 
+                return [];
+            }
+
+            public function sections(): array
+            {
                 return [];
             }
 
@@ -83,9 +94,14 @@ final class HomeControllerTest extends WebTestCase
     {
         $client = self::createClient();
         self::getContainer()->set(ArticleRepository::class, new class implements ArticleRepository {
-            public function findLatest(int $limit): array
+            public function findLatest(int $limit, ?string $section = null): array
             {
                 throw new ArticlesLoadException();
+            }
+
+            public function sections(): array
+            {
+                return [];
             }
 
             public function find(string $slug): ?ArticleDetail
@@ -170,5 +186,30 @@ final class HomeControllerTest extends WebTestCase
                 return $this->real->productSlugs();
             }
         });
+    }
+
+    public function testACardWithoutSectionHasNoOvertitle(): void
+    {
+        $client = self::createClient();
+        self::getContainer()->set(ArticleRepository::class, new class implements ArticleRepository {
+            public function findLatest(int $limit, ?string $section = null): array
+            {
+                return [new Article('1', 'sans-rubrique', 'Sans rubrique', 'Extrait', new \DateTimeImmutable('2026-10-01'), null, null, null, null, '')];
+            }
+
+            public function sections(): array
+            {
+                return [];
+            }
+
+            public function find(string $slug): ?ArticleDetail
+            {
+                return null;
+            }
+        });
+        $client->request('GET', '/');
+
+        self::assertSelectorCount(1, '[data-testid="home-blog-card"]');
+        self::assertSelectorNotExists('[data-testid="article-section"]');
     }
 }

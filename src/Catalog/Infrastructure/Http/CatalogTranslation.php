@@ -100,7 +100,14 @@ final class CatalogTranslation
 
         $paragraphs = array_map(trim(...), preg_split('/\n\s*\n/', ApiPayload::string($data, 'description')) ?: []);
 
-        return new ProductDetail(self::product($data), $path, array_values(array_filter($paragraphs, static fn (string $paragraph): bool => '' !== $paragraph)));
+        return new ProductDetail(
+            self::product($data),
+            $path,
+            array_values(array_filter($paragraphs, static fn (string $paragraph): bool => '' !== $paragraph)),
+            ApiPayload::images($data, 'gallery'),
+            ApiPayload::string($data, 'metaTitle'),
+            ApiPayload::string($data, 'metaDescription'),
+        );
     }
 
     /**

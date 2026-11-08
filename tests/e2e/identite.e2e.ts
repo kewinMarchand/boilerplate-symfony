@@ -118,3 +118,35 @@ test.describe('Identité du site avec couleurs @identite', () => {
     }
   }
 })
+
+test.describe('Icône et image de partage du site', () => {
+  test('sans icône ni image de partage, les fichiers du site', async ({ page }) => {
+    await page.goto('/contact')
+
+    await expect(page.locator('link[rel="icon"]')).toHaveCount(2)
+    await expect(page.locator('link[rel="icon"]').first()).toHaveAttribute('href', '/favicon.ico')
+    await expect(page.locator('link[rel="apple-touch-icon"]')).toHaveAttribute('href', '/apple-touch-icon.png')
+    await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', /\/og-image\.jpg$/)
+  })
+})
+
+test.describe('Icône et image de partage du site saisies @identite', () => {
+  test('les favicons, le manifeste et og:image pointent vers les fichiers de l’API', async ({ page, request }) => {
+    await page.setExtraHTTPHeaders({ 'X-Scenario': 'identite-icone' })
+    await page.goto('/contact')
+
+    const icon = page.locator('link[rel="icon"]')
+    await expect(icon).toHaveCount(1)
+    await expect(icon).toHaveAttribute('href', 'http://localhost:3232/media/icone-oraki-32.png')
+    await expect(icon).toHaveAttribute('sizes', '32x32')
+    await expect(page.locator('link[rel="apple-touch-icon"]')).toHaveAttribute('href', 'http://localhost:3232/media/icone-oraki-180.png')
+    await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', 'http://localhost:3232/media/partage-oraki-1200.webp')
+    await expect(page.locator('meta[name="twitter:image"]')).toHaveAttribute('content', 'http://localhost:3232/media/partage-oraki-1200.webp')
+
+    const manifest = await (await request.get('/manifest.webmanifest', { headers: { 'X-Scenario': 'identite-icone' } })).json()
+    expect(manifest.icons.map((item: { src: string }) => item.src)).toEqual([
+      'http://localhost:3232/media/icone-oraki-192.png',
+      'http://localhost:3232/media/icone-oraki-512.png',
+    ])
+  })
+})

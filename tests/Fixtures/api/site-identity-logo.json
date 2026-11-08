@@ -13,6 +13,8 @@
         ],
         "src": "http://localhost:3232/media/logo-oraki-200.webp"
     },
+    "shareImage": null,
+    "icon": null,
     "defaultColorScheme": "auto",
     "theme": null
 }

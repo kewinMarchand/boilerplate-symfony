@@ -6,13 +6,15 @@ namespace App\Blog\Domain;
 
 /**
  * Fiche d'un article : l'article et son texte en HTML, converti par l'API depuis le Markdown saisi dans l'admin
- * (HTML saisi échappé, liens javascript: et data: retirés).
+ * (HTML saisi échappé, liens javascript: et data: retirés), et ses métadonnées saisies (chaînes vides si non saisies).
  */
 final readonly class ArticleDetail
 {
     public function __construct(
         public Article $article,
         public string $html,
+        public string $metaTitle,
+        public string $metaDescription,
     ) {
     }
 }

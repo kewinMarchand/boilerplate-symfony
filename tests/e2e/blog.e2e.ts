@@ -63,4 +63,41 @@ test.describe('Blog, états de l’API', () => {
     await expect(page.getByTestId('blog-error')).toContainText('Impossible de charger les articles pour le moment.')
     await expect(page.getByTestId('blog-retry')).toHaveAttribute('href', '/blog')
   })
+
+  test('chaque carte porte sa rubrique en sur-titre', async ({ page }) => {
+    await page.goto('/blog')
+
+    await expect(page.getByTestId('blog-card').getByTestId('article-section')).toHaveText(['Actualités', 'Conseils', 'Conseils'])
+  })
+
+  test('le filtre par rubrique met à jour l’URL et la liste', async ({ page }) => {
+    await page.goto('/blog')
+
+    const nav = page.getByRole('navigation', { name: 'Rubriques' })
+    const links = nav.getByTestId('blog-section-link')
+    await expect(links).toHaveText(['Toutes', 'Conseils', 'Actualités'])
+    await expect(links.first()).toHaveAttribute('aria-current', 'page')
+    await links.nth(1).click()
+
+    await expect(page).toHaveURL(/\/blog\?rubrique=conseils$/)
+    await expect(page.getByTestId('blog-card')).toHaveCount(2)
+    await expect(page.getByTestId('blog-section-link').nth(1)).toHaveAttribute('aria-current', 'page')
+    await expect(page.getByTestId('blog-section-link').first()).not.toHaveAttribute('aria-current')
+  })
+
+  test('sans rubrique, aucun filtre', async ({ page }) => {
+    await page.setExtraHTTPHeaders({ 'X-Scenario': 'empty' })
+    await page.goto('/blog')
+
+    await expect(page.getByTestId('blog-empty')).toBeVisible()
+    await expect(page.getByTestId('blog-sections')).toHaveCount(0)
+  })
+
+  test('la description saisie dans l’admin remplace celle de la page, le titre non saisi reste', async ({ page }) => {
+    await page.goto('/blog')
+
+    await expect(page).toHaveTitle('Blog · Boilerplate')
+    await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /^Conseils et actualités du modèle/)
+    await expect(page.locator('meta[property="og:description"]')).toHaveAttribute('content', /^Conseils et actualités du modèle/)
+  })
 })

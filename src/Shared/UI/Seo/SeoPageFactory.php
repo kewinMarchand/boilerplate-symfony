@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Shared\UI\Seo;
 
+use App\Shared\Domain\PageMeta;
+use App\Shared\Domain\PageMetaRepository;
+use App\Shared\Domain\PageMetasLoadException;
 use App\Shared\UI\SiteIdentityProvider;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -26,6 +29,7 @@ final readonly class SeoPageFactory
         private RequestStack $requestStack,
         private UrlGeneratorInterface $urlGenerator,
         private SiteIdentityProvider $siteIdentity,
+        private PageMetaRepository $pageMetas,
     ) {
     }
 
@@ -41,7 +45,11 @@ final readonly class SeoPageFactory
      *     next?: string|null,
      *     image?: array{url: string, width: int, height: int, alt: string},
      *     published_time?: string,
-     * } $options chemins relatifs à l'URL du site ; image : adresse absolue (image servie par l'API) ; published_time : page d'article, AAAA-MM-JJ
+     *     page?: string,
+     *     meta_title?: string,
+     * } $options chemins relatifs à l'URL du site ; image : adresse absolue (image servie par l'API) ; published_time : page d'article, AAAA-MM-JJ ;
+     *   page : clé de la page fixe dont le titre et la description saisis dans l'admin remplacent ceux de la vue ;
+     *   meta_title : titre saisi dans l'admin (produit, article). Un titre saisi est servi tel quel, sans le nom du site
      */
     public function create(array $options = []): SeoPage
     {
@@ -51,6 +59,17 @@ final readonly class SeoPageFactory
         $route = \is_string($route) ? $route : null;
         $title = $options['title'] ?? null;
         $identity = $this->siteIdentity->current();
+        $meta = isset($options['page']) ? $this->pageMeta($options['page']) : null;
+        $pageTitle = $meta->title ?? '';
+        $enteredTitle = '' !== $pageTitle ? $pageTitle : ($options['meta_title'] ?? '');
+        $metaDescription = $meta->description ?? '';
+        $shareImage = $identity->shareImage;
+        $image = $options['image'] ?? (null === $shareImage ? null : [
+            'url' => $shareImage->src,
+            'width' => $shareImage->width,
+            'height' => $shareImage->height,
+            'alt' => '' !== $shareImage->alt ? $shareImage->alt : null,
+        ]);
 
         $canonicalPath = $options['canonical'] ?? (null !== $route ? $this->currentPath($route) : false);
         $canonical = false === $canonicalPath ? null : $siteUrl.$canonicalPath;
@@ -58,7 +77,7 @@ final readonly class SeoPageFactory
 
         $jsonLd = $options['json_ld'] ?? [];
         if ('home' === $route) {
-            $jsonLd = [...$this->organizationJsonLd($siteUrl, $identity->name), ...$jsonLd];
+            $jsonLd = [...$this->organizationJsonLd($siteUrl, $identity->name, $identity->icon->png512 ?? $siteUrl.'/icon-512.png'), ...$jsonLd];
         }
         $breadcrumbJsonLd = $breadcrumb->jsonLd($siteUrl, $canonical ?? $siteUrl.($request?->getPathInfo() ?? '/'));
         if (null !== $breadcrumbJsonLd) {
@@ -66,20 +85,34 @@ final readonly class SeoPageFactory
         }
 
         return new SeoPage(
-            null === $title ? $identity->name : $title.' · '.$identity->name,
-            $options['description'] ?? ('' !== $identity->tagline ? $identity->tagline : $this->site['description']),
+            match (true) {
+                '' !== $enteredTitle => $enteredTitle,
+                null === $title => $identity->name,
+                default => $title.' · '.$identity->name,
+            },
+            '' !== $metaDescription ? $metaDescription : ($options['description'] ?? ('' !== $identity->tagline ? $identity->tagline : $this->site['description'])),
             $canonical,
             $options['robots'] ?? 'index, follow',
-            $options['image']['url'] ?? $siteUrl.'/og-image.jpg',
-            $options['image']['alt'] ?? $identity->name.' : jardin tropical luxuriant',
+            $image['url'] ?? $siteUrl.'/og-image.jpg',
+            $image['alt'] ?? $identity->name.' : jardin tropical luxuriant',
             $breadcrumb,
             array_map(static fn (array $data): string => json_encode($data, self::JSON_FLAGS), $jsonLd),
             isset($options['prev']) ? $siteUrl.$options['prev'] : null,
             isset($options['next']) ? $siteUrl.$options['next'] : null,
-            $options['image']['width'] ?? 1200,
-            $options['image']['height'] ?? 630,
+            $image['width'] ?? 1200,
+            $image['height'] ?? 630,
             $options['published_time'] ?? null,
         );
+    }
+
+    private function pageMeta(string $page): ?PageMeta
+    {
+        try {
+            return $this->pageMetas->all()[$page] ?? null;
+        } catch (PageMetasLoadException) {
+            // API indisponible : la page garde le titre et la description de la vue
+            return null;
+        }
     }
 
     private function currentPath(string $route): string
@@ -112,7 +145,7 @@ final readonly class SeoPageFactory
     /**
      * @return list<array<string, mixed>>
      */
-    private function organizationJsonLd(string $siteUrl, string $name): array
+    private function organizationJsonLd(string $siteUrl, string $name, string $logo): array
     {
         return [
             [
@@ -120,7 +153,7 @@ final readonly class SeoPageFactory
                 '@type' => 'Organization',
                 'name' => $name,
                 'url' => $siteUrl.'/',
-                'logo' => $siteUrl.'/icon-512.png',
+                'logo' => $logo,
             ],
             [
                 '@context' => 'https://schema.org',

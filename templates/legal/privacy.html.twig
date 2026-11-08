@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% set seo = seo_page({title: 'Données personnelles', description: 'Politique de protection des données personnelles du site ' ~ site_identity().name ~ ' : finalité, base légale, durée de conservation et droits.'}) %}
+{% set seo = seo_page({page: 'privacy', title: 'Données personnelles', description: 'Politique de protection des données personnelles du site ' ~ site_identity().name ~ ' : finalité, base légale, durée de conservation et droits.'}) %}
 
 {% block body %}
     <article class="prose">

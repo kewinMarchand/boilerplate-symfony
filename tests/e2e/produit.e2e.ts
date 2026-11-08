@@ -87,4 +87,90 @@ test.describe('Fiche produit', () => {
 
     expect(response?.status()).toBe(404)
   })
+
+  test('galerie : vignettes en boutons, la première affichée', async ({ page }) => {
+    await page.goto(PRODUCT)
+
+    const thumbs = page.getByTestId('product-gallery').getByTestId('product-gallery-thumb')
+    await expect(thumbs).toHaveCount(3)
+    await expect(thumbs.first()).toHaveAccessibleName('Voir l’image 1 sur 3')
+    await expect(thumbs.first()).toHaveAttribute('aria-current', 'true')
+    await expect(page.getByTestId('product-gallery').getByRole('button')).toHaveCount(3)
+    await expect(thumbs.first().locator('img')).toHaveAttribute('loading', 'lazy')
+    await expect(page.getByTestId('product-gallery').locator('img').first()).toHaveAttribute('fetchpriority', 'high')
+  })
+
+  test('galerie : un clic sur une vignette remplace l’image affichée', async ({ page }) => {
+    await page.goto(PRODUCT)
+
+    const thumbs = page.getByTestId('product-gallery-thumb')
+    const main = page.getByTestId('product-gallery').locator('img').first()
+    await expect(main).toHaveAttribute('src', /01272a8b6d3f8221cfe5a2a36aefcd35/)
+    await thumbs.nth(1).click()
+
+    await expect(main).toHaveAttribute('src', /a32d6e246a7553a3f0304c6fc434a220/)
+    await expect(thumbs.nth(1)).toHaveAttribute('aria-current', 'true')
+    await expect(thumbs.first()).not.toHaveAttribute('aria-current')
+  })
+
+  test('galerie : les flèches du clavier passent d’une vignette à l’autre', async ({ page }) => {
+    await page.goto(PRODUCT)
+
+    const thumbs = page.getByTestId('product-gallery-thumb')
+    const main = page.getByTestId('product-gallery').locator('img').first()
+    await expect(page.getByTestId('product-gallery').getByRole('button')).toHaveCount(3)
+    await thumbs.first().focus()
+    await page.keyboard.press('ArrowRight')
+
+    await expect(thumbs.nth(1)).toBeFocused()
+    await expect(thumbs.nth(1)).toHaveAttribute('aria-current', 'true')
+    await expect(main).toHaveAttribute('src', /a32d6e246a7553a3f0304c6fc434a220/)
+
+    await page.keyboard.press('ArrowLeft')
+    await page.keyboard.press('ArrowLeft')
+    await expect(thumbs.nth(2)).toBeFocused()
+    await expect(main).toHaveAttribute('src', /b1a780cf9c0bdcfcce00f31e0056be87/)
+  })
+
+  test('n’affiche aucune galerie sans image supplémentaire', async ({ page }) => {
+    await page.goto('/produit/monstera-thai-constellation')
+
+    await expect(page.getByTestId('product-title')).toHaveText('Monstera Thai Constellation')
+    await expect(page.getByTestId('product-gallery')).toHaveCount(0)
+    await expect(page.getByTestId('product-page').locator('img').first()).toHaveAttribute('fetchpriority', 'high')
+  })
+})
+
+test.describe('Fiche produit sans JavaScript', () => {
+  test.use({ javaScriptEnabled: false })
+
+  test('les vignettes de la galerie sont des liens vers l’image en grand', async ({ page }) => {
+    await page.goto(PRODUCT)
+
+    const thumbs = page.getByTestId('product-gallery-thumb')
+    await expect(thumbs).toHaveCount(3)
+    await expect(page.getByTestId('product-gallery').getByRole('link')).toHaveCount(3)
+    await expect(thumbs.nth(1)).toHaveAttribute('href', /a32d6e246a7553a3f0304c6fc434a220-800\.webp$/)
+  })
+})
+
+test.describe('Fiche produit avec métadonnées saisies @identite', () => {
+  test('le titre et la description saisis remplacent ceux calculés', async ({ page }) => {
+    await page.setExtraHTTPHeaders({ 'X-Scenario': 'metas' })
+    await page.goto(PRODUCT)
+
+    await expect(page).toHaveTitle('Titre saisi dans l’admin')
+    await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /^Description saisie dans l’admin/)
+    await expect(page.locator('meta[property="og:title"]')).toHaveAttribute('content', 'Titre saisi dans l’admin')
+    await expect(page.getByTestId('product-title')).toHaveText('Monstera deliciosa')
+  })
+})
+
+test.describe('Fiche produit sans métadonnées saisies', () => {
+  test('garde le titre et la description calculés', async ({ page }) => {
+    await page.goto(PRODUCT)
+
+    await expect(page).toHaveTitle('Monstera deliciosa · Boilerplate')
+    await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /^Monstera deliciosa : exposition mi-ombre/)
+  })
 })

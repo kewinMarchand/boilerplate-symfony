@@ -20,6 +20,7 @@ final class SiteCspTest extends TestCase
 
         self::assertStringContainsString("connect-src 'self' http://localhost:8091", $csp);
         self::assertStringContainsString("img-src 'self' data: https: http://localhost:8091", $csp);
+        self::assertStringContainsString("media-src 'self' http://localhost:8091", $csp);
         self::assertStringContainsString('report-uri /api/csp-report', $csp);
         self::assertStringNotContainsString('matomo', $csp);
     }
@@ -37,6 +38,7 @@ final class SiteCspTest extends TestCase
             "connect-src 'self' http://localhost:8091 https://matomo.exemple.com https://erreurs.exemple.com",
             $csp,
         );
+        self::assertStringContainsString("media-src 'self' http://localhost:8091", $csp);
     }
 
     public function testStartupLine(): void
