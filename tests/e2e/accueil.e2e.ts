@@ -1,5 +1,7 @@
 import { expect, test } from '@playwright/test'
 
+import type { Page } from '@playwright/test'
+
 test.describe('Accueil', () => {
   test('affiche le hero, le carrousel et la grille de blog', async ({ page }) => {
     await page.goto('/')
@@ -82,6 +84,104 @@ test.describe('Carrousel', () => {
 
     await expect(page).toHaveURL(/\/produit\/[a-z0-9-]+$/)
     await expect(page.getByTestId('product-title')).toHaveText(name)
+  })
+})
+
+test.describe('Grille des articles', () => {
+  const measureCards = async (page: Page) => {
+    const cards = page.getByTestId('home-blog-card')
+    await expect(cards).toHaveCount(3)
+    return Promise.all(
+      [0, 1, 2].map(async (index) => {
+        const box = await cards.nth(index).boundingBox()
+        if (!box) throw new Error(`carte ${index + 1} introuvable`)
+        return box
+      }),
+    )
+  }
+
+  test('desktop : l’article à la une sur 8 colonnes, les deux autres empilés à droite', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'largeur fixée explicitement')
+    await page.setViewportSize({ width: 1280, height: 900 })
+    await page.goto('/')
+    const [featured, second, third] = await measureCards(page)
+
+    expect(featured.width / second.width).toBeGreaterThan(1.9)
+    expect(featured.width / second.width).toBeLessThan(2.3)
+    expect(Math.abs(second.width - third.width)).toBeLessThan(1)
+    expect(Math.abs(second.x - third.x)).toBeLessThan(1)
+    expect(second.x).toBeGreaterThan(featured.x + featured.width)
+    expect(third.y).toBeGreaterThanOrEqual(second.y + second.height)
+    expect(Math.abs(featured.y + featured.height - (third.y + third.height))).toBeLessThan(1)
+  })
+
+  test('tablette : l’article à la une et les deux autres sur 6 colonnes, côte à côte', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'largeur fixée explicitement')
+    await page.setViewportSize({ width: 768, height: 900 })
+    await page.goto('/')
+    const [featured, second, third] = await measureCards(page)
+
+    expect(Math.abs(featured.width - second.width)).toBeLessThan(1)
+    expect(Math.abs(second.width - third.width)).toBeLessThan(1)
+    expect(second.x).toBeGreaterThan(featured.x + featured.width)
+    expect(Math.abs(featured.y - second.y)).toBeLessThan(1)
+    expect(Math.abs(second.x - third.x)).toBeLessThan(1)
+    expect(third.y).toBeGreaterThanOrEqual(second.y + second.height)
+  })
+
+  test('l’image de l’article à la une annonce sa largeur propre à chaque point de rupture', async ({ page }) => {
+    await page.goto('/')
+    const sources = page.getByTestId('home-blog-card').first().locator('source')
+
+    await expect(sources.first()).toHaveAttribute(
+      'sizes',
+      '(min-width: 1024px) calc((min(100vw, 1440px) - 64px) * 2 / 3), (min-width: 768px) 100vw, 100vw',
+    )
+    await expect(page.getByTestId('home-blog-card').nth(1).locator('source').first()).toHaveAttribute(
+      'sizes',
+      '(min-width: 1024px) calc((min(100vw, 1440px) - 64px) / 3), (min-width: 768px) 50vw, 100vw',
+    )
+  })
+
+  test('mobile : les trois articles sur toute la largeur, empilés', async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 800 })
+    await page.goto('/')
+    const [featured, second, third] = await measureCards(page)
+
+    expect(Math.abs(featured.width - second.width)).toBeLessThan(1)
+    expect(Math.abs(second.width - third.width)).toBeLessThan(1)
+    expect(Math.abs(featured.x - second.x)).toBeLessThan(1)
+    expect(second.y).toBeGreaterThanOrEqual(featured.y + featured.height)
+    expect(third.y).toBeGreaterThanOrEqual(second.y + second.height)
+  })
+})
+
+test.describe('Carrousel débordant', () => {
+  test('les diapositives suivantes restent visibles au-delà du conteneur, sans défilement horizontal', async ({
+    page,
+    isMobile,
+  }) => {
+    if (!isMobile) await page.setViewportSize({ width: 1280, height: 900 })
+    await page.goto('/')
+    const carousel = page.getByTestId('home-carousel')
+    await expect(carousel.getByTestId('carousel-dot').first()).toHaveAttribute('aria-current', 'true')
+    await carousel.getByTestId('carousel-track').scrollIntoViewIfNeeded()
+
+    const section = await carousel.boundingBox()
+    const first = await carousel.getByTestId('carousel-slide').first().boundingBox()
+    if (!section || !first) throw new Error('carrousel introuvable')
+    const rights = await carousel
+      .getByTestId('carousel-slide')
+      .evaluateAll((slides) => slides.map((slide) => slide.getBoundingClientRect().right))
+    expect(Math.max(...rights)).toBeGreaterThan(section.x + section.width)
+
+    // Le bord de la fenêtre, au-delà du conteneur, montre une diapositive : elle n'est pas masquée par la piste
+    const atWindowEdge = await page.evaluate(
+      (y) => !!document.elementFromPoint(window.innerWidth - 4, y)?.closest('[data-testid="carousel-slide"]'),
+      first.y + first.height / 2,
+    )
+    expect(atWindowEdge).toBe(true)
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true)
   })
 })
 

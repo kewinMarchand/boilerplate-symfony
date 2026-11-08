@@ -177,6 +177,7 @@
 
 .main {
     flex-grow: 1;
+    overflow-x: clip;
 }
 
 .main__content {
@@ -726,7 +727,7 @@ html:not(.js) .carousel__dots {
 }
 
 .carousel.is-enhanced .carousel__viewport {
-    overflow: hidden;
+    overflow: visible;
     scroll-snap-type: none;
 }
 
@@ -738,7 +739,7 @@ html:not(.js) .carousel__dots {
 
 .carousel__slide {
     position: relative;
-    flex: 0 0 100%;
+    flex: 0 0 85%;
     min-width: 0;
     scroll-snap-align: start;
     content-visibility: auto;
@@ -799,23 +800,53 @@ html:not(.js) .carousel__dots {
 
 .blog__grid {
     display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
     gap: var(--space-4);
 }
 
-@media (min-width: 640px) {
-    .blog__grid {
-        grid-template-columns: repeat(2, 1fr);
+.blog__item {
+    grid-column: span 12;
+    container-type: inline-size;
+}
+
+@media (min-width: 768px) {
+    .blog__item {
+        grid-column: span 6;
+    }
+
+    .blog__item:first-child {
+        grid-row: span 2;
+    }
+
+    .blog__item:first-child .bui-card {
+        height: 100%;
+    }
+
+    .blog__item:first-child .bui-card__media {
+        position: relative;
+        flex: 1 0 auto;
+        aspect-ratio: 16 / 9;
+    }
+
+    .blog__item:first-child .bui-card__media img {
+        position: absolute;
+        inset: 0;
+        height: 100%;
+    }
+
+    .blog__item:first-child .bui-card__body {
+        flex: none;
     }
 }
 
 @media (min-width: 1024px) {
-    .blog__grid {
-        grid-template-columns: repeat(3, 1fr);
+    .blog__item {
+        grid-column: span 4;
     }
-}
 
-.blog__item {
-    container-type: inline-size;
+    .blog__item:first-child {
+        grid-column: span 8;
+    }
 }
 
 @container (min-width: 360px) {
