@@ -74,6 +74,9 @@ test-e2e: ## Tests end-to-end desktop et mobile : image de production, puis bili
 	$(UP_DEV)
 	$(RUN_NODE) yarn playwright test tests/e2e --grep @dev
 
+e2e-vite: ## e2e desktop des fichiers modifiés depuis origin/main (FICHIERS="…" ou GREP="…"), phase principale puis @bilingue, image de production reconstruite seulement si les sources ont changé
+	FICHIERS='$(FICHIERS)' GREP='$(GREP)' sh tools/e2e-vite.sh
+
 test-a11y: ## Tests d'accessibilité WCAG 2.1 AA, deux modes, prod puis dev (axe-core + Playwright)
 	$(UP_PROD)
 	$(RUN_NODE) yarn playwright test tests/a11y --grep-invert @dev
@@ -85,4 +88,4 @@ metrics: docker-build ## Métriques Lighthouse CI sur l'image de production, en 
 	$(RUN_NODE) sh -c 'export CHROME_PATH=$$(node -e "console.log(require(\"@playwright/test\").chromium.executablePath())") && yarn lhci autorun && yarn lhci autorun --collect.settings.chromeFlags="--headless=new --no-sandbox --blink-settings=preferredColorScheme=0" --upload.outputDir=.lighthouseci/reports-sombre'; \
 		status=$$?; HTTP_PORT=$(LHCI_PORT) SITE_HOST=127.0.0.1 $(COMPOSE_PROD) -p $(LHCI_PROJECT) down; exit $$status
 
-.PHONY: qa qa-full lint lint-js lint-js-fix arch arch-deptrac arch-wrappers arch-selftest icons-check ui-check format format-check typecheck test test-unit test-e2e test-a11y metrics
+.PHONY: qa qa-full lint lint-js lint-js-fix arch arch-deptrac arch-wrappers arch-selftest icons-check ui-check format format-check typecheck test test-unit test-e2e e2e-vite test-a11y metrics
