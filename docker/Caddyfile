@@ -9,11 +9,19 @@ http://{$SERVER_ADDRESS::8080} {
 	encode zstd br gzip
 
 	@maintenance expression "{$MAINTENANCE:0}" == "1"
+	# Sans PHP : la page de la langue du préfixe si elle a été générée (app:maintenance-pages), sinon celle de DEFAULT_LOCALE
 	handle @maintenance {
 		header Retry-After 3600
-		rewrite * /maintenance.html
-		file_server {
-			status 503
+		route {
+			vars lang {$DEFAULT_LOCALE:fr}
+			@prefixed path_regexp prefix ^/([a-z]{2})(?:/|$)
+			vars @prefixed lang {re.prefix.1}
+			@unknown not file /maintenance.{vars.lang}.html
+			vars @unknown lang {$DEFAULT_LOCALE:fr}
+			rewrite * /maintenance.{vars.lang}.html
+			file_server {
+				status 503
+			}
 		}
 	}
 

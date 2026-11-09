@@ -1,10 +1,12 @@
+{#- Page de maintenance d'une langue, écrite au build de l'image dans public/maintenance.<langue>.html par app:maintenance-pages
+    et servie par Caddy sans PHP (MAINTENANCE=1) : aucun appel à l'API ni script, styles en ligne. -#}
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="{{ locale }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex">
-    <title>Site en maintenance</title>
+    <title>{{ 'maintenance.title'|trans({}, 'messages', locale) }}</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <style>
         body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 16px; font-family: system-ui, sans-serif; font-size: 16px; line-height: 1.5; color: #111827; background: #ffffff; }
@@ -15,8 +17,8 @@
 <body>
     <main>
         <img src="/favicon.svg" alt="" width="48" height="48">
-        <h1>Site en maintenance</h1>
-        <p>Le site est momentanément indisponible pour une opération de maintenance. Merci de revenir dans quelques instants.</p>
+        <h1>{{ 'maintenance.title'|trans({}, 'messages', locale) }}</h1>
+        <p>{{ 'maintenance.text'|trans({}, 'messages', locale) }}</p>
     </main>
 </body>
 </html>

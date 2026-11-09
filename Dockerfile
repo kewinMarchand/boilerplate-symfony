@@ -29,6 +29,7 @@ RUN composer dump-autoload --classmap-authoritative --no-dev \
     && composer dump-env prod \
     && composer run-script --no-dev post-install-cmd \
     && bin/console asset-map:compile \
+    && bin/console app:maintenance-pages \
     && mkdir -p /tmp/caddy \
     && chown -R www-data:www-data var /tmp/caddy
 USER www-data

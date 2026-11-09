@@ -156,6 +156,9 @@ legal:
     notice_description: 'Mentions légales du site %site% : éditeur, directeur de la publication, hébergeur et propriété intellectuelle.'
     privacy_description: 'Politique de protection des données personnelles du site %site% : finalité, base légale, durée de conservation et droits.'
     sitemap_description: 'Plan du site %site% : liste de toutes les pages, navigation principale et informations légales.'
+maintenance:
+    text: 'Le site est momentanément indisponible pour une opération de maintenance. Merci de revenir dans quelques instants.'
+    title: 'Site en maintenance'
 nav:
     blog: 'Blog'
     catalog: 'Catalogue'

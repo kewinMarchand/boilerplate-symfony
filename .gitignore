@@ -23,6 +23,9 @@
 /.phpunit.cache/
 ###< phpunit/phpunit ###
 
+# pages de maintenance générées au build de l'image (app:maintenance-pages)
+/public/maintenance.*.html
+
 # node, tests et rapports
 /node_modules/
 /test-results/

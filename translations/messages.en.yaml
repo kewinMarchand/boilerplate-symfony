@@ -156,6 +156,9 @@ legal:
     notice_description: 'Legal notice of the %site% website: publisher, publishing director, host and intellectual property.'
     privacy_description: 'Personal data protection policy of the %site% website: purpose, legal basis, retention period and rights.'
     sitemap_description: '%site% sitemap: list of all pages, main navigation and legal information.'
+maintenance:
+    text: 'The site is temporarily unavailable for maintenance. Please come back in a few moments.'
+    title: 'Site under maintenance'
 nav:
     blog: 'Blog'
     catalog: 'Catalogue'

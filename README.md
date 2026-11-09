@@ -60,7 +60,8 @@ Variables d'environnement (`.env`, à surcharger dans `.env.local` non versionn�
 | `MATOMO_URL`, `MATOMO_SITE_ID` | Mesure d'audience Matomo sans cookie. Les deux sont nécessaires, vides : rien n'est chargé ni envoyé |
 | `API_URL` | API commune : `http://localhost:8090` (API Platform, par défaut) ou `http://localhost:8091` (Hono) |
 | `API_SCENARIO` | Scénario de l'API fixé sur tous les appels (`bilingual` : site en français et en anglais, tests e2e). Vide hors des tests |
-| `MAINTENANCE` | `1` sert la page statique de maintenance en 503 avec `Retry-After`, sans PHP        |
+| `MAINTENANCE` | `1` sert la page statique de maintenance en 503 avec `Retry-After`, sans PHP : celle de la langue du préfixe de l'adresse (`/en/…`), sinon celle de `DEFAULT_LOCALE` |
+| `DEFAULT_LOCALE` | Langue de la page de maintenance hors préfixe (`fr` par défaut) : celle par défaut du site, Caddy ne lit pas l'API |
 
 ## Démarrer un projet à partir de ce dépôt
 
