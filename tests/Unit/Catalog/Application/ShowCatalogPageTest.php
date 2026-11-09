@@ -44,7 +44,7 @@ final class ShowCatalogPageTest extends TestCase
                 return new CatalogResult(new ProductPage([], 24, $query->page, $this->pageCount), new FacetCounts([], [], []));
             }
 
-            public function findProduct(string $slug): ?\App\Catalog\Domain\ProductDetail
+            public function findProduct(string $slug, ?string $locale = null): ?\App\Catalog\Domain\ProductDetail
             {
                 return null;
             }

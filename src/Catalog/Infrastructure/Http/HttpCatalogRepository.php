@@ -57,10 +57,10 @@ final class HttpCatalogRepository implements CatalogRepository
         }
     }
 
-    public function findProduct(string $slug): ?ProductDetail
+    public function findProduct(string $slug, ?string $locale = null): ?ProductDetail
     {
         try {
-            $response = $this->apiClient->request('GET', '/api/products/'.rawurlencode($slug));
+            $response = $this->apiClient->request('GET', '/api/products/'.rawurlencode($slug), null === $locale ? [] : ['query' => ['locale' => $locale]]);
             if (Response::HTTP_NOT_FOUND === $response->getStatusCode()) {
                 return null;
             }

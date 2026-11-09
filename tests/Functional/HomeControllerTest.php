@@ -166,9 +166,9 @@ final class HomeControllerTest extends WebTestCase
                 return $this->real->search($category, $query);
             }
 
-            public function findProduct(string $slug): ?ProductDetail
+            public function findProduct(string $slug, ?string $locale = null): ?ProductDetail
             {
-                return $this->real->findProduct($slug);
+                return $this->real->findProduct($slug, $locale);
             }
 
             public function featured(): array

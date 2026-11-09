@@ -104,7 +104,7 @@
                             {% endfor %}
                         </dl>
                     {% endif %}
-                    {{ include(purchase, {item: {slug: product.slug, name: product.name, price: product.price.cents}, available: product.inStock}) }}
+                    {{ include(purchase, {item: {id: product.id, slug: product.slug, name: product.name, price: product.price.cents, translations: translations}, available: product.inStock}) }}
                     {% if detail.category %}
                         <p><a class="bui-link" href="{{ path('catalog', {path: detail.category.path}) }}">{{ 'product.other_products'|trans({'%category%': detail.category.name}) }}</a></p>
                     {% endif %}

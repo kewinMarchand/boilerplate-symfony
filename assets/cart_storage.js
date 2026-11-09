@@ -3,20 +3,28 @@ import { MAX_QUANTITY } from './cart.js';
 export const CART_KEY = 'panier';
 const CHANGE_EVENT = 'panier:change';
 
+const isText = (value) => typeof value === 'string' && value !== '';
+
+const isTranslation = (translation) =>
+    typeof translation === 'object' && translation !== null && isText(translation.locale) && isText(translation.slug) && isText(translation.name);
+
 const isLine = (line) =>
     typeof line === 'object' &&
     line !== null &&
-    typeof line.slug === 'string' &&
-    line.slug !== '' &&
-    typeof line.name === 'string' &&
-    line.name !== '' &&
+    (line.id === undefined || isText(line.id)) &&
+    isText(line.slug) &&
+    isText(line.name) &&
+    (line.translations === undefined || (Array.isArray(line.translations) && line.translations.every(isTranslation))) &&
     Number.isInteger(line.price) &&
     line.price >= 0 &&
     Number.isInteger(line.quantity) &&
     line.quantity >= 1 &&
     line.quantity <= MAX_QUANTITY;
 
-/** Panier enregistré ; vide si l'entrée est absente, illisible ou invalide. */
+/**
+ * Panier enregistré ; vide si l'entrée est absente, illisible ou invalide. Une ligne enregistrée avant les langues, sans
+ * identifiant ni traductions, est identifiée par son slug.
+ */
 export const parseCart = (raw) => {
     if (raw === null) {
         return [];
@@ -24,7 +32,14 @@ export const parseCart = (raw) => {
     try {
         const lines = JSON.parse(raw);
         return Array.isArray(lines) && lines.every(isLine)
-            ? lines.map(({ slug, name, price, quantity }) => ({ slug, name, price, quantity }))
+            ? lines.map(({ id, slug, name, price, quantity, translations }) => ({
+                  id: id ?? slug,
+                  slug,
+                  name,
+                  price,
+                  quantity,
+                  translations: (translations ?? []).map(({ locale, slug, name }) => ({ locale, slug, name })),
+              }))
             : [];
     } catch {
         return [];

@@ -1,7 +1,7 @@
 /* stimulusFetch: 'lazy' */
 import { Controller } from '@hotwired/stimulus';
 
-import { formatPrice, removeItem, setQuantity, totalPrice } from '../cart.js';
+import { formatPrice, lineIn, removeItem, setQuantity, totalPrice } from '../cart.js';
 import { readCart, saveCart, subscribeToCart } from '../cart_storage.js';
 
 // Contenu de la page panier, lu dans le navigateur. Les lignes ne sont reconstruites que si la liste des produits change :
@@ -12,7 +12,7 @@ export default class extends Controller {
     static values = { productPath: String, labels: Object };
 
     connect() {
-        this.renderedSlugs = null;
+        this.renderedIds = null;
         this.unsubscribe = subscribeToCart(() => this.render());
         this.render();
     }
@@ -24,7 +24,7 @@ export default class extends Controller {
     changeQuantity(event) {
         const quantity = event.currentTarget.valueAsNumber;
         if (!Number.isNaN(quantity)) {
-            saveCart(setQuantity(readCart(), event.currentTarget.closest('li').dataset.slug, quantity));
+            saveCart(setQuantity(readCart(), event.currentTarget.closest('li').dataset.id, quantity));
         }
     }
 
@@ -33,7 +33,7 @@ export default class extends Controller {
     remove(event) {
         const row = event.currentTarget.closest('li');
         const index = [...row.parentElement.children].indexOf(row);
-        saveCart(removeItem(readCart(), row.dataset.slug));
+        saveCart(removeItem(readCart(), row.dataset.id));
 
         const buttons = this.contentTarget.querySelectorAll('[data-cart-lines] > li [data-field="remove"]');
         (buttons[Math.min(index, buttons.length - 1)] ?? this.contentTarget.querySelector('[data-cart-empty]')).focus();
@@ -42,20 +42,20 @@ export default class extends Controller {
     render() {
         const lines = readCart();
         if (lines.length === 0) {
-            this.renderedSlugs = '';
+            this.renderedIds = '';
             this.contentTarget.replaceChildren(this.emptyTarget.content.cloneNode(true));
             return;
         }
 
-        const slugs = lines.map((line) => line.slug).join('\n');
-        if (slugs !== this.renderedSlugs) {
-            this.renderedSlugs = slugs;
+        const ids = lines.map((line) => line.id).join('\n');
+        if (ids !== this.renderedIds) {
+            this.renderedIds = ids;
             this.contentTarget.replaceChildren(this.summaryTarget.content.cloneNode(true));
             this.contentTarget.querySelector('[data-cart-lines]').replaceChildren(...lines.map((line) => this.createLine(line)));
         }
 
         for (const line of lines) {
-            const row = this.contentTarget.querySelector(`li[data-slug="${CSS.escape(line.slug)}"]`);
+            const row = this.contentTarget.querySelector(`li[data-id="${CSS.escape(line.id)}"]`);
             const input = row.querySelector('[data-field="quantity"]');
             if (input.valueAsNumber !== line.quantity) {
                 input.value = String(line.quantity);
@@ -68,16 +68,17 @@ export default class extends Controller {
     createLine(line) {
         const row = this.lineTarget.content.firstElementChild.cloneNode(true);
         const field = (name) => row.querySelector(`[data-field="${name}"]`);
-        const inputId = `cart-quantity-${line.slug}`;
+        const inputId = `cart-quantity-${line.id}`;
+        const { slug, name } = lineIn(line, document.documentElement.lang);
 
-        row.dataset.slug = line.slug;
-        field('name').href = this.productPathValue + encodeURIComponent(line.slug);
-        field('name').textContent = line.name;
+        row.dataset.id = line.id;
+        field('name').href = this.productPathValue + encodeURIComponent(slug);
+        field('name').textContent = name;
         field('unit-price').textContent = this.labelsValue.unitPrice.replace('%price%', formatPrice(line.price, document.documentElement.lang));
         field('label').htmlFor = inputId;
-        field('label').textContent = this.labelsValue.quantity.replace('%name%', line.name);
+        field('label').textContent = this.labelsValue.quantity.replace('%name%', name);
         field('quantity').id = inputId;
-        field('remove').setAttribute('aria-label', this.labelsValue.remove.replace('%name%', line.name));
+        field('remove').setAttribute('aria-label', this.labelsValue.remove.replace('%name%', name));
 
         return row;
     }

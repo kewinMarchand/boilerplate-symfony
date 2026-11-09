@@ -214,6 +214,20 @@ test.describe('Site bilingue fr, en @bilingue', () => {
     await expect(page.getByTestId('cart-remove')).toHaveAccessibleName('Remove Swiss cheese plant')
   })
 
+  test('une ligne du panier prend le nom et le lien de la langue de la page', async ({ page }) => {
+    await page.goto(PRODUCT.en)
+    await page.getByTestId('add-to-cart').click()
+    await expect(page.getByTestId('cart-count')).toHaveText('1')
+
+    await page.goto('/panier')
+    await expect(page.getByTestId('cart-line')).toContainText('Monstera deliciosa')
+    await expect(page.getByTestId('cart-line').getByRole('link')).toHaveAttribute('href', PRODUCT.fr)
+
+    await page.goto('/en/panier')
+    await expect(page.getByTestId('cart-line')).toContainText('Swiss cheese plant')
+    await expect(page.getByTestId('cart-line').getByRole('link')).toHaveAttribute('href', PRODUCT.en)
+  })
+
   for (const path of ['/de/contact', '/fr/contact', '/en/produit/monstera-deliciosa', '/en/sitemap.xml']) {
     test(`${path} répond 404`, async ({ page }) => {
       const response = await page.goto(path)

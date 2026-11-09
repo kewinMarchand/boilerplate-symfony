@@ -121,7 +121,7 @@ final class CatalogControllerTest extends WebTestCase
                 throw new CatalogLoadException();
             }
 
-            public function findProduct(string $slug): ?\App\Catalog\Domain\ProductDetail
+            public function findProduct(string $slug, ?string $locale = null): ?\App\Catalog\Domain\ProductDetail
             {
                 return null;
             }

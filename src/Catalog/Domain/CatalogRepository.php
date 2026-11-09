@@ -16,9 +16,11 @@ interface CatalogRepository
     /**
      * Null si l'API ne connaît pas le produit (404).
      *
+     * @param string|null $locale langue du slug et de la fiche ; null : langue de la page
+     *
      * @throws ProductLoadException
      */
-    public function findProduct(string $slug): ?ProductDetail;
+    public function findProduct(string $slug, ?string $locale = null): ?ProductDetail;
 
     /**
      * Produits « À la une » : le carrousel de l'accueil.

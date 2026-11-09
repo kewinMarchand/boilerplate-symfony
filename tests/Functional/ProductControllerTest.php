@@ -41,7 +41,7 @@ final class ProductControllerTest extends WebTestCase
         $crawler = $client->request('GET', self::PRODUCT);
 
         $button = $crawler->filter('[data-testid="product-page"] [data-controller="add-to-cart"]');
-        self::assertSame('{"slug":"monstera-deliciosa","name":"Monstera deliciosa","price":3490}', $button->attr('data-add-to-cart-item-value'));
+        self::assertSame('{"id":"1","slug":"monstera-deliciosa","name":"Monstera deliciosa","price":3490,"translations":[]}', $button->attr('data-add-to-cart-item-value'));
         self::assertSame('/panier', $button->attr('data-add-to-cart-cart-url-value'));
     }
 
@@ -93,9 +93,9 @@ final class ProductControllerTest extends WebTestCase
                 return $this->real->search($category, $query);
             }
 
-            public function findProduct(string $slug): ?ProductDetail
+            public function findProduct(string $slug, ?string $locale = null): ?ProductDetail
             {
-                return $this->real->findProduct($slug);
+                return $this->real->findProduct($slug, $locale);
             }
 
             public function featured(): array
