@@ -7,6 +7,8 @@ OBSERVABILITY_ENV := GLITCHTIP_DSN=http://clefactice@localhost:3231/1 MATOMO_URL
 # et relaie le reste à l'API réelle choisie par API_URL (8091 en CI), dont la base n'est jamais modifiée.
 IDENTITY_ENV := API_URL=http://localhost:3232
 IDENTITY_TARGET := $(or $(API_URL),http://localhost:8090)
+# Phase @bilingue : le site fixe X-Scenario: bilingual sur tous ses appels, l'API sert le site en français et en anglais.
+BILINGUAL_ENV := API_SCENARIO=bilingual
 
 qa: lint lint-js arch arch-selftest icons-check ui-check format-check typecheck test-unit ## QA rapide : lint, ordre des imports JS, architecture, sprite d'icônes, format, analyse statique, tests unitaires
 
@@ -60,9 +62,11 @@ test-unit: ## Tests unitaires et fonctionnels (PHPUnit) et test du mode accessib
 	$(EXEC) sh -c "rm -rf var/cache/test && vendor/bin/phpunit"
 	$(NODE) --test 'tests/js/**/*.test.js'
 
-test-e2e: ## Tests end-to-end desktop et mobile : image de production, puis avec traceurs factices, puis avec une fausse API d'identité, puis serveur de dev (Playwright)
+test-e2e: ## Tests end-to-end desktop et mobile : image de production, puis bilingue, puis avec traceurs factices, puis avec une fausse API d'identité, puis serveur de dev (Playwright)
 	$(UP_PROD)
-	$(RUN_NODE) yarn playwright test tests/e2e --grep-invert "@dev|@observabilite|@identite"
+	$(RUN_NODE) yarn playwright test tests/e2e --grep-invert "@dev|@observabilite|@identite|@bilingue"
+	$(BILINGUAL_ENV) $(UP_PROD)
+	$(RUN_NODE) yarn playwright test tests/e2e --grep @bilingue
 	$(OBSERVABILITY_ENV) $(UP_PROD)
 	$(RUN_NODE) yarn playwright test tests/e2e --grep @observabilite
 	$(IDENTITY_ENV) $(UP_PROD)
