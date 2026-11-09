@@ -10,6 +10,7 @@ services:
     environment:
       SERVER_ADDRESS: 127.0.0.1:${HTTP_PORT:-8095}
       API_URL: ${API_URL:-http://localhost:8090}
+      API_SCENARIO: ${API_SCENARIO:-}
       SITE_URL: http://${SITE_HOST:-localhost}:${HTTP_PORT:-8095}
       APP_SECRET: ${APP_SECRET:?APP_SECRET requis pour l'image de production}
       MAINTENANCE: ${MAINTENANCE:-0}
