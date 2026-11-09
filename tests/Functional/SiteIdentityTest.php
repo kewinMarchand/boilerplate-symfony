@@ -106,10 +106,10 @@ final class SiteIdentityTest extends WebTestCase
 
         $icons = $crawler->filter('link[rel="icon"]');
         self::assertCount(1, $icons);
-        self::assertSame(['http://localhost:3232/media/icone-oraki-32.png', 'image/png', '32x32'], [$icons->attr('href'), $icons->attr('type'), $icons->attr('sizes')]);
-        self::assertSame('http://localhost:3232/media/icone-oraki-180.png', $crawler->filter('link[rel="apple-touch-icon"]')->attr('href'));
-        self::assertSame('http://localhost:3232/media/partage-oraki-1200.webp', $crawler->filter('meta[property="og:image"]')->attr('content'));
-        self::assertSame('http://localhost:3232/media/partage-oraki-1200.webp', $crawler->filter('meta[name="twitter:image"]')->attr('content'));
+        self::assertSame(['http://localhost:4069/media/icone-oraki-32.png', 'image/png', '32x32'], [$icons->attr('href'), $icons->attr('type'), $icons->attr('sizes')]);
+        self::assertSame('http://localhost:4069/media/icone-oraki-180.png', $crawler->filter('link[rel="apple-touch-icon"]')->attr('href'));
+        self::assertSame('http://localhost:4069/media/partage-oraki-1200.webp', $crawler->filter('meta[property="og:image"]')->attr('content'));
+        self::assertSame('http://localhost:4069/media/partage-oraki-1200.webp', $crawler->filter('meta[name="twitter:image"]')->attr('content'));
         self::assertSame('Serre de plantes tropicales Oraki', $crawler->filter('meta[property="og:image:alt"]')->attr('content'));
     }
 
@@ -133,7 +133,7 @@ final class SiteIdentityTest extends WebTestCase
         self::assertIsArray($withIcon['icons']);
         self::assertIsArray($withoutIcon);
         self::assertIsArray($withoutIcon['icons']);
-        self::assertSame(['http://localhost:3232/media/icone-oraki-192.png', 'http://localhost:3232/media/icone-oraki-512.png'], array_column($withIcon['icons'], 'src'));
+        self::assertSame(['http://localhost:4069/media/icone-oraki-192.png', 'http://localhost:4069/media/icone-oraki-512.png'], array_column($withIcon['icons'], 'src'));
         self::assertSame(['/icon-192.png', '/icon-512.png'], array_column($withoutIcon['icons'], 'src'));
     }
 
@@ -141,7 +141,7 @@ final class SiteIdentityTest extends WebTestCase
     {
         $client = self::createClient();
         $withIcon = $client->request('GET', '/', server: ['HTTP_X_SCENARIO' => 'identite-icone']);
-        self::assertStringContainsString('"logo":"http://localhost:3232/media/icone-oraki-512.png"', $withIcon->filter('script[type="application/ld+json"]')->first()->text());
+        self::assertStringContainsString('"logo":"http://localhost:4069/media/icone-oraki-512.png"', $withIcon->filter('script[type="application/ld+json"]')->first()->text());
 
         $withoutIcon = $client->request('GET', '/');
         self::assertMatchesRegularExpression('#"logo":"https?://[^"]+/icon-512\.png"#', $withoutIcon->filter('script[type="application/ld+json"]')->first()->text());

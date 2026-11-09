@@ -8,10 +8,10 @@
         "sources": [
             {
                 "type": "image/webp",
-                "srcset": "http://localhost:3232/media/logo-oraki-200.webp 200w, http://localhost:3232/media/logo-oraki-400.webp 400w"
+                "srcset": "http://localhost:4069/media/logo-oraki-200.webp 200w, http://localhost:4069/media/logo-oraki-400.webp 400w"
             }
         ],
-        "src": "http://localhost:3232/media/logo-oraki-200.webp"
+        "src": "http://localhost:4069/media/logo-oraki-200.webp"
     },
     "shareImage": null,
     "icon": null,

@@ -137,16 +137,16 @@ test.describe('Icône et image de partage du site saisies @identite', () => {
 
     const icon = page.locator('link[rel="icon"]')
     await expect(icon).toHaveCount(1)
-    await expect(icon).toHaveAttribute('href', 'http://localhost:3232/media/icone-oraki-32.png')
+    await expect(icon).toHaveAttribute('href', 'http://localhost:4069/media/icone-oraki-32.png')
     await expect(icon).toHaveAttribute('sizes', '32x32')
-    await expect(page.locator('link[rel="apple-touch-icon"]')).toHaveAttribute('href', 'http://localhost:3232/media/icone-oraki-180.png')
-    await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', 'http://localhost:3232/media/partage-oraki-1200.webp')
-    await expect(page.locator('meta[name="twitter:image"]')).toHaveAttribute('content', 'http://localhost:3232/media/partage-oraki-1200.webp')
+    await expect(page.locator('link[rel="apple-touch-icon"]')).toHaveAttribute('href', 'http://localhost:4069/media/icone-oraki-180.png')
+    await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', 'http://localhost:4069/media/partage-oraki-1200.webp')
+    await expect(page.locator('meta[name="twitter:image"]')).toHaveAttribute('content', 'http://localhost:4069/media/partage-oraki-1200.webp')
 
     const manifest = await (await request.get('/manifest.webmanifest', { headers: { 'X-Scenario': 'identite-icone' } })).json()
     expect(manifest.icons.map((item: { src: string }) => item.src)).toEqual([
-      'http://localhost:3232/media/icone-oraki-192.png',
-      'http://localhost:3232/media/icone-oraki-512.png',
+      'http://localhost:4069/media/icone-oraki-192.png',
+      'http://localhost:4069/media/icone-oraki-512.png',
     ])
   })
 })

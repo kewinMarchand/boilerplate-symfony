@@ -1,11 +1,11 @@
 LHCI_PROJECT := boilerplate-symfony-lhci
-LHCI_PORT := 3230
+LHCI_PORT := 4079
 # Valeurs factices de la phase @observabilite : un faux GlitchTip local et un traceur Matomo intercepté
 # (tests/e2e/observability.e2e.ts), jamais une instance réelle.
-OBSERVABILITY_ENV := GLITCHTIP_DSN=http://clefactice@localhost:3231/1 MATOMO_URL=http://matomo.test/ MATOMO_SITE_ID=1
+OBSERVABILITY_ENV := GLITCHTIP_DSN=http://clefactice@localhost:4067/1 MATOMO_URL=http://matomo.test/ MATOMO_SITE_ID=1
 # Phase @identite : le site lit une fausse API (tests/e2e/fixtures/fake-api.js) qui sert l'identité avec logo ou couleurs
 # et relaie le reste à l'API réelle choisie par API_URL (8091 en CI), dont la base n'est jamais modifiée.
-IDENTITY_ENV := API_URL=http://localhost:3232
+IDENTITY_ENV := API_URL=http://localhost:4069
 IDENTITY_TARGET := $(or $(API_URL),http://localhost:8090)
 # Phase @bilingue : le site fixe X-Scenario: bilingual sur tous ses appels, l'API sert le site en français et en anglais.
 BILINGUAL_ENV := API_SCENARIO=bilingual

@@ -9,16 +9,16 @@
         "sources": [
             {
                 "type": "image/webp",
-                "srcset": "http://localhost:3232/media/partage-oraki-1200.webp 1200w"
+                "srcset": "http://localhost:4069/media/partage-oraki-1200.webp 1200w"
             }
         ],
-        "src": "http://localhost:3232/media/partage-oraki-1200.webp"
+        "src": "http://localhost:4069/media/partage-oraki-1200.webp"
     },
     "icon": {
-        "png32": "http://localhost:3232/media/icone-oraki-32.png",
-        "png180": "http://localhost:3232/media/icone-oraki-180.png",
-        "png192": "http://localhost:3232/media/icone-oraki-192.png",
-        "png512": "http://localhost:3232/media/icone-oraki-512.png"
+        "png32": "http://localhost:4069/media/icone-oraki-32.png",
+        "png180": "http://localhost:4069/media/icone-oraki-180.png",
+        "png192": "http://localhost:4069/media/icone-oraki-192.png",
+        "png512": "http://localhost:4069/media/icone-oraki-512.png"
     },
     "defaultColorScheme": "auto",
     "salesEnabled": true,

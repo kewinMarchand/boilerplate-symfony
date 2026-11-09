@@ -1,10 +1,10 @@
-// Fausse API de la phase @identite de make test-e2e (port 3232) : sert l'identité du site avec logo, avec couleurs, avec
+// Fausse API de la phase @identite de make test-e2e (port 4069) : sert l'identité du site avec logo, avec couleurs, avec
 // icône et image de partage ou à vente en ligne coupée, et les fiches avec métadonnées saisies, selon X-Scenario (fixtures
 // de tests/Fixtures/api/), que l'API locale n'a pas par défaut, et relaie tout le reste à l'API réelle.
 import { readFileSync } from 'node:fs'
 import { createServer, request as forward } from 'node:http'
 
-const PORT = 3232
+const PORT = 4069
 const API = new URL(process.env.API_TARGET ?? 'http://localhost:8090')
 const FIXTURES = {
   'identite-logo': 'site-identity-logo',

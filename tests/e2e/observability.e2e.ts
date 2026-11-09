@@ -7,7 +7,7 @@ import type { Page } from '@playwright/test'
 import type { Server } from 'node:http'
 
 // Faux GlitchTip local : le DSN factice de la phase @observabilite de make test-e2e pointe ici.
-const GLITCHTIP_PORT = 3231
+const GLITCHTIP_PORT = 4067
 
 const envelopes: string[] = []
 const events = () => envelopes.filter((body) => body.includes('"type":"event"'))

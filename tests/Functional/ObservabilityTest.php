@@ -12,7 +12,7 @@ use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 final class ObservabilityTest extends WebTestCase
 {
-    private const string FAKE_DSN = 'http://clefactice@localhost:3231/1';
+    private const string FAKE_DSN = 'http://clefactice@localhost:4067/1';
 
     protected function tearDown(): void
     {

@@ -63,6 +63,8 @@ Variables d'environnement (`.env`, à surcharger dans `.env.local` non versionn�
 | `MAINTENANCE` | `1` sert la page statique de maintenance en 503 avec `Retry-After`, sans PHP : celle de la langue du préfixe de l'adresse (`/en/…`), sinon celle de `DEFAULT_LOCALE` |
 | `DEFAULT_LOCALE` | Langue de la page de maintenance hors préfixe (`fr` par défaut) : celle par défaut du site, Caddy ne lit pas l'API |
 
+Ports : registre unique de la section 7 de la spec commune (`~/Applications/boilerplates-commun/SPEC-COMMUNE.md`). Développement sur 8095. Bloc 4060-4079 : 4067 faux GlitchTip (`@observabilite`), 4069 API factice de l'identité (`@identite`), 4079 Lighthouse CI. Les suites e2e tournent sur l'image de production servie sur 8095 (`HTTP_PORT`, repli 18095), à la place du serveur de dev ; les autres ports du bloc sont libres.
+
 ## Démarrer un projet à partir de ce dépôt
 
 ### Créer le dépôt
@@ -108,10 +110,10 @@ git cherry-pick <sha>
 | --- | --- |
 | Nom du projet et du paquet | `composer.json` (`name`, `description`), `package.json` (`name`, `description`), `compose.yaml` (`name:` du projet Compose, image `…:prod`), `compose.override.yaml` (image `…:dev`), `Makefile.qa.mk` (`LHCI_PROJECT`), `LICENSE`, titres de `README.md` et `CLAUDE.md` |
 | Config du site et identité | `config/packages/site.yaml` (nom, description, couleur du thème, navigation), `templates/seo/manifest.webmanifest.twig` (`short_name`), `translations/messages.{fr,en}.yaml` (libellés de l'interface, dont le texte alternatif de l'image de partage `seo.default_image_alt` et les boutons du hero), `templates/home/index.html.twig` (sur-titre du hero). Les diapositives du carrousel se modifient dans l'admin de l'API Platform (`GET /api/slides`, images comprises). Le nom du site est aussi vérifié par `tests/Functional/PagesTest.php` (`SITE`) et `tests/e2e/navigation.e2e.ts` |
-| Ports | `Makefile` (`HTTP_PORT`, 8095), `compose.yaml` (port par défaut), `.env` (`SITE_URL`), `playwright.config.ts`, `Makefile.qa.mk` (`LHCI_PORT`, 3230) et `.lighthouserc.json` |
+| Ports | `Makefile` (`HTTP_PORT`, 8095), `compose.yaml` (port par défaut), `.env` (`SITE_URL`), `playwright.config.ts`, `Makefile.qa.mk` (`LHCI_PORT`, 4079, et ports des faux services) et `.lighthouserc.json`. Tests et outils dans le bloc 4060-4079, section 7 de la spec commune |
 | Logo et favicons | `assets/images/logo-mark.svg`, `public/favicon.ico`, `public/favicon.svg`, `public/apple-touch-icon.png`, `public/icon-192.png`, `public/icon-512.png`, `public/og-image.jpg` |
 | Pages légales | textes dans l'admin de l'API Platform (`GET /api/legal_pages/{slug}`), `config/packages/site.yaml` (`site.accessibility` une fois l'audit RGAA réalisé, pour l'état de conformité du lien du pied de page), section « Mesure d'audience » de `templates/legal/privacy.html.twig` |
-| URL Lighthouse | `.lighthouserc.json` (une URL par page à mesurer, sur le port 3230) |
+| URL Lighthouse | `.lighthouserc.json` (une URL par page à mesurer, sur le port 4079) |
 | CI | `.github/workflows/ci.yml` |
 
 ### Retirer les modules d'exemple
@@ -166,10 +168,10 @@ Terminer par `make qa`, puis `make test-e2e test-a11y`. Déroulée sur une copie
 | `make test-e2e`                        | Playwright sur l'image de production, puis servie en bilingue (`@bilingue`), puis les tests `@dev` sur le serveur de développement |
 | `make e2e-vite`                        | Playwright desktop sur les e2e modifiés depuis `origin/main`, `FICHIERS="…"` ou `GREP="…"` ; image de production reconstruite seulement si les sources ont changé |
 | `make test-a11y`                       | axe-core, WCAG 2.1 AA, chaque page en standard, sombre et renforcé                         |
-| `make metrics`                         | Lighthouse CI sur l'image de production (port 3230) en clair puis en sombre : échoue sous 90 en performance ou sous 100 en accessibilité et SEO |
+| `make metrics`                         | Lighthouse CI sur l'image de production (port 4079) en clair puis en sombre : échoue sous 90 en performance ou sous 100 en accessibilité et SEO |
 | `make docker-build` / `make docker-up` | Image de production, sur le port `HTTP_PORT`                                               |
 
-Toutes les commandes tournent dans des conteneurs jetables : PHP par `docker compose run --rm php`, Node, Playwright et Lighthouse par `docker compose run --rm node` (image officielle Playwright à la version exacte de `@playwright/test`, profil Compose `dev`, réseau de l'hôte pour joindre les ports 8095 et 3230). Les `node_modules` vivent dans un volume nommé, et les conteneurs tournent avec l'UID et le GID de la machine.
+Toutes les commandes tournent dans des conteneurs jetables : PHP par `docker compose run --rm php`, Node, Playwright et Lighthouse par `docker compose run --rm node` (image officielle Playwright à la version exacte de `@playwright/test`, profil Compose `dev`, réseau de l'hôte pour joindre les ports 8095 et 4079). Les `node_modules` vivent dans un volume nommé, et les conteneurs tournent avec l'UID et le GID de la machine.
 
 ## Architecture
 

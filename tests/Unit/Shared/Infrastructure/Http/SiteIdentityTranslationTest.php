@@ -60,8 +60,8 @@ final class SiteIdentityTranslationTest extends TestCase
     {
         $identity = SiteIdentityTranslation::identity(self::fixture('site-identity-icone'));
 
-        self::assertSame('http://localhost:3232/media/icone-oraki-32.png', $identity->icon?->png32);
-        self::assertSame('http://localhost:3232/media/icone-oraki-512.png', $identity->icon->png512);
+        self::assertSame('http://localhost:4069/media/icone-oraki-32.png', $identity->icon?->png32);
+        self::assertSame('http://localhost:4069/media/icone-oraki-512.png', $identity->icon->png512);
         self::assertSame([1200, 630], [$identity->shareImage?->width, $identity->shareImage?->height]);
     }
 
