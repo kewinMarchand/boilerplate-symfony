@@ -34,6 +34,68 @@ const EN_ROUTES = [
 ]
 
 const en = messages('en')
+const fr = messages('fr')
+
+/** Libellés par défaut de boilerplates-ui (tableau « Libellés d'interface » de son README). */
+const LIBRARY_DEFAULTS = [
+  '(obligatoire)',
+  '(chargement en cours)',
+  '(nouvelle fenêtre)',
+  'Retirer le filtre :',
+  'Information :',
+  'Succès :',
+  'Attention :',
+  'Erreur :',
+  'Fermer la notification',
+  'Fermer',
+  'Fil d’Ariane',
+  "Fil d'Ariane",
+  'Précédent',
+  'Suivant',
+  'Chargement en cours',
+]
+
+/**
+ * Sections des fichiers de traduction lues par l'alerte, les champs, le chargement, les filtres, la pagination, le fil d'Ariane,
+ * la 404 et le panier. Pas `carousel` : « carrousel » est aussi dans un titre d'article que l'API sert en français.
+ */
+const SECTIONS = ['ui', 'layout', 'nav', 'error', 'maintenance', 'catalog', 'cart', 'contact', 'tasks', 'common']
+
+/**
+ * Libellés d'interface français de ces sections, coupés aux variables (`%name%`) et aux pluriels, plus les défauts de la
+ * bibliothèque, sauf ceux qu'un libellé anglais contient aussi (« Blog », « Contact ») ; fragments de moins de 4 caractères
+ * ignorés.
+ */
+const FRENCH_LABELS = (() => {
+  const english = Object.values(en).join('\n')
+  const french = Object.entries(fr)
+    .filter(([key]) => SECTIONS.includes(key.split('.')[0]))
+    .flatMap(([, value]) => value.split(/%\w+%|\|/))
+  return [...new Set([...french, ...LIBRARY_DEFAULTS].map((label) => label.trim()))].filter(
+    (label) => label.length >= 4 && !english.includes(label),
+  )
+})()
+
+/** Texte lu de la page : contenu (masqué compris, hors scripts et styles) et attributs annoncés. */
+const readableText = (page: Page) =>
+  page.evaluate(() => {
+    const root = document.documentElement.cloneNode(true) as HTMLElement
+    root.querySelectorAll('script, style').forEach((element) => element.remove())
+    const attributes = ['aria-label', 'aria-roledescription', 'title', 'alt', 'placeholder']
+    const announced = [...root.querySelectorAll('*')].flatMap((element) => attributes.map((name) => element.getAttribute(name) ?? ''))
+    return [root.textContent ?? '', ...announced].join('\n')
+  })
+
+/** Libellé trouvé en mots entiers : « Grande » (taille) ne doit pas trouver « Grandes feuilles » (contenu de l'API non traduit). */
+const containsWords = (text: string, label: string) => {
+  const isLetter = (char: string | undefined) => char !== undefined && /\p{L}/u.test(char)
+  for (let index = text.indexOf(label); index !== -1; index = text.indexOf(label, index + 1)) {
+    if (!isLetter(text[index - 1]) && !isLetter(text[index + label.length])) return true
+  }
+  return false
+}
+
+const expectNoFrenchLabel = (text: string) => expect(FRENCH_LABELS.filter((label) => containsWords(text, label))).toEqual([])
 
 const pathOf = (url: string | null) => (url === null ? null : new URL(url).pathname)
 
@@ -58,6 +120,17 @@ test.describe('Site monolingue', () => {
 
     expect(response?.status()).toBe(404)
     await expect(page.locator('html')).toHaveAttribute('lang', 'fr')
+  })
+})
+
+test.describe('Site bilingue fr, en, sans JavaScript @bilingue', () => {
+  test.use({ javaScriptEnabled: false })
+
+  test('le chargement des tâches est annoncé en anglais', async ({ page }) => {
+    await page.goto('/en/taches')
+
+    await expect(page.getByTestId('tasks-loading')).toHaveAttribute('aria-label', en['tasks.loading'])
+    expectNoFrenchLabel(await readableText(page))
   })
 })
 
@@ -147,8 +220,7 @@ test.describe('Site bilingue fr, en @bilingue', () => {
     if (isMobile) await page.getByTestId('catalog-filters-open').click()
     await page.getByTestId('catalog-filter-exposure-ombre').check()
     await expect(page).toHaveURL('/en/catalogue?exposition=ombre')
-    // La puce préfixe son nom d'un libellé de boilerplates-ui laissé en français (suivi)
-    await expect(page.getByTestId('catalog-active-filter')).toContainText(en['catalog.exposure.ombre'])
+    await expect(page.getByTestId('catalog-active-filter')).toHaveText(`${en['ui.remove_filter']} ${en['catalog.exposure.ombre']}`)
   })
 
   test('hreflang, x-default, canonique et og:locale suivent la langue de la page', async ({ page }) => {
@@ -196,8 +268,7 @@ test.describe('Site bilingue fr, en @bilingue', () => {
     await page.getByTestId('contact-email').fill('ada@example.com')
     await page.getByTestId('contact-submit').click()
 
-    // L'alerte préfixe son texte d'un libellé de boilerplates-ui laissé en français (suivi)
-    await expect(page.getByTestId('contact-success')).toContainText(en['contact.sent'])
+    await expect(page.getByTestId('contact-success')).toHaveText(`${en['ui.alert.success']}${en['contact.sent']}`)
   })
 
   test('le panier anglais annonce l’ajout, compte et lie la fiche en anglais', async ({ page }) => {
@@ -226,6 +297,64 @@ test.describe('Site bilingue fr, en @bilingue', () => {
     await page.goto('/en/panier')
     await expect(page.getByTestId('cart-line')).toContainText('Swiss cheese plant')
     await expect(page.getByTestId('cart-line').getByRole('link')).toHaveAttribute('href', PRODUCT.en)
+  })
+
+  test('aucun libellé français sur les pages anglaises', async ({ page }) => {
+    for (const path of [...EN_ROUTES, '/en/catalogue?exposition=soleil&page=2']) {
+      await page.goto(path)
+      await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
+      if (path === '/en/taches') await expect(page.getByTestId('tasks-list')).toBeVisible()
+      expectNoFrenchLabel(await readableText(page))
+    }
+  })
+
+  test('filtres actifs, pagination et catalogue vide sans libellé français', async ({ page }) => {
+    await page.goto('/en/catalogue?exposition=soleil&page=2')
+    await expect(page.getByTestId('catalog-active-filter').first()).toContainText(en['ui.remove_filter'])
+    await expect(page.getByTestId('catalog-pagination')).toHaveAttribute('aria-label', en['catalog.pagination'])
+    expectNoFrenchLabel(await readableText(page))
+
+    await page.goto('/en/catalogue?prix_max=1')
+    await expect(page.getByTestId('catalog-empty')).toContainText(en['ui.alert.info'])
+    expectNoFrenchLabel(await readableText(page))
+  })
+
+  test('champs obligatoires et alerte de confirmation du contact en anglais', async ({ page }) => {
+    await page.goto('/en/contact')
+    await expect(page.getByTestId('contact-name')).toHaveAccessibleName(`${en['contact.form.name']} ${en['ui.required']}`)
+    expectNoFrenchLabel(await readableText(page))
+
+    await page.getByTestId('contact-name').fill('Jane Doe')
+    await page.getByTestId('contact-email').fill('jane@example.com')
+    await page.getByTestId('contact-message').fill('A message long enough to be sent.')
+    await page.getByTestId('contact-submit').click()
+    await expect(page.getByTestId('contact-success')).toContainText(en['ui.alert.success'])
+    expectNoFrenchLabel(await readableText(page))
+  })
+
+  test('la page introuvable suit la langue de l’adresse', async ({ page }) => {
+    await page.goto('/en/route-inexistante')
+    await expect(page.getByTestId('error-home-link')).toHaveAttribute('href', '/en')
+    expectNoFrenchLabel(await readableText(page))
+
+    await page.goto('/route-inexistante')
+    await expect(page.locator('html')).toHaveAttribute('lang', 'fr')
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText(fr['error.not_found'])
+  })
+
+  test('le panier anglais, vide puis rempli, est en anglais', async ({ page }) => {
+    await page.goto('/en/panier')
+    await expect(page.getByTestId('cart-empty')).toContainText(en['cart.empty'].trim())
+    expectNoFrenchLabel(await readableText(page))
+
+    await page.goto(PRODUCT.en)
+    await page.getByTestId('add-to-cart').click()
+    await expect(page.getByTestId('add-to-cart-status')).toContainText('Swiss cheese plant')
+    expectNoFrenchLabel(await readableText(page))
+
+    await page.goto('/en/panier')
+    await expect(page.getByTestId('cart-line')).toBeVisible()
+    expectNoFrenchLabel(await readableText(page))
   })
 
   for (const path of ['/de/contact', '/fr/contact', '/en/produit/monstera-deliciosa', '/en/sitemap.xml']) {
