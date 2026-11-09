@@ -15,6 +15,8 @@ Les pages de démonstration montrent chaque brique en situation :
 
 Un bouton « Accessibilité renforcée » dans l'en-tête agrandit le texte, espace le contenu (WCAG 1.4.12), renforce les contrastes et coupe les animations. Le choix est mémorisé dans le navigateur.
 
+Le site parle français par défaut. Les langues activées dans l'identité du site de l'API (`locales`) sont servies sous leur préfixe (`/en/produit/swiss-cheese-plant`), avec un sélecteur de langue dans l'en-tête, des `hreflang` et un sitemap par langue ; un site à une seule langue ne change en rien.
+
 Le site suit le thème clair ou sombre du système. Un bouton « Thème » dans l'en-tête permet de le forcer en clair ou en sombre, choix lui aussi mémorisé et appliqué dès le premier affichage. Le mode renforcé garde toujours la page en clair.
 
 ## Stack
@@ -57,6 +59,7 @@ Variables d'environnement (`.env`, à surcharger dans `.env.local` non versionn�
 | `GLITCHTIP_ENVIRONMENT` | Environnement des erreurs remontées, par défaut celui de Symfony |
 | `MATOMO_URL`, `MATOMO_SITE_ID` | Mesure d'audience Matomo sans cookie. Les deux sont nécessaires, vides : rien n'est chargé ni envoyé |
 | `API_URL` | API commune : `http://localhost:8090` (API Platform, par défaut) ou `http://localhost:8091` (Hono) |
+| `API_SCENARIO` | Scénario de l'API fixé sur tous les appels (`bilingual` : site en français et en anglais, tests e2e). Vide hors des tests |
 | `MAINTENANCE` | `1` sert la page statique de maintenance en 503 avec `Retry-After`, sans PHP        |
 
 ## Démarrer un projet à partir de ce dépôt
@@ -103,7 +106,7 @@ git cherry-pick <sha>
 | Sujet | Fichiers |
 | --- | --- |
 | Nom du projet et du paquet | `composer.json` (`name`, `description`), `package.json` (`name`, `description`), `compose.yaml` (`name:` du projet Compose, image `…:prod`), `compose.override.yaml` (image `…:dev`), `Makefile.qa.mk` (`LHCI_PROJECT`), `LICENSE`, titres de `README.md` et `CLAUDE.md` |
-| Config du site et identité | `config/packages/site.yaml` (nom, description, couleur du thème, navigation), `templates/seo/manifest.webmanifest.twig` (`short_name`), `src/Shared/UI/Seo/SeoPageFactory.php` (texte alternatif de l'image de partage), `templates/home/index.html.twig` (sur-titre et boutons du hero). Les diapositives du carrousel se modifient dans l'admin de l'API Platform (`GET /api/slides`, images comprises). Le nom du site est aussi vérifié par `tests/Functional/PagesTest.php` (`SITE`) et `tests/e2e/navigation.e2e.ts` |
+| Config du site et identité | `config/packages/site.yaml` (nom, description, couleur du thème, navigation), `templates/seo/manifest.webmanifest.twig` (`short_name`), `translations/messages.{fr,en}.yaml` (libellés de l'interface, dont le texte alternatif de l'image de partage `seo.default_image_alt` et les boutons du hero), `templates/home/index.html.twig` (sur-titre du hero). Les diapositives du carrousel se modifient dans l'admin de l'API Platform (`GET /api/slides`, images comprises). Le nom du site est aussi vérifié par `tests/Functional/PagesTest.php` (`SITE`) et `tests/e2e/navigation.e2e.ts` |
 | Ports | `Makefile` (`HTTP_PORT`, 8095), `compose.yaml` (port par défaut), `.env` (`SITE_URL`), `playwright.config.ts`, `Makefile.qa.mk` (`LHCI_PORT`, 3230) et `.lighthouserc.json` |
 | Logo et favicons | `assets/images/logo-mark.svg`, `public/favicon.ico`, `public/favicon.svg`, `public/apple-touch-icon.png`, `public/icon-192.png`, `public/icon-512.png`, `public/og-image.jpg` |
 | Pages légales | textes dans l'admin de l'API Platform (`GET /api/legal_pages/{slug}`), `config/packages/site.yaml` (`site.accessibility` une fois l'audit RGAA réalisé, pour l'état de conformité du lien du pied de page), section « Mesure d'audience » de `templates/legal/privacy.html.twig` |
@@ -159,7 +162,7 @@ Terminer par `make qa`, puis `make test-e2e test-a11y`. Déroulée sur une copie
 | `make format`                          | PHP-CS-Fixer en écriture                                                                   |
 | `make typecheck`                       | PHPStan niveau max                                                                         |
 | `make test-unit`                       | PHPUnit et tests du mode renforcé et du thème                                              |
-| `make test-e2e`                        | Playwright sur l'image de production, puis les tests `@dev` sur le serveur de développement |
+| `make test-e2e`                        | Playwright sur l'image de production, puis servie en bilingue (`@bilingue`), puis les tests `@dev` sur le serveur de développement |
 | `make test-a11y`                       | axe-core, WCAG 2.1 AA, chaque page en standard, sombre et renforcé                         |
 | `make metrics`                         | Lighthouse CI sur l'image de production (port 3230) en clair puis en sombre : échoue sous 90 en performance ou sous 100 en accessibilité et SEO |
 | `make docker-build` / `make docker-up` | Image de production, sur le port `HTTP_PORT`                                               |
@@ -212,7 +215,7 @@ Les conventions de code viennent du `CLAUDE.md` global de l'auteur. Le `CLAUDE.m
 ### Ajouter une page
 
 1. Créer le contrôleur dans `src/<Module>/UI/` (ou `src/Site/UI/` pour une page sans métier), avec sa route en attribut. Il ne fait qu'appeler le domaine et rendre une vue.
-2. Créer la vue dans le dossier de templates de la page, `templates/<page>/index.html.twig` (comme `templates/contact/` ou `templates/legal/`), qui commence par `{% set seo = seo_page({title: '…', description: '…'}) %}`.
+2. Créer la vue dans le dossier de templates de la page, `templates/<page>/index.html.twig` (comme `templates/contact/` ou `templates/legal/`), qui commence par `{% set seo = seo_page({title: '…'|trans, description: '…'|trans}) %}`. Chaque libellé est une clé de `translations/messages.fr.yaml` et `messages.en.yaml` (`{{ 'page.title'|trans }}`), mêmes clés dans les deux fichiers (`TranslationFilesTest`). La route est servie aussi sous le préfixe de chaque autre langue activée, et ses liens `path()` gardent la langue de la page.
 3. Ajouter la route à `config/packages/site.yaml` (navigation, sitemap, plan du site, fil d'Ariane) et à `tests/e2e/routes.ts` (tests de réponse, SEO, débordement et accessibilité), puis à `.lighthouserc.json`.
 4. Écrire `tests/e2e/<page>.e2e.ts` et un test fonctionnel dans `tests/Functional/`.
 
@@ -226,8 +229,12 @@ Le pattern est dans le domaine Tasks :
 
 ### Ajouter un champ de formulaire
 
-1. Ajouter la propriété et ses contraintes, avec leur message en français, dans `src/Contact/UI/Form/ContactFormData.php`.
-2. L'ajouter dans `ContactType.php`, puis dans `templates/contact/_form.html.twig` avec son `data-testid`. Le thème `form/bui_layout.html.twig` produit le balisage `bui-field` de boilerplates-ui, écrit « (obligatoire) » dans le libellé d'un champ requis, et Symfony relie l'erreur au champ par `aria-describedby` et pose `aria-invalid`.
+1. Ajouter la propriété et ses contraintes dans `src/Contact/UI/Form/ContactFormData.php`, avec pour message une clé de `translations/validators.fr.yaml` et `validators.en.yaml`.
+2. L'ajouter dans `ContactType.php` (libellé : une clé de `messages.*.yaml`), puis dans `templates/contact/_form.html.twig` avec son `data-testid`. Le thème `form/bui_layout.html.twig` produit le balisage `bui-field` de boilerplates-ui, écrit « (obligatoire) » dans le libellé d'un champ requis, et Symfony relie l'erreur au champ par `aria-describedby` et pose `aria-invalid`.
+
+### Activer une langue
+
+Dans l'admin de l'API, fiche « Identité du site » : langues activées (la première est la langue par défaut). Le front les lit dans `GET /api/site-identity` à chaque requête, rien n'est à configurer. Une langue sans fichier `translations/messages.<langue>.yaml` prend les libellés français : pour une nouvelle langue, copier `messages.en.yaml` et `validators.en.yaml` et les traduire. Les appels à l'API passent `locale=<langue de la page>` (`Accept-Language` pour le contact) dès qu'il y a plus d'une langue.
 
 ### Ajouter une icône
 
@@ -248,7 +255,7 @@ Chaque réponse porte un en-tête `Content-Security-Policy-Report-Only` construi
 ## Tests
 
 - **Unitaires et fonctionnels** : `tests/Unit` (domaine et fonctions pures, sans conteneur), `tests/Functional` (WebTestCase, avec des dépôts remplacés pour les états vide et erreur), `tests/js` (mode renforcé et thème).
-- **End-to-end** : Playwright sur l'image de production servie sur le port 8095. Les éléments sont ciblés par `data-testid`, préfixé par le domaine (`catalog-product`, `contact-submit`). Chaque rendu conditionnel est testé présent et absent. Les tests marqués `@dev` (page 500, charte graphique) tournent ensuite sur le serveur de développement.
+- **End-to-end** : Playwright sur l'image de production servie sur le port 8095. Les éléments sont ciblés par `data-testid`, préfixé par le domaine (`catalog-product`, `contact-submit`). Chaque rendu conditionnel est testé présent et absent. Les tests marqués `@bilingue` (`tests/e2e/bilingue.e2e.ts` : routes préfixées, libellés anglais, sélecteur, `hreflang`, sitemap, 404 des préfixes non servis, axe des pages anglaises) tournent sur l'image servie avec `API_SCENARIO=bilingual`, les tests marqués `@dev` (page 500, charte graphique) ensuite sur le serveur de développement.
 - **Accessibilité** : `tests/a11y/` passe axe-core sur chaque route, en mode standard, sombre et renforcé, desktop et mobile, menus ouverts compris. Axe ne couvre qu'une partie du RGAA, un audit manuel reste nécessaire.
 - **Captures** : `tests/e2e/layout.e2e.ts` enregistre l'accueil et le catalogue dans les trois modes, à 375, 768 et 1280 px, dans `screenshots/`.
 
