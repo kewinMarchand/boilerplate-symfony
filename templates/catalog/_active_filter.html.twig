@@ -1,6 +1,6 @@
 <li>
     <a class="bui-chip" href="{{ href }}" data-testid="catalog-active-filter">
-        <span class="bui-visually-hidden">Retirer le filtre : </span>{{ label }}
+        <span class="bui-visually-hidden">{{ 'ui.remove_filter'|trans }} </span>{{ label }}
         {{ include('shared/ui/_icon.html.twig', {name: 'x'}) }}
     </a>
 </li>

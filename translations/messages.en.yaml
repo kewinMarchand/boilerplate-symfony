@@ -195,3 +195,11 @@ tasks:
     loading: 'Loading tasks'
     show: 'Show tasks'
     todo: 'To do'
+ui:
+    alert:
+        error: 'Error:'
+        info: 'Information:'
+        success: 'Success:'
+        warning: 'Warning:'
+    remove_filter: 'Remove filter:'
+    required: '(required)'

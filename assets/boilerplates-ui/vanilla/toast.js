@@ -36,11 +36,21 @@ const icon = (name, className) => {
 
 /**
  * Ajoute un toast en bas de la file et renvoie son élément.
+ * `prefix` (préfixe masqué, celui de la variante par défaut) et `closeLabel` (nom du bouton de fermeture)
+ * remplacent les libellés français.
  * @param {HTMLElement} toaster élément `[data-bui-toaster]`
- * @param {{ message: string, variant?: ToastVariant }} options
+ * @param {{ message: string, variant?: ToastVariant, prefix?: string, closeLabel?: string }} options
  */
-export const showToast = (toaster, { message, variant = 'info' }) => {
-  const { role, prefix } = VARIANTS[variant]
+export const showToast = (
+  toaster,
+  {
+    message,
+    variant = 'info',
+    prefix = VARIANTS[variant].prefix,
+    closeLabel = 'Fermer la notification',
+  },
+) => {
+  const { role } = VARIANTS[variant]
   const toast = document.createElement('div')
   toast.className = `bui-toast bui-toast--${variant}`
   toast.id = `bui-toast-${++counter}`
@@ -56,7 +66,7 @@ export const showToast = (toaster, { message, variant = 'info' }) => {
   const close = document.createElement('button')
   close.type = 'button'
   close.className = 'bui-toast__close'
-  close.setAttribute('aria-label', 'Fermer la notification')
+  close.setAttribute('aria-label', closeLabel)
   close.setAttribute('data-bui-toast-close', '')
   close.append(icon('x'))
 
