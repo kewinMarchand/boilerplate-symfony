@@ -1,6 +1,6 @@
 {#- Fil d'Ariane bui-breadcrumb de boilerplates-ui, balisage de référence de la bibliothèque. -#}
 {% if not seo.breadcrumb.empty %}
-    <nav class="bui-breadcrumb" aria-label="Fil d'Ariane" data-testid="layout-breadcrumb">
+    <nav class="bui-breadcrumb" aria-label="{{ 'layout.breadcrumb'|trans }}" data-testid="layout-breadcrumb">
         <ol class="bui-breadcrumb__list">
             {% for item in seo.breadcrumb.items %}
                 <li class="bui-breadcrumb__item">

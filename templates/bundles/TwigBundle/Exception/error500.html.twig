@@ -1,12 +1,12 @@
 {% extends 'base.html.twig' %}
 
-{% set seo = seo_page({title: 'Une erreur est survenue', description: 'Une erreur inattendue nous empêche d’afficher cette page. Réessayez dans quelques instants ou revenez à l’accueil du site.', robots: 'noindex', canonical: false, breadcrumb: [{label: 'Une erreur est survenue'}]}) %}
+{% set seo = seo_page({title: 'error.server'|trans, description: 'error.server_description'|trans, robots: 'noindex', canonical: false, breadcrumb: [{label: 'error.server'|trans}]}) %}
 
 {% block body %}
-    <h1>Une erreur est survenue</h1>
-    <p class="lead">Nous n’avons pas pu afficher cette page. Réessayez dans quelques instants.</p>
+    <h1>{{ 'error.server'|trans }}</h1>
+    <p class="lead">{{ 'error.server_lead'|trans }}</p>
     <ul class="error-links" role="list">
-        <li><a class="bui-button" href="{{ app.request.requestUri }}" data-testid="error-retry">Réessayer</a></li>
-        <li><a class="bui-button bui-button--outline" href="{{ path('home') }}" data-testid="error-home-link">Retour à l’accueil</a></li>
+        <li><a class="bui-button" href="{{ app.request.requestUri }}" data-testid="error-retry">{{ 'common.retry'|trans }}</a></li>
+        <li><a class="bui-button bui-button--outline" href="{{ path('home') }}" data-testid="error-home-link">{{ 'error.home'|trans }}</a></li>
     </ul>
 {% endblock %}

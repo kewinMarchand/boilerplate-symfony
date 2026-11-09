@@ -1,11 +1,11 @@
 <li class="category-menu" data-controller="category-menu" data-action="keydown.esc@window->category-menu#closeAndFocus click@window->category-menu#closeOnOutsideClick">
-    <a class="nav-link category-menu__fallback" href="{{ path('catalog') }}"{% if app.current_route == 'catalog' %} aria-current="page"{% endif %}>Catalogue</a>
+    <a class="nav-link category-menu__fallback" href="{{ path('catalog') }}"{% if app.current_route == 'catalog' %} aria-current="page"{% endif %}>{{ 'nav.catalog'|trans }}</a>
     <button type="button" class="nav-link category-menu__toggle" aria-expanded="false" aria-controls="category-menu-panel" data-category-menu-target="toggle" data-action="category-menu#toggle" data-testid="layout-category-menu-toggle"{% if app.current_route == 'catalog' %} data-current="true"{% endif %}>
-        <span>Catalogue</span>
+        <span>{{ 'nav.catalog'|trans }}</span>
         {{ include('shared/ui/_icon.html.twig', {name: 'chevron-down'}) }}
     </button>
     <div id="category-menu-panel" class="category-menu__panel" data-category-menu-target="panel" data-testid="layout-category-menu" hidden>
-        <a class="category-menu__all" href="{{ path('catalog') }}" data-action="focus->category-menu#collapseAll mouseenter->category-menu#collapseAll">Tout le catalogue</a>
+        <a class="category-menu__all" href="{{ path('catalog') }}" data-action="focus->category-menu#collapseAll mouseenter->category-menu#collapseAll">{{ 'layout.catalog_all'|trans }}</a>
         {{ include('shared/layout/_category_menu_column.html.twig', {categories: tree.root.children, parents: []}) }}
     </div>
 </li>

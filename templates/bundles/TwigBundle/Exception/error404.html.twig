@@ -1,13 +1,13 @@
 {% extends 'base.html.twig' %}
 
-{% set seo = seo_page({title: 'Page introuvable', description: 'La page demandée n’existe pas ou a été déplacée. Retrouvez votre chemin depuis l’accueil, le plan du site ou le catalogue.', robots: 'noindex', canonical: false, breadcrumb: [{label: 'Page introuvable'}]}) %}
+{% set seo = seo_page({title: 'error.not_found'|trans, description: 'error.not_found_description'|trans, robots: 'noindex', canonical: false, breadcrumb: [{label: 'error.not_found'|trans}]}) %}
 
 {% block body %}
-    <h1>Page introuvable</h1>
-    <p class="lead">La page demandée n’existe pas ou a été déplacée.</p>
+    <h1>{{ 'error.not_found'|trans }}</h1>
+    <p class="lead">{{ 'error.not_found_lead'|trans }}</p>
     <ul class="error-links" role="list">
-        <li><a class="bui-button" href="{{ path('home') }}" data-testid="error-home-link">Retour à l’accueil</a></li>
-        <li><a class="bui-button bui-button--outline" href="{{ path('legal_sitemap') }}">Plan du site</a></li>
-        <li><a class="bui-button bui-button--outline" href="{{ path('catalog') }}">Catalogue</a></li>
+        <li><a class="bui-button" href="{{ path('home') }}" data-testid="error-home-link">{{ 'error.home'|trans }}</a></li>
+        <li><a class="bui-button bui-button--outline" href="{{ path('legal_sitemap') }}">{{ 'nav.legal_sitemap'|trans }}</a></li>
+        <li><a class="bui-button bui-button--outline" href="{{ path('catalog') }}">{{ 'nav.catalog'|trans }}</a></li>
     </ul>
 {% endblock %}

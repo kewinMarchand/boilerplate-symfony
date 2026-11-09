@@ -1,9 +1,9 @@
 {% extends 'base.html.twig' %}
 
-{% set seo = seo_page({page: 'legal-notice', title: 'Mentions légales', description: 'Mentions légales du site ' ~ site_identity().name ~ ' : éditeur, directeur de la publication, hébergeur et propriété intellectuelle.'}) %}
+{% set seo = seo_page({page: 'legal-notice', title: 'nav.legal_notice'|trans, description: 'legal.notice_description'|trans({'%site%': site_identity().name})}) %}
 
 {% block body %}
     <article class="prose">
-        {{ include('legal/_page_content.html.twig', {fallback_title: 'Mentions légales'}) }}
+        {{ include('legal/_page_content.html.twig', {fallback_title: 'nav.legal_notice'|trans}) }}
     </article>
 {% endblock %}

@@ -15,14 +15,4 @@ enum ProductSort: string
     {
         return self::PriceAscending === $this || self::PriceDescending === $this;
     }
-
-    public function label(): string
-    {
-        return match ($this) {
-            self::Relevance => 'Pertinence',
-            self::PriceAscending => 'Prix croissant',
-            self::PriceDescending => 'Prix décroissant',
-            self::Name => 'Nom',
-        };
-    }
 }

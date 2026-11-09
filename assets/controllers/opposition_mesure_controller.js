@@ -4,6 +4,7 @@ import { isMesureRefusee, setOppositionMesure } from '../opposition_mesure.js';
 
 export default class extends Controller {
     static targets = ['input', 'status'];
+    static values = { refused: String, measured: String };
 
     connect() {
         this.render(isMesureRefusee());
@@ -16,8 +17,6 @@ export default class extends Controller {
 
     render(refusee) {
         this.inputTarget.checked = refusee;
-        this.statusTarget.textContent = refusee
-            ? 'Vos visites ne sont plus mesurées depuis ce navigateur.'
-            : 'Vos visites sont mesurées, de façon anonyme.';
+        this.statusTarget.textContent = refusee ? this.refusedValue : this.measuredValue;
     }
 }

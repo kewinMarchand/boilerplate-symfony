@@ -79,4 +79,18 @@ final class CategoryPathTest extends TestCase
             CategoryPath::all(self::tree()),
         ));
     }
+
+    public function testAlternatesFollowEachCategoryInEachLanguage(): void
+    {
+        $tree = new CategoryTree(new Category('', 'Catalogue', [
+            new Category('interieur', 'Intérieur', [
+                new Category('feuillages', 'Feuillages', [], ['fr' => 'feuillages', 'en' => 'foliage']),
+                new Category('cactus', 'Cactus', [], ['fr' => 'cactus']),
+            ], ['fr' => 'interieur', 'en' => 'indoor']),
+        ]));
+
+        self::assertSame(['fr' => 'interieur/feuillages', 'en' => 'indoor/foliage'], CategoryPath::resolve($tree, 'interieur/feuillages')?->alternates());
+        self::assertSame(['fr' => 'interieur/cactus'], CategoryPath::resolve($tree, 'interieur/cactus')?->alternates());
+        self::assertSame([], CategoryPath::resolve($tree, '')?->alternates());
+    }
 }

@@ -33,8 +33,11 @@ final readonly class Price
         return intdiv($this->cents, 100);
     }
 
-    public function format(): string
+    /**
+     * @param string $locale langue de la page, « fr_FR » : « 34,90 € », « en_US » : « €34.90 »
+     */
+    public function format(string $locale = 'fr_FR'): string
     {
-        return (string) (new \NumberFormatter('fr_FR', \NumberFormatter::CURRENCY))->formatCurrency($this->cents / 100, 'EUR');
+        return (string) (new \NumberFormatter($locale, \NumberFormatter::CURRENCY))->formatCurrency($this->cents / 100, 'EUR');
     }
 }

@@ -6,6 +6,6 @@
     {{ form_row(form.message, {attr: {rows: 5, autofocus: first_invalid == 'message', 'data-testid': 'contact-message'}}) }}
     <button type="submit" class="bui-button" data-testid="contact-submit">
         {{ include('shared/ui/_icon.html.twig', {name: 'mail'}) }}
-        <span>Envoyer</span>
+        <span>{{ 'contact.submit'|trans }}</span>
     </button>
 {{ form_end(form) }}

@@ -3,14 +3,14 @@
 {%- set sizes = '(min-width: 1024px) calc((min(100vw, 1440px) - 64px) / 3), (min-width: 768px) 50vw, 100vw' -%}
 {%- set seo = seo_page({
     page: 'blog',
-    title: 'Blog',
-    description: 'Tous les articles du blog ' ~ site_identity().name ~ ' : accessibilité, rendu côté serveur et composants d’interface, du plus récent au plus ancien.',
+    title: 'nav.blog'|trans,
+    description: 'blog.description'|trans({'%site%': site_identity().name}),
     json_ld: [{
         '@context': 'https://schema.org',
         '@type': 'Blog',
-        name: 'Blog ' ~ site_identity().name,
+        name: 'blog.name'|trans({'%site%': site_identity().name}),
         url: site.url ~ path('blog'),
-        inLanguage: 'fr-FR',
+        inLanguage: page_locale().tag,
         blogPost: articles|map(article => {
             '@type': 'BlogPosting',
             headline: article.title,
@@ -28,11 +28,11 @@
 {% endblock %}
 
 {% block body %}
-    <h1>Blog</h1>
+    <h1>{{ 'nav.blog'|trans }}</h1>
     {% if sections is not empty %}
-        <nav aria-label="Rubriques" data-testid="blog-sections">
+        <nav aria-label="{{ 'blog.sections'|trans }}" data-testid="blog-sections">
             <ul class="bui-chip-list chips" role="list">
-                <li><a class="bui-chip" href="{{ path('blog') }}" data-testid="blog-section-link"{% if section is null %} aria-current="page"{% endif %}>Toutes</a></li>
+                <li><a class="bui-chip" href="{{ path('blog') }}" data-testid="blog-section-link"{% if section is null %} aria-current="page"{% endif %}>{{ 'blog.all_sections'|trans }}</a></li>
                 {% for item in sections %}
                     <li><a class="bui-chip" href="{{ path('blog', {rubrique: item.slug}) }}" data-testid="blog-section-link"{% if item.slug == section %} aria-current="page"{% endif %}>{{ item.name }}</a></li>
                 {% endfor %}
@@ -40,16 +40,16 @@
         </nav>
     {% endif %}
     {% if error %}
-        {% embed 'shared/ui/_alert.html.twig' with {variant: 'error', body: error, testid: 'blog-error'} %}
+        {% embed 'shared/ui/_alert.html.twig' with {variant: 'error', body: 'blog.load_error'|trans, testid: 'blog-error'} %}
             {% block action %}
                 <a class="bui-button bui-button--outline" href="{{ path('blog') }}" data-testid="blog-retry">
                     {{ include('shared/ui/_icon.html.twig', {name: 'rotate-cw'}) }}
-                    <span>Réessayer</span>
+                    <span>{{ 'common.retry'|trans }}</span>
                 </a>
             {% endblock %}
         {% endembed %}
     {% elseif articles is empty %}
-        {{ include('shared/ui/_alert.html.twig', {body: section is null ? 'Aucun article pour l’instant. Revenez bientôt.' : 'Aucun article dans cette rubrique pour l’instant.', testid: 'blog-empty'}) }}
+        {{ include('shared/ui/_alert.html.twig', {body: section is null ? 'blog.empty'|trans : 'blog.empty_section'|trans, testid: 'blog-empty'}) }}
     {% else %}
         <ul class="blog-list" role="list" data-testid="blog-list">
             {% for article in articles %}

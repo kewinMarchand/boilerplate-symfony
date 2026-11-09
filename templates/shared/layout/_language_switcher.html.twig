@@ -1,0 +1,8 @@
+{#- Sélecteur de langue (section 29 bis de la spec commune), seulement à plus d'une langue : un lien par langue, vers l'équivalent de la page ou l'accueil de la langue (seo.languages). -#}
+<nav class="language-switcher container" aria-label="{{ 'layout.languages'|trans }}" data-testid="layout-languages">
+    <ul class="language-switcher__list" role="list">
+        {% for language in seo.languages %}
+            <li><a class="language-switcher__link" href="{{ language.href }}" lang="{{ language.locale }}" hreflang="{{ language.locale }}"{% if language.current %} aria-current="true"{% endif %} data-testid="layout-language-{{ language.locale }}">{{ language.name }}</a></li>
+        {% endfor %}
+    </ul>
+</nav>

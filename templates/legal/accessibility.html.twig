@@ -1,9 +1,9 @@
 {% extends 'base.html.twig' %}
 
-{% set seo = seo_page({page: 'accessibility', title: 'Déclaration d\'accessibilité', description: 'Déclaration d’accessibilité du site ' ~ site_identity().name ~ ' selon le RGAA 4.1.2 : état de conformité, tests réalisés et voies de recours.'}) %}
+{% set seo = seo_page({page: 'accessibility', title: 'legal.accessibility_title'|trans, description: 'legal.accessibility_description'|trans({'%site%': site_identity().name})}) %}
 
 {% block body %}
     <article class="prose">
-        {{ include('legal/_page_content.html.twig', {fallback_title: 'Déclaration d\'accessibilité'}) }}
+        {{ include('legal/_page_content.html.twig', {fallback_title: 'legal.accessibility_title'|trans}) }}
     </article>
 {% endblock %}

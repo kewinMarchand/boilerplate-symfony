@@ -40,7 +40,7 @@ final class HomeControllerTest extends WebTestCase
     {
         $client = self::createClient();
         self::getContainer()->set(ArticleRepository::class, new class implements ArticleRepository {
-            public function findLatest(int $limit, ?string $section = null): array
+            public function findLatest(int $limit, ?string $section = null, ?string $locale = null): array
             {
                 return [];
             }
@@ -67,7 +67,7 @@ final class HomeControllerTest extends WebTestCase
         $repository = new class implements ArticleRepository {
             public ?int $limit = null;
 
-            public function findLatest(int $limit, ?string $section = null): array
+            public function findLatest(int $limit, ?string $section = null, ?string $locale = null): array
             {
                 $this->limit = $limit;
 
@@ -94,7 +94,7 @@ final class HomeControllerTest extends WebTestCase
     {
         $client = self::createClient();
         self::getContainer()->set(ArticleRepository::class, new class implements ArticleRepository {
-            public function findLatest(int $limit, ?string $section = null): array
+            public function findLatest(int $limit, ?string $section = null, ?string $locale = null): array
             {
                 throw new ArticlesLoadException();
             }
@@ -181,9 +181,9 @@ final class HomeControllerTest extends WebTestCase
                 return $this->real->similar($product, $limit);
             }
 
-            public function productSlugs(): array
+            public function productSlugs(?string $locale = null): array
             {
-                return $this->real->productSlugs();
+                return $this->real->productSlugs($locale);
             }
         });
     }
@@ -192,7 +192,7 @@ final class HomeControllerTest extends WebTestCase
     {
         $client = self::createClient();
         self::getContainer()->set(ArticleRepository::class, new class implements ArticleRepository {
-            public function findLatest(int $limit, ?string $section = null): array
+            public function findLatest(int $limit, ?string $section = null, ?string $locale = null): array
             {
                 return [new Article('1', 'sans-rubrique', 'Sans rubrique', 'Extrait', new \DateTimeImmutable('2026-10-01'), null, null, null, null, '')];
             }

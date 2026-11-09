@@ -1,2 +1,2 @@
 {#- Lien de demande de renseignement de la fiche produit, à la place du bouton d'ajout au panier quand la vente en ligne est coupée : item = {slug, name}. Présent en rupture de stock et sans JavaScript. -#}
-<p><a class="bui-button" href="{{ path('contact', {produit: item.slug}) }}" data-testid="product-inquiry">Demande de renseignement<span class="bui-visually-hidden"> sur {{ item.name }}</span></a></p>
+<p><a class="bui-button" href="{{ path('contact', {produit: item.slug}) }}" data-testid="product-inquiry">{{ 'contact.inquiry'|trans }}<span class="bui-visually-hidden">{{ 'contact.inquiry_about'|trans({'%name%': item.name}) }}</span></a></p>

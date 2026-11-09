@@ -1,20 +1,20 @@
 {% extends 'base.html.twig' %}
 
-{% set seo = seo_page({page: 'contact', title: 'Contact', description: 'Démo de formulaire : Symfony Form et Validator, erreurs liées aux champs, envoi amélioré par Turbo et fonctionnel sans JavaScript.'}) %}
+{% set seo = seo_page({page: 'contact', title: 'nav.contact'|trans, description: 'contact.description'|trans}) %}
 
 {% block body %}
-    <h1>Contact</h1>
-    <p class="lead">Formulaire validé côté serveur par Symfony Validator, envoyé par Turbo et fonctionnel sans JavaScript.</p>
+    <h1>{{ 'nav.contact'|trans }}</h1>
+    <p class="lead">{{ 'contact.lead'|trans }}</p>
     {% if product %}
-        <p data-testid="contact-product">Votre demande concerne : <a class="bui-link" href="{{ path('product', {slug: product.slug}) }}">{{ product.name }}</a></p>
+        <p data-testid="contact-product">{{ 'contact.product'|trans }}<a class="bui-link" href="{{ path('product', {slug: product.slug}) }}">{{ product.name }}</a></p>
     {% endif %}
     {{ include('contact/_form.html.twig') }}
     <div id="contact-status" class="contact-status" aria-live="polite">
         {% for message in app.flashes('contact_success') %}
-            {{ include('shared/ui/_alert.html.twig', {variant: 'success', body: message, testid: 'contact-success'}) }}
+            {{ include('shared/ui/_alert.html.twig', {variant: 'success', body: message|trans, testid: 'contact-success'}) }}
         {% endfor %}
         {% if send_error %}
-            {{ include('shared/ui/_alert.html.twig', {variant: 'error', body: send_error, testid: 'contact-error'}) }}
+            {{ include('shared/ui/_alert.html.twig', {variant: 'error', body: 'contact.send_error'|trans, testid: 'contact-error'}) }}
         {% endif %}
     </div>
 {% endblock %}

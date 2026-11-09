@@ -12,6 +12,9 @@ final class SiteIdentityTranslation
 {
     private const array COLOR_SCHEMES = ['auto', 'light', 'dark'];
 
+    /** Langues d'une API antérieure à la section 29 du contrat, qui ne publie pas `locales` */
+    private const array DEFAULT_LOCALES = ['fr'];
+
     public static function identity(mixed $payload): SiteIdentity
     {
         $identity = ApiPayload::object($payload, 'siteIdentity');
@@ -29,7 +32,32 @@ final class SiteIdentityTranslation
             ApiPayload::image($identity, 'shareImage'),
             null === ($identity['icon'] ?? null) ? null : self::icon(ApiPayload::object($identity['icon'], 'icon')),
             ApiPayload::bool($identity, 'salesEnabled'),
+            self::locales($identity),
         );
+    }
+
+    /**
+     * @param array<string, mixed> $identity
+     *
+     * @return non-empty-list<string>
+     */
+    private static function locales(array $identity): array
+    {
+        if (!isset($identity['locales'])) {
+            return self::DEFAULT_LOCALES;
+        }
+        $locales = $identity['locales'];
+        if (!\is_array($locales) || !array_is_list($locales) || [] === $locales) {
+            throw new InvalidApiPayloadException('locales', 'une liste de langues non vide');
+        }
+
+        return array_map(static function (mixed $locale): string {
+            if (!\is_string($locale) || 1 !== preg_match('/^[a-z]{2}$/', $locale)) {
+                throw new InvalidApiPayloadException('locales[]', 'un code de langue à deux lettres');
+            }
+
+            return $locale;
+        }, $locales);
     }
 
     /**

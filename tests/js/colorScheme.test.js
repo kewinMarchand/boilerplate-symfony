@@ -55,13 +55,20 @@ describe('applyColorScheme', () => {
 })
 
 describe('colorSchemeLabel', () => {
+  const labels = {
+    auto: 'Thème : système',
+    light: 'Thème : clair',
+    dark: 'Thème : sombre',
+    suspended: ", suspendu par l'accessibilité renforcée",
+  }
+
   it('nomme le thème courant', () => {
-    assert.equal(colorSchemeLabel('auto', false), 'Thème : système')
-    assert.equal(colorSchemeLabel('dark', false), 'Thème : sombre')
+    assert.equal(colorSchemeLabel('auto', false, labels), 'Thème : système')
+    assert.equal(colorSchemeLabel('dark', false, labels), 'Thème : sombre')
   })
 
   it('signale un choix suspendu par le mode renforcé, sauf le clair', () => {
-    assert.equal(colorSchemeLabel('dark', true), "Thème : sombre, suspendu par l'accessibilité renforcée")
-    assert.equal(colorSchemeLabel('light', true), 'Thème : clair')
+    assert.equal(colorSchemeLabel('dark', true, labels), "Thème : sombre, suspendu par l'accessibilité renforcée")
+    assert.equal(colorSchemeLabel('light', true, labels), 'Thème : clair')
   })
 })

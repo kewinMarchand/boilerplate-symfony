@@ -136,7 +136,7 @@ final class CatalogControllerTest extends WebTestCase
                 return [];
             }
 
-            public function productSlugs(): array
+            public function productSlugs(?string $locale = null): array
             {
                 return [];
             }

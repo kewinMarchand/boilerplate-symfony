@@ -1,20 +1,20 @@
 {% extends 'base.html.twig' %}
 
-{% set seo = seo_page({page: 'privacy', title: 'Données personnelles', description: 'Politique de protection des données personnelles du site ' ~ site_identity().name ~ ' : finalité, base légale, durée de conservation et droits.'}) %}
+{% set seo = seo_page({page: 'privacy', title: 'nav.legal_privacy'|trans, description: 'legal.privacy_description'|trans({'%site%': site_identity().name})}) %}
 
 {% block body %}
     <article class="prose">
-        {{ include('legal/_page_content.html.twig', {fallback_title: 'Données personnelles'}) }}
+        {{ include('legal/_page_content.html.twig', {fallback_title: 'nav.legal_privacy'|trans}) }}
 
         {% if matomo() %}
             <section aria-labelledby="mesure-audience" data-testid="legal-audience-measurement">
-                <h2 id="mesure-audience">Mesure d’audience</h2>
-                <p>La fréquentation du site est mesurée avec Matomo, hébergé par l’éditeur, configuré sans cookie et sans identifiant : aucun suivi d’un site à l’autre, aucune donnée transmise à un tiers. Les statistiques produites sont anonymes et servent uniquement à améliorer le site. Les données brutes sont conservées 25 mois au plus.</p>
-                <p>Vous pouvez vous opposer à cette mesure : votre choix est gardé dans ce navigateur, sans cookie.</p>
-                <div data-controller="opposition-mesure">
+                <h2 id="mesure-audience">{{ 'privacy.audience'|trans }}</h2>
+                <p>{{ 'privacy.audience_text'|trans }}</p>
+                <p>{{ 'privacy.opposition'|trans }}</p>
+                <div data-controller="opposition-mesure" data-opposition-mesure-refused-value="{{ 'privacy.refused'|trans }}" data-opposition-mesure-measured-value="{{ 'privacy.measured'|trans }}">
                     <div class="bui-checkbox">
                         <input class="bui-checkbox__input" id="opposition-mesure" type="checkbox" data-opposition-mesure-target="input" data-action="opposition-mesure#change" data-testid="legal-opposition-mesure">
-                        <label class="bui-checkbox__label" for="opposition-mesure">Ne pas mesurer mes visites sur ce site</label>
+                        <label class="bui-checkbox__label" for="opposition-mesure">{{ 'privacy.opt_out'|trans }}</label>
                     </div>
                     <p role="status" aria-live="polite" data-opposition-mesure-target="status" data-testid="legal-opposition-etat"></p>
                 </div>

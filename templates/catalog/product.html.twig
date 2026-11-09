@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{%- set breadcrumb = [{label: 'Catalogue', path: path('catalog')}] -%}
+{%- set breadcrumb = [{label: 'nav.catalog'|trans, path: path('catalog')}] -%}
 {%- set sales_enabled = site_identity().salesEnabled -%}
 {%- if detail -%}
     {%- set product = detail.product -%}
@@ -14,8 +14,9 @@
     {%- set seo = seo_page({
         title: product.name,
         meta_title: detail.metaTitle,
-        description: detail.metaDescription ?: product.name ~ ' : exposition ' ~ product.exposure.label|lower ~ ', taille ' ~ product.size.value ~ (sales_enabled ? ', ' ~ product.price|price) ~ '. ' ~ (product.inStock ? 'En stock' : 'En rupture de stock') ~ ', rayon ' ~ (category ? category.name : 'catalogue') ~ '.',
+        description: detail.metaDescription ?: 'product.description'|trans({'%name%': product.name, '%exposure%': (('catalog.exposure.' ~ product.exposure.value)|trans)|lower, '%size%': product.size.value, '%price%': sales_enabled ? ', ' ~ product.price|price : '', '%stock%': product.inStock ? 'catalog.in_stock'|trans : 'product.out_of_stock_long'|trans, '%category%': category ? category.name : 'product.catalogue'|trans}),
         breadcrumb: breadcrumb|merge([{label: product.name}]),
+        alternates: detail.alternates|map(slug => {slug: slug}),
         image: image ? {url: largest, width: image.width, height: image.height, alt: image.alt ?: product.name} : null,
         json_ld: [{
             '@context': 'https://schema.org',
@@ -36,7 +37,7 @@
         }|filter(value => value is not null)],
     }|filter(value => value is not null)) -%}
 {%- else -%}
-    {%- set seo = seo_page({title: 'Produit', description: 'Fiche produit de la jardinerie tropicale ' ~ site_identity().name ~ '.', breadcrumb: breadcrumb|merge([{label: 'Produit'}]), robots: 'noindex, follow'}) -%}
+    {%- set seo = seo_page({title: 'product.title'|trans, description: 'product.fallback_description'|trans({'%site%': site_identity().name}), breadcrumb: breadcrumb|merge([{label: 'product.title'|trans}]), robots: 'noindex, follow'}) -%}
 {%- endif -%}
 
 {% block preload %}
@@ -64,7 +65,7 @@
                         <ul class="product-gallery__thumbs" role="list">
                             {% for image in images %}
                                 <li>
-                                    <a class="product-gallery__thumb" href="{{ image.sources is empty ? image.src : (image.sources|last).srcset|split(', ')|last|split(' ')|first }}" aria-label="Voir l’image {{ loop.index }} sur {{ images|length }}"
+                                    <a class="product-gallery__thumb" href="{{ image.sources is empty ? image.src : (image.sources|last).srcset|split(', ')|last|split(' ')|first }}" aria-label="{{ 'product.gallery_thumb'|trans({'%index%': loop.index, '%count%': images|length}) }}"
                                         {%- if loop.first %} aria-current="true"{% endif %} data-testid="product-gallery-thumb" data-product-gallery-target="thumb" data-action="click->product-gallery#show keydown->product-gallery#move">
                                         {{- include('shared/ui/_picture.html.twig', {image: image, sizes: '80px', decorative: true}) -}}
                                     </a>
@@ -88,12 +89,12 @@
                         </div>
                     {% endif %}
                     <dl class="product-page__features">
-                        <dt>Exposition</dt>
-                        <dd>{{ product.exposure.label }}</dd>
-                        <dt>Taille</dt>
+                        <dt>{{ 'catalog.exposure_label'|trans }}</dt>
+                        <dd>{{ ('catalog.exposure.' ~ product.exposure.value)|trans }}</dd>
+                        <dt>{{ 'catalog.size_label'|trans }}</dt>
                         <dd>{{ product.size.value }}</dd>
-                        <dt>Disponibilité</dt>
-                        <dd>{% if product.inStock %}En stock{% else %}<span class="bui-badge bui-badge--error">Rupture de stock</span>{% endif %}</dd>
+                        <dt>{{ 'product.availability'|trans }}</dt>
+                        <dd>{% if product.inStock %}{{ 'catalog.in_stock'|trans }}{% else %}<span class="bui-badge bui-badge--error">{{ 'catalog.out_of_stock'|trans }}</span>{% endif %}</dd>
                     </dl>
                     {% if product.attributes is not empty %}
                         <dl class="product-page__features" data-testid="product-attributes">
@@ -105,7 +106,7 @@
                     {% endif %}
                     {{ include(purchase, {item: {slug: product.slug, name: product.name, price: product.price.cents}, available: product.inStock}) }}
                     {% if detail.category %}
-                        <p><a class="bui-link" href="{{ path('catalog', {path: detail.category.path}) }}">Voir les autres produits : {{ detail.category.name }}</a></p>
+                        <p><a class="bui-link" href="{{ path('catalog', {path: detail.category.path}) }}">{{ 'product.other_products'|trans({'%category%': detail.category.name}) }}</a></p>
                     {% endif %}
                 </div>
             </div>
@@ -113,7 +114,7 @@
         {% if similar is not empty %}
             {{ include('shared/carousel/_carousel.html.twig', {
                 id: 'product-similar',
-                title: 'Produits similaires',
+                title: 'product.similar'|trans,
                 testid: 'product-similar',
                 slides: similar|map(other => {
                     image: other.image,
@@ -124,7 +125,7 @@
             }) }}
         {% endif %}
     {% else %}
-        <h1>Produit</h1>
-        {{ include('shared/ui/_alert.html.twig', {variant: 'error', body: error, testid: 'product-error'}) }}
+        <h1>{{ 'product.title'|trans }}</h1>
+        {{ include('shared/ui/_alert.html.twig', {variant: 'error', body: 'product.load_error'|trans, testid: 'product-error'}) }}
     {% endif %}
 {% endblock %}

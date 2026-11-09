@@ -59,7 +59,7 @@ final class ShowCatalogPageTest extends TestCase
                 return [];
             }
 
-            public function productSlugs(): array
+            public function productSlugs(?string $locale = null): array
             {
                 return [];
             }

@@ -13,5 +13,5 @@
     {% endfor %}
 {% else %}
     <h1>{{ fallback_title }}</h1>
-    {{ include('shared/ui/_alert.html.twig', {variant: 'error', body: error, testid: 'legal-error'}) }}
+    {{ include('shared/ui/_alert.html.twig', {variant: 'error', body: 'legal.load_error'|trans, testid: 'legal-error'}) }}
 {% endif %}

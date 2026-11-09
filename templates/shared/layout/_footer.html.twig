@@ -1,14 +1,14 @@
 <footer class="footer" data-testid="layout-footer">
     <div class="footer__inner container">
-        <nav aria-label="Liens légaux">
+        <nav aria-label="{{ 'layout.legal_links'|trans }}">
             <ul class="footer__links" role="list">
                 {% for item in site.navigation.legal %}
                     <li>
-                        <a href="{{ path(item.route) }}"{% if app.current_route == item.route %} aria-current="page"{% endif %}>{{ item.label }}{% if item.route == 'legal_accessibility' %} : {{ accessibility_compliance().value }}{% endif %}</a>
+                        <a href="{{ path(item.route) }}"{% if app.current_route == item.route %} aria-current="page"{% endif %}>{% if item.route == 'legal_accessibility' %}{{ 'legal.compliance_link'|trans({'%label%': item.label|trans, '%status%': ('legal.compliance.' ~ accessibility_compliance().name)|trans}) }}{% else %}{{ item.label|trans }}{% endif %}</a>
                     </li>
                 {% endfor %}
                 {% if app.environment == 'dev' %}
-                    <li><a href="{{ path('styleguide') }}">Charte graphique (dev)</a></li>
+                    <li><a href="{{ path('styleguide') }}">{{ 'layout.styleguide'|trans }}</a></li>
                 {% endif %}
             </ul>
         </nav>

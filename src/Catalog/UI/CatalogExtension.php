@@ -10,6 +10,7 @@ use App\Catalog\Domain\Category;
 use App\Catalog\Domain\CategoryPath;
 use App\Catalog\Domain\CategoryTree;
 use App\Catalog\Domain\Price;
+use App\Shared\UI\Locale\PageLocale;
 use Twig\Attribute\AsTwigFilter;
 use Twig\Attribute\AsTwigFunction;
 
@@ -19,7 +20,7 @@ use Twig\Attribute\AsTwigFunction;
  */
 final readonly class CatalogExtension
 {
-    public function __construct(private CatalogRepository $catalogRepository)
+    public function __construct(private CatalogRepository $catalogRepository, private PageLocale $pageLocale)
     {
     }
 
@@ -54,6 +55,6 @@ final readonly class CatalogExtension
     #[AsTwigFilter('price')]
     public function price(Price|int $price): string
     {
-        return ($price instanceof Price ? $price : Price::fromCents($price))->format();
+        return ($price instanceof Price ? $price : Price::fromCents($price))->format($this->pageLocale->ogLocale());
     }
 }

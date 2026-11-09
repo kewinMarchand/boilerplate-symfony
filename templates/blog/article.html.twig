@@ -9,7 +9,8 @@
         title: article.title,
         meta_title: detail.metaTitle,
         description: detail.metaDescription ?: article.excerpt ?: article.title,
-        breadcrumb: [{label: 'Blog', path: path('blog')}, {label: article.title}],
+        breadcrumb: [{label: 'nav.blog'|trans, path: path('blog')}, {label: article.title}],
+        alternates: detail.alternates|map(slug => {slug: slug}),
         published_time: article.publishedAt|date('Y-m-d'),
         image: image ? {url: largest, width: image.width, height: image.height, alt: image.alt ?: article.title} : null,
         json_ld: [{
@@ -20,11 +21,11 @@
             datePublished: article.publishedAt|date('Y-m-d'),
             url: url,
             image: largest,
-            inLanguage: 'fr-FR',
+            inLanguage: page_locale().tag,
         }|filter(value => value is not null)],
     }|filter(value => value is not null)) -%}
 {%- else -%}
-    {%- set seo = seo_page({title: 'Article', description: 'Article du blog ' ~ site_identity().name ~ '.', breadcrumb: [{label: 'Blog', path: path('blog')}, {label: 'Article'}], robots: 'noindex, follow'}) -%}
+    {%- set seo = seo_page({title: 'article.title'|trans, description: 'article.fallback_description'|trans({'%site%': site_identity().name}), breadcrumb: [{label: 'nav.blog'|trans, path: path('blog')}, {label: 'article.title'|trans}], robots: 'noindex, follow'}) -%}
 {%- endif -%}
 
 {% block preload %}
@@ -42,11 +43,11 @@
             <h1 data-testid="article-title">{{ article.title }}</h1>
             {% if article.section or article.format %}
                 <p class="article__terms">
-                    {%- if article.section %}<span data-testid="article-section"><span class="bui-visually-hidden">Rubrique : </span>{{ article.section.name }}</span>{% endif -%}
-                    {%- if article.format %}<span data-testid="article-format"><span class="bui-visually-hidden">Format : </span>{{ article.format.name }}</span>{% endif -%}
+                    {%- if article.section %}<span data-testid="article-section"><span class="bui-visually-hidden">{{ 'article.section'|trans }}</span>{{ article.section.name }}</span>{% endif -%}
+                    {%- if article.format %}<span data-testid="article-format"><span class="bui-visually-hidden">{{ 'article.format'|trans }}</span>{{ article.format.name }}</span>{% endif -%}
                 </p>
             {% endif %}
-            <p class="article__date">Publié le <time datetime="{{ article.publishedAt|date('Y-m-d') }}">{{ article.publishedAt|date('d/m/Y') }}</time></p>
+            <p class="article__date">{{ 'article.published'|trans }}<time datetime="{{ article.publishedAt|date('Y-m-d') }}">{{ article.publishedAt|date('date.short'|trans) }}</time></p>
             {% if article.image %}
                 {{ include('shared/ui/_picture.html.twig', {image: article.image, sizes: '(min-width: 800px) 760px, calc(100vw - 32px)', class: 'article__image', priority: true}) }}
             {% endif %}
@@ -54,20 +55,20 @@
             {% if article.audio %}
                 <figure class="article__audio">
                     <figcaption id="article-audio-caption">
-                        Version audio, <time datetime="{{ article.audio.isoDuration }}" data-testid="article-audio-duration">{{ article.audio.readableDuration }}</time>
+                        {{ 'article.audio'|trans }}<time datetime="{{ article.audio.isoDuration }}" data-testid="article-audio-duration">{{ article.audio.readableDuration }}</time>
                         {%- if article.speaker %}. <span data-testid="article-audio-speaker">{{ article.speaker }}</span>{% endif %}
                     </figcaption>
                     <audio controls preload="none" aria-labelledby="article-audio-caption" data-testid="article-audio">
                         <source src="{{ article.audio.src }}" type="{{ article.audio.type }}">
-                        <a class="bui-link" href="{{ article.audio.src }}">Télécharger la version audio</a>
+                        <a class="bui-link" href="{{ article.audio.src }}">{{ 'article.audio_download'|trans }}</a>
                     </audio>
                 </figure>
             {% endif %}
             <div class="legal-html" data-testid="article-body">{{ detail.html|raw }}</div>
-            <p class="article__back"><a href="{{ path('blog') }}">Tous les articles</a></p>
+            <p class="article__back"><a href="{{ path('blog') }}">{{ 'blog.all'|trans }}</a></p>
         </article>
     {% else %}
-        <h1>Article</h1>
-        {{ include('shared/ui/_alert.html.twig', {variant: 'error', body: error, testid: 'article-error'}) }}
+        <h1>{{ 'article.title'|trans }}</h1>
+        {{ include('shared/ui/_alert.html.twig', {variant: 'error', body: 'article.load_error'|trans, testid: 'article-error'}) }}
     {% endif %}
 {% endblock %}

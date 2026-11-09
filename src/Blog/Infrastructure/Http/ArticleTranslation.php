@@ -30,6 +30,7 @@ final class ArticleTranslation
             ApiPayload::string($article, 'html'),
             ApiPayload::string($article, 'metaTitle'),
             ApiPayload::string($article, 'metaDescription'),
+            ApiPayload::alternates($article),
         );
     }
 

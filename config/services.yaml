@@ -19,6 +19,7 @@ services:
     App\Catalog\Domain\CatalogRepository: '@App\Catalog\Infrastructure\Http\HttpCatalogRepository'
     App\Shared\Domain\SiteIdentityRepository: '@App\Shared\Infrastructure\Http\HttpSiteIdentityRepository'
     App\Shared\Domain\PageMetaRepository: '@App\Shared\Infrastructure\Http\HttpPageMetaRepository'
+    App\Shared\Domain\ContentLocale: '@App\Shared\UI\Locale\PageLocale'
 
     Kewinmarchand\Csp\Symfony\CspResponseSubscriber:
         factory: ['App\Shared\Infrastructure\Security\SiteCsp', 'subscriber']

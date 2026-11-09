@@ -17,6 +17,6 @@ export const countItems = (lines) => lines.reduce((count, line) => count + line.
 
 export const totalPrice = (lines) => lines.reduce((total, line) => total + line.price * line.quantity, 0);
 
-const PRICE_FORMAT = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' });
-
-export const formatPrice = (cents) => PRICE_FORMAT.format(cents / 100);
+// locale : langue de la page (<html lang>), le français par défaut
+export const formatPrice = (cents, locale = 'fr-FR') =>
+    new Intl.NumberFormat(locale, { style: 'currency', currency: 'EUR' }).format(cents / 100);

@@ -1,10 +1,10 @@
 {%- set facets = result.facets -%}
 <aside id="catalog-filters" class="catalog__filters" aria-labelledby="catalog-filters-title" data-catalog-target="panel" data-action="keydown->catalog#trapFocus" data-testid="catalog-filters">
     <div class="catalog__filters-header">
-        <h2 id="catalog-filters-title">Filtres</h2>
+        <h2 id="catalog-filters-title">{{ 'catalog.filters'|trans }}</h2>
         <button type="button" class="bui-button bui-button--outline catalog__filters-close" data-action="catalog#closeFilters">
             {{ include('shared/ui/_icon.html.twig', {name: 'x'}) }}
-            <span>Fermer</span>
+            <span>{{ 'layout.close'|trans }}</span>
         </button>
     </div>
     <form id="catalog-filters-form" class="catalog__form" method="get" action="{{ category_path }}" data-catalog-target="form">
@@ -12,7 +12,7 @@
 
         {% if category.children is not empty %}
             <details class="facet" open>
-                <summary>Catégorie</summary>
+                <summary>{{ 'catalog.category'|trans }}</summary>
                 <ul class="facet__links" role="list">
                     {% for child in category.children %}
                         <li><a href="{{ path('catalog', {path: categoryPath.child(child).value}) }}" data-turbo-frame="_top">{{ child.name }} <span class="facet__count">({{ facets.categories[child.slug] }})</span></a></li>
@@ -22,30 +22,30 @@
         {% endif %}
 
         <details class="facet" open>
-            <summary>Exposition</summary>
+            <summary>{{ 'catalog.exposure_label'|trans }}</summary>
             <fieldset>
-                <legend class="bui-visually-hidden">Exposition</legend>
+                <legend class="bui-visually-hidden">{{ 'catalog.exposure_label'|trans }}</legend>
                 {% for exposure in enum('App\\Catalog\\Domain\\Exposure').cases() %}
                     {% set count = facets.exposures[exposure.value] %}
                     {% set checked = exposure in filters.exposures %}
                     <div class="bui-checkbox">
                         <input class="bui-checkbox__input" type="checkbox" id="filter-exposure-{{ exposure.value }}" name="exposition" value="{{ exposure.value }}"{% if checked %} checked{% endif %}{% if count == 0 and not checked %} disabled{% endif %} data-action="catalog#apply" data-testid="catalog-filter-exposure-{{ exposure.value }}">
-                        <label class="bui-checkbox__label" for="filter-exposure-{{ exposure.value }}">{{ exposure.label }} <span class="facet__count">({{ count }})</span></label>
+                        <label class="bui-checkbox__label" for="filter-exposure-{{ exposure.value }}">{{ ('catalog.exposure.' ~ exposure.value)|trans }} <span class="facet__count">({{ count }})</span></label>
                     </div>
                 {% endfor %}
             </fieldset>
         </details>
 
         <details class="facet" open>
-            <summary>Taille</summary>
+            <summary>{{ 'catalog.size_label'|trans }}</summary>
             <fieldset>
-                <legend class="bui-visually-hidden">Taille</legend>
+                <legend class="bui-visually-hidden">{{ 'catalog.size_label'|trans }}</legend>
                 {% for size in enum('App\\Catalog\\Domain\\Size').cases() %}
                     {% set count = facets.sizes[size.value] %}
                     {% set checked = size in filters.sizes %}
                     <div class="bui-checkbox">
                         <input class="bui-checkbox__input" type="checkbox" id="filter-size-{{ size.value }}" name="taille" value="{{ size.value }}"{% if checked %} checked{% endif %}{% if count == 0 and not checked %} disabled{% endif %} data-action="catalog#apply" data-testid="catalog-filter-size-{{ size.value }}">
-                        <label class="bui-checkbox__label" for="filter-size-{{ size.value }}">{{ size.label }} <span class="facet__count">({{ count }})</span></label>
+                        <label class="bui-checkbox__label" for="filter-size-{{ size.value }}">{{ ('catalog.size.' ~ size.value)|trans }} <span class="facet__count">({{ count }})</span></label>
                     </div>
                 {% endfor %}
             </fieldset>
@@ -71,15 +71,15 @@
 
         {% if site_identity().salesEnabled %}
             <details class="facet" open>
-                <summary>Prix</summary>
+                <summary>{{ 'catalog.price'|trans }}</summary>
                 <fieldset class="facet__price">
-                    <legend class="bui-visually-hidden">Prix en euros</legend>
+                    <legend class="bui-visually-hidden">{{ 'catalog.price_in_euros'|trans }}</legend>
                     <div class="bui-field">
-                        <label class="bui-field__label" for="filter-price-min">Minimum (€)</label>
+                        <label class="bui-field__label" for="filter-price-min">{{ 'catalog.price_min'|trans }}</label>
                         <input class="bui-field__input" type="number" id="filter-price-min" name="prix_min" min="0" step="1" inputmode="numeric" value="{{ filters.priceMin ? filters.priceMin.euros }}" data-action="change->catalog#apply" data-testid="catalog-filter-price-min">
                     </div>
                     <div class="bui-field">
-                        <label class="bui-field__label" for="filter-price-max">Maximum (€)</label>
+                        <label class="bui-field__label" for="filter-price-max">{{ 'catalog.price_max'|trans }}</label>
                         <input class="bui-field__input" type="number" id="filter-price-max" name="prix_max" min="0" step="1" inputmode="numeric" value="{{ filters.priceMax ? filters.priceMax.euros }}" data-action="change->catalog#apply" data-testid="catalog-filter-price-max">
                     </div>
                 </fieldset>
@@ -88,12 +88,12 @@
 
         <div class="bui-switch">
             <input class="bui-switch__input" type="checkbox" role="switch" id="filter-in-stock" name="en_stock" value="1"{% if filters.inStockOnly %} checked{% endif %} data-action="catalog#apply" data-testid="catalog-filter-in-stock">
-            <label class="bui-switch__label" for="filter-in-stock">En stock uniquement</label>
+            <label class="bui-switch__label" for="filter-in-stock">{{ 'catalog.in_stock_only'|trans }}</label>
         </div>
 
-        <button type="submit" class="bui-button catalog__apply">Appliquer les filtres</button>
+        <button type="submit" class="bui-button catalog__apply">{{ 'catalog.apply'|trans }}</button>
     </form>
     <div class="catalog__filters-footer">
-        <button type="button" class="bui-button" data-action="catalog#closeFilters">Voir les {{ result.page.total }} produits</button>
+        <button type="button" class="bui-button" data-action="catalog#closeFilters">{{ 'catalog.show_products'|trans({'%count%': result.page.total}) }}</button>
     </div>
 </aside>

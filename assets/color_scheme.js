@@ -16,8 +16,7 @@ export const applyColorScheme = (root, scheme) => {
     return scheme;
 };
 
-const LABELS = { auto: 'système', light: 'clair', dark: 'sombre' };
-
 // Le mode renforcé impose le clair : un autre choix reste mémorisé mais suspendu.
-export const colorSchemeLabel = (scheme, enhanced) =>
-    `Thème : ${LABELS[scheme]}${enhanced && scheme !== 'light' ? ", suspendu par l'accessibilité renforcée" : ''}`;
+// labels : libellés de la page, { auto, light, dark, suspended }, passés par le HTML dans sa langue.
+export const colorSchemeLabel = (scheme, enhanced, labels) =>
+    `${labels[scheme]}${enhanced && scheme !== 'light' ? labels.suspended : ''}`;

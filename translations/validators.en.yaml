@@ -1,0 +1,9 @@
+contact:
+    email:
+        invalid: 'Enter a valid email address, for example name@domain.com.'
+    message:
+        too_long: 'Your message must not exceed 5000 characters.'
+        too_short: 'Your message must contain at least 10 characters.'
+    name:
+        too_long: 'Your name must not exceed 100 characters.'
+        too_short: 'Enter your name (2 characters minimum).'

@@ -25,6 +25,24 @@ final class SiteIdentityTranslationTest extends TestCase
         self::assertTrue($identity->salesEnabled);
     }
 
+    public function testDefaultsToFrenchWithoutLocales(): void
+    {
+        self::assertSame(['fr'], SiteIdentityTranslation::identity(self::fixture('site-identity'))->locales);
+    }
+
+    public function testTranslatesTheLocalesDefaultFirst(): void
+    {
+        self::assertSame(['fr', 'en'], SiteIdentityTranslation::identity(self::fixture('site-identity-bilingue'))->locales);
+    }
+
+    public function testRejectsAnEmptyLocaleList(): void
+    {
+        $this->expectException(InvalidApiPayloadException::class);
+        $this->expectExceptionMessage('locales');
+
+        SiteIdentityTranslation::identity(self::fixture('site-identity-bilingue', ['"fr",' => '', '"en"' => '']));
+    }
+
     public function testTranslatesOnlineSalesTurnedOff(): void
     {
         self::assertFalse(SiteIdentityTranslation::identity(self::fixture('site-identity-sans-vente'))->salesEnabled);

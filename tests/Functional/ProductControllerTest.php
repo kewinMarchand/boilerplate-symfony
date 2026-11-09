@@ -108,9 +108,9 @@ final class ProductControllerTest extends WebTestCase
                 throw new CatalogLoadException();
             }
 
-            public function productSlugs(): array
+            public function productSlugs(?string $locale = null): array
             {
-                return $this->real->productSlugs();
+                return $this->real->productSlugs($locale);
             }
         });
         $client->request('GET', self::PRODUCT);

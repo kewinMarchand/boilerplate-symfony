@@ -50,7 +50,8 @@ final class ContactController extends AbstractController
             return $this->renderPage($form, $product, $exception->getMessage(), Response::HTTP_SERVICE_UNAVAILABLE);
         }
 
-        $success = null === $data->product ? 'Merci, votre message a bien été envoyé.' : 'Votre demande de renseignement a bien été envoyée.';
+        // Clé de traduction, traduite à l'affichage dans la langue de la page
+        $success = null === $data->product ? 'contact.sent' : 'contact.inquiry_sent';
 
         if (TurboBundle::STREAM_FORMAT === $request->getPreferredFormat()) {
             $request->setRequestFormat(TurboBundle::STREAM_FORMAT);

@@ -6,11 +6,11 @@
     {% endif %}
     <div class="catalog__main">
         {% if error %}
-            {% embed 'shared/ui/_alert.html.twig' with {variant: 'error', body: error, testid: 'catalog-error'} %}
+            {% embed 'shared/ui/_alert.html.twig' with {variant: 'error', body: 'catalog.load_error'|trans, testid: 'catalog-error'} %}
                 {% block action %}
                     <a class="bui-button bui-button--outline" href="{{ category_path ~ state.queryString() }}" data-testid="catalog-retry">
                         {{ include('shared/ui/_icon.html.twig', {name: 'rotate-cw'}) }}
-                        <span>Réessayer</span>
+                        <span>{{ 'common.retry'|trans }}</span>
                     </a>
                 {% endblock %}
             {% endembed %}
@@ -18,37 +18,37 @@
             <div class="catalog__toolbar">
                 <button type="button" class="bui-button bui-button--outline catalog__filters-open" aria-haspopup="dialog" aria-expanded="false" aria-controls="catalog-filters" data-catalog-target="opener" data-action="catalog#openFilters" data-testid="catalog-filters-open">
                     {{ include('shared/ui/_icon.html.twig', {name: 'sliders-horizontal'}) }}
-                    <span>Filtrer{% if filters.activeCount > 0 %} ({{ filters.activeCount }}<span class="bui-visually-hidden"> filtres actifs</span>){% endif %}</span>
+                    <span>{{ 'catalog.filter'|trans }}{% if filters.activeCount > 0 %} ({{ filters.activeCount }}<span class="bui-visually-hidden">{{ 'catalog.active_count'|trans }}</span>){% endif %}</span>
                 </button>
-                <p class="catalog__count" role="status" data-catalog-target="count" data-testid="catalog-results-count">{{ product_count }} produit{{ product_count > 1 ? 's' }}</p>
+                <p class="catalog__count" role="status" data-catalog-target="count" data-testid="catalog-results-count">{{ 'catalog.count'|trans({'%count%': product_count}) }}</p>
                 <div class="catalog__sort">
-                    <label for="catalog-sort">Trier par</label>
+                    <label for="catalog-sort">{{ 'catalog.sort_by'|trans }}</label>
                     <select id="catalog-sort" name="tri" form="catalog-filters-form" data-action="catalog#apply" data-testid="catalog-sort">
                         {% for sort in enum('App\\Catalog\\Domain\\ProductSort').cases()|filter(sort => sales_enabled or not sort.byPrice) %}
-                            <option value="{{ sort.value }}"{% if sort == state.query.sort %} selected{% endif %}>{{ sort.label }}</option>
+                            <option value="{{ sort.value }}"{% if sort == state.query.sort %} selected{% endif %}>{{ ('catalog.sort.' ~ sort.value)|trans }}</option>
                         {% endfor %}
                     </select>
                 </div>
-                <nav class="catalog__views" aria-label="Affichage">
+                <nav class="catalog__views" aria-label="{{ 'catalog.display'|trans }}">
                     <a class="bui-button bui-button--outline" href="{{ category_path ~ state.withView(enum('App\\Catalog\\UI\\ListView').Grid).queryString() }}"{% if state.view.value == 'grille' %} aria-current="page"{% endif %} data-testid="catalog-view-grid">
                         {{ include('shared/ui/_icon.html.twig', {name: 'layout-grid'}) }}
-                        <span>Grille</span>
+                        <span>{{ 'catalog.grid'|trans }}</span>
                     </a>
                     <a class="bui-button bui-button--outline" href="{{ category_path ~ state.withView(enum('App\\Catalog\\UI\\ListView').List).queryString() }}"{% if state.view.value == 'liste' %} aria-current="page"{% endif %} data-testid="catalog-view-list">
                         {{ include('shared/ui/_icon.html.twig', {name: 'list'}) }}
-                        <span>Liste</span>
+                        <span>{{ 'catalog.list'|trans }}</span>
                     </a>
                 </nav>
             </div>
 
             {% if filters.activeCount > 0 %}
                 <div class="catalog__active" data-testid="catalog-active-filters">
-                    <ul class="bui-chip-list chips" role="list" aria-label="Filtres actifs">
+                    <ul class="bui-chip-list chips" role="list" aria-label="{{ 'catalog.active_filters'|trans }}">
                         {% for exposure in filters.exposures %}
-                            {{ include('catalog/_active_filter.html.twig', {label: exposure.label, href: category_path ~ state.withoutExposure(exposure).queryString()}) }}
+                            {{ include('catalog/_active_filter.html.twig', {label: ('catalog.exposure.' ~ exposure.value)|trans, href: category_path ~ state.withoutExposure(exposure).queryString()}) }}
                         {% endfor %}
                         {% for size in filters.sizes %}
-                            {{ include('catalog/_active_filter.html.twig', {label: size.label, href: category_path ~ state.withoutSize(size).queryString()}) }}
+                            {{ include('catalog/_active_filter.html.twig', {label: ('catalog.size.' ~ size.value)|trans, href: category_path ~ state.withoutSize(size).queryString()}) }}
                         {% endfor %}
                         {% for code, values in filters.attributes %}
                             {% set facet = result.facets.attribute(code) %}
@@ -57,27 +57,27 @@
                             {% endfor %}
                         {% endfor %}
                         {% if filters.priceMin is not null %}
-                            {{ include('catalog/_active_filter.html.twig', {label: 'Prix minimum ' ~ filters.priceMin.euros ~ ' €', href: category_path ~ state.withoutPriceMin().queryString()}) }}
+                            {{ include('catalog/_active_filter.html.twig', {label: 'catalog.active_price_min'|trans({'%euros%': filters.priceMin.euros}), href: category_path ~ state.withoutPriceMin().queryString()}) }}
                         {% endif %}
                         {% if filters.priceMax is not null %}
-                            {{ include('catalog/_active_filter.html.twig', {label: 'Prix maximum ' ~ filters.priceMax.euros ~ ' €', href: category_path ~ state.withoutPriceMax().queryString()}) }}
+                            {{ include('catalog/_active_filter.html.twig', {label: 'catalog.active_price_max'|trans({'%euros%': filters.priceMax.euros}), href: category_path ~ state.withoutPriceMax().queryString()}) }}
                         {% endif %}
                         {% if filters.inStockOnly %}
-                            {{ include('catalog/_active_filter.html.twig', {label: 'En stock', href: category_path ~ state.withoutInStock().queryString()}) }}
+                            {{ include('catalog/_active_filter.html.twig', {label: 'catalog.in_stock'|trans, href: category_path ~ state.withoutInStock().queryString()}) }}
                         {% endif %}
                     </ul>
-                    <a class="catalog__clear" href="{{ category_path ~ state.cleared().queryString() }}" data-catalog-focus="title" data-testid="catalog-clear-filters">Tout effacer</a>
+                    <a class="catalog__clear" href="{{ category_path ~ state.cleared().queryString() }}" data-catalog-focus="title" data-testid="catalog-clear-filters">{{ 'catalog.clear'|trans }}</a>
                 </div>
             {% endif %}
 
-            <div class="catalog__loading" role="status" aria-label="Chargement des produits">
+            <div class="catalog__loading" role="status" aria-label="{{ 'catalog.loading'|trans }}">
                 {% for i in 1..4 %}<span class="bui-skeleton skeleton--card" aria-hidden="true"></span>{% endfor %}
             </div>
 
             {% if result.page.items is empty %}
-                {% embed 'shared/ui/_alert.html.twig' with {body: 'Aucun produit ne correspond à ces filtres.', testid: 'catalog-empty'} %}
+                {% embed 'shared/ui/_alert.html.twig' with {body: 'catalog.empty'|trans, testid: 'catalog-empty'} %}
                     {% block action %}
-                        <a class="bui-button bui-button--outline" href="{{ category_path ~ state.cleared().queryString() }}" data-catalog-focus="title">Tout effacer</a>
+                        <a class="bui-button bui-button--outline" href="{{ category_path ~ state.cleared().queryString() }}" data-catalog-focus="title">{{ 'catalog.clear'|trans }}</a>
                     {% endblock %}
                 {% endembed %}
             {% else %}
@@ -101,11 +101,11 @@
                                         <p class="product__price" data-testid="catalog-product-price" data-price="{{ product.price.cents }}">{{ product.price|price }}</p>
                                     {% endif %}
                                     <dl class="product__details">
-                                        <div><dt>Exposition</dt><dd>{{ product.exposure.label }}</dd></div>
-                                        <div><dt>Taille</dt><dd>{{ product.size.label }}</dd></div>
+                                        <div><dt>{{ 'catalog.exposure_label'|trans }}</dt><dd>{{ ('catalog.exposure.' ~ product.exposure.value)|trans }}</dd></div>
+                                        <div><dt>{{ 'catalog.size_label'|trans }}</dt><dd>{{ ('catalog.size.' ~ product.size.value)|trans }}</dd></div>
                                     </dl>
                                     {% if not product.inStock %}
-                                        <p><span class="bui-badge bui-badge--error">Rupture de stock</span></p>
+                                        <p><span class="bui-badge bui-badge--error">{{ 'catalog.out_of_stock'|trans }}</span></p>
                                     {% endif %}
                                 </div>
                             </article>

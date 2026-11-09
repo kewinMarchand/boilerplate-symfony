@@ -1,10 +1,10 @@
 {#- Bascule du thème (spec commune, section 20) : menu à choix cochés de boilerplates-ui. Servie sur « système », le contrôleur color-scheme la remet sur le choix mémorisé. -#}
-<div class="bui-menu color-scheme-toggle" data-bui-menu data-controller="color-scheme" data-action="bui-menu-select->color-scheme#select">
-    <button type="button" class="bui-button bui-button--nav bui-button--icon bui-menu__trigger" id="color-scheme-trigger" aria-label="Thème : système" aria-haspopup="menu" aria-expanded="false" aria-controls="color-scheme-list" data-testid="color-scheme-toggle" data-color-scheme-target="trigger">
+<div class="bui-menu color-scheme-toggle" data-bui-menu data-controller="color-scheme" data-action="bui-menu-select->color-scheme#select" data-color-scheme-labels-value="{{ {auto: 'color_scheme.label.auto'|trans, light: 'color_scheme.label.light'|trans, dark: 'color_scheme.label.dark'|trans, suspended: 'color_scheme.suspended'|trans}|json_encode }}">
+    <button type="button" class="bui-button bui-button--nav bui-button--icon bui-menu__trigger" id="color-scheme-trigger" aria-label="{{ 'color_scheme.label.auto'|trans }}" aria-haspopup="menu" aria-expanded="false" aria-controls="color-scheme-list" data-testid="color-scheme-toggle" data-color-scheme-target="trigger">
         {{- include('shared/ui/_icon.html.twig', {name: 'monitor'}) -}}
     </button>
     <ul class="bui-menu__list" role="menu" id="color-scheme-list" aria-labelledby="color-scheme-trigger" hidden>
-        {% for scheme, label in {auto: 'Système', light: 'Clair', dark: 'Sombre'} %}
+        {% for scheme, label in {auto: 'color_scheme.auto'|trans, light: 'color_scheme.light'|trans, dark: 'color_scheme.dark'|trans} %}
             <li role="none">
                 <button type="button" class="bui-menu__item" role="menuitemradio" aria-checked="{{ scheme == 'auto' ? 'true' : 'false' }}" tabindex="-1" data-bui-menu-item="{{ scheme }}" data-testid="color-scheme-option-{{ scheme }}" data-color-scheme-target="item">
                     {{- include('shared/ui/_icon.html.twig', {name: 'check', class: 'bui-menu__check'}) -}}

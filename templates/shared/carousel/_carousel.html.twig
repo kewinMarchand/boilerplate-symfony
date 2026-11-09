@@ -1,22 +1,22 @@
 {#- Carrousel agnostique : id, title, testid, slides = [{image (objet image du contrat, ou null), title, text (null : pas de ligne), href facultatif : le titre devient un lien étiré sur la diapositive}] -#}
-<section class="carousel" aria-roledescription="carrousel" aria-labelledby="{{ id }}-title" data-testid="{{ testid }}" data-controller="carousel">
+<section class="carousel" aria-roledescription="{{ 'carousel.roledescription'|trans }}" aria-labelledby="{{ id }}-title" data-testid="{{ testid }}" data-controller="carousel" data-carousel-dot-label-value="{{ 'carousel.dot'|trans }}">
     <div class="carousel__header">
         <h2 id="{{ id }}-title">{{ title }}</h2>
         <div class="carousel__controls">
             <button type="button" class="bui-button bui-button--outline" aria-controls="{{ id }}-track" data-carousel-target="previous" data-action="carousel#previous" data-testid="carousel-prev" disabled>
                 {{ include('shared/ui/_icon.html.twig', {name: 'chevron-left'}) }}
-                <span>Précédent</span>
+                <span>{{ 'carousel.previous'|trans }}</span>
             </button>
             <button type="button" class="bui-button bui-button--outline" aria-controls="{{ id }}-track" data-carousel-target="next" data-action="carousel#next" data-testid="carousel-next">
-                <span>Suivant</span>
+                <span>{{ 'carousel.next'|trans }}</span>
                 {{ include('shared/ui/_icon.html.twig', {name: 'chevron-right'}) }}
             </button>
         </div>
     </div>
-    <div id="{{ id }}-track" class="carousel__viewport" role="group" aria-label="Diapositives" tabindex="0" data-carousel-target="viewport" data-testid="carousel-track">
+    <div id="{{ id }}-track" class="carousel__viewport" role="group" aria-label="{{ 'carousel.slides'|trans }}" tabindex="0" data-carousel-target="viewport" data-testid="carousel-track">
         <div class="carousel__container">
             {% for slide in slides %}
-                <div class="carousel__slide" role="group" aria-roledescription="diapositive" aria-label="{{ loop.index }} sur {{ slides|length }}" data-testid="carousel-slide">
+                <div class="carousel__slide" role="group" aria-roledescription="{{ 'carousel.slide'|trans }}" aria-label="{{ 'carousel.position'|trans({'%index%': loop.index, '%count%': slides|length}) }}" data-testid="carousel-slide">
                     {% if slide.image %}{{ include('shared/ui/_picture.html.twig', {image: slide.image, sizes: '(min-width: 1024px) calc((min(100vw, 1440px) - 96px) / 3), (min-width: 768px) calc((100vw - 64px) / 2), calc((100vw - 32px) * 0.85)', class: 'carousel__image'}) }}{% endif %}
                     <h3 class="carousel__title">
                         {%- if slide.href is defined and slide.href -%}

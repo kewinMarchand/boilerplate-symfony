@@ -74,6 +74,29 @@ final readonly class CategoryPath
         return implode('/', array_map(static fn (Category $category): string => $category->slug, $this->categories));
     }
 
+    /**
+     * Valeur du paramètre d'URL dans chaque langue où chaque catégorie traversée a un slug, par langue (sélecteur de langue,
+     * hreflang, sitemap). Racine : chemin vide dans chaque langue connue d'aucune catégorie, donc aucune.
+     *
+     * @return array<string, string>
+     */
+    public function alternates(): array
+    {
+        if ($this->isRoot()) {
+            return [];
+        }
+
+        $paths = [];
+        foreach (array_keys($this->categories[0]->alternates) as $locale) {
+            $slugs = array_map(static fn (Category $category): ?string => $category->alternates[$locale] ?? null, $this->categories);
+            if (!\in_array(null, $slugs, true)) {
+                $paths[$locale] = implode('/', $slugs);
+            }
+        }
+
+        return $paths;
+    }
+
     public function child(Category $child): self
     {
         return new self($this->root, [...$this->categories, $child]);

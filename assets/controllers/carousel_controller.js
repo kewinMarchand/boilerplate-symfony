@@ -9,6 +9,7 @@ const prefersInstantScroll = () =>
 
 export default class extends Controller {
     static targets = ['viewport', 'previous', 'next', 'dots'];
+    static values = { dotLabel: String };
 
     connect() {
         this.embla = EmblaCarousel(this.viewportTarget, { align: 'start' }, [WheelGesturesPlugin()]);
@@ -45,7 +46,7 @@ export default class extends Controller {
                 dot.dataset.index = String(index);
                 dot.dataset.action = 'carousel#goTo';
                 dot.dataset.testid = 'carousel-dot';
-                dot.setAttribute('aria-label', `Aller à la diapositive ${index + 1}`);
+                dot.setAttribute('aria-label', this.dotLabelValue.replace('%index%', String(index + 1)));
                 dot.setAttribute('aria-controls', viewportId);
                 return dot;
             }),

@@ -1,7 +1,7 @@
 {%- set seo = seo is defined ? seo : seo_page() -%}
 {%- set identity = site_identity() -%}
 <!DOCTYPE html>
-<html lang="fr" data-color-scheme="{{ identity.defaultColorScheme }}">
+<html lang="{{ page_locale().locale }}" data-color-scheme="{{ identity.defaultColorScheme }}">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -15,6 +15,9 @@
             <link rel="canonical" href="{{ seo.canonical }}">
             <meta property="og:url" content="{{ seo.canonical }}">
         {% endif %}
+        {%~ for alternate in seo.alternates %}
+        <link rel="alternate" hreflang="{{ alternate.hreflang }}" href="{{ alternate.url }}">
+        {%~ endfor %}
         {% if seo.prev %}<link rel="prev" href="{{ seo.prev }}">{% endif %}
         {% if seo.next %}<link rel="next" href="{{ seo.next }}">{% endif %}
         <meta name="theme-color" content="{{ site.theme_color }}">
@@ -27,7 +30,10 @@
         <meta property="og:image:width" content="{{ seo.imageWidth }}">
         <meta property="og:image:height" content="{{ seo.imageHeight }}">
         <meta property="og:image:alt" content="{{ seo.imageAlt }}">
-        <meta property="og:locale" content="{{ site.locale }}">
+        <meta property="og:locale" content="{{ seo.ogLocale }}">
+        {%~ for og_locale in seo.ogLocaleAlternates %}
+        <meta property="og:locale:alternate" content="{{ og_locale }}">
+        {%~ endfor %}
         <meta name="twitter:card" content="summary_large_image">
         <meta name="twitter:title" content="{{ seo.title }}">
         <meta name="twitter:description" content="{{ seo.description }}">

@@ -4,16 +4,17 @@
 {%- set category_path = path('catalog', {path: categoryPath.value}) -%}
 {%- set page = state.query.page -%}
 {%- set product_count = result ? result.page.total : 0 -%}
-{%- set breadcrumb = [{label: 'Catalogue', path: path('catalog')}] -%}
+{%- set breadcrumb = [{label: 'nav.catalog'|trans, path: path('catalog')}] -%}
 {%- for step in categoryPath.steps -%}
     {%- set breadcrumb = breadcrumb|merge([{label: step.category.name, path: path('catalog', {path: step.value})}]) -%}
 {%- endfor -%}
-{%- set page_suffix = page > 1 ? ', page ' ~ page : '' -%}
+{%- set page_suffix = page > 1 ? 'catalog.page_suffix'|trans({'%page%': page}) : '' -%}
 {%- set seo = seo_page({
     page: categoryPath.isRoot and page == 1 ? 'catalog' : null,
-    title: (categoryPath.isRoot ? 'Catalogue' : category.name ~ ' · Catalogue') ~ page_suffix,
-    description: 'Jardinerie tropicale fictive : ' ~ (categoryPath.isRoot ? 'tout le catalogue' : category.name|lower) ~ ', à filtrer par exposition, taille, prix et disponibilité. Livraison et conseils d’entretien.',
+    title: (categoryPath.isRoot ? 'nav.catalog'|trans : category.name ~ ' · ' ~ 'nav.catalog'|trans) ~ page_suffix,
+    description: 'catalog.description'|trans({'%subject%': categoryPath.isRoot ? 'catalog.whole_catalogue'|trans : category.name|lower}),
     breadcrumb: breadcrumb,
+    alternates: categoryPath.isRoot ? null : categoryPath.alternates|map(alternate => {path: alternate}),
     canonical: category_path ~ (page > 1 ? '?page=' ~ page : ''),
     robots: state.hasFiltersOrSort() ? 'noindex, follow' : 'index, follow',
     prev: result and page > 1 ? category_path ~ state.withPage(page - 1).queryString() : null,
@@ -41,9 +42,9 @@
 
 {% block body %}
     <div class="catalog" data-controller="catalog" data-action="click->catalog#trackClick turbo:before-fetch-request->catalog#rememberFocus turbo:frame-load->catalog#restoreFocus">
-        <h1 class="catalog__title" tabindex="-1" data-catalog-target="title">{{ category.name }}</h1>
+        <h1 class="catalog__title" tabindex="-1" data-catalog-target="title">{{ categoryPath.isRoot ? 'nav.catalog'|trans : category.name }}</h1>
         {% if category.children is not empty %}
-            <ul class="bui-chip-list chips" role="list" aria-label="Sous-catégories">
+            <ul class="bui-chip-list chips" role="list" aria-label="{{ 'catalog.subcategories'|trans }}">
                 {% for child in category.children %}
                     <li><a class="bui-chip" href="{{ path('catalog', {path: categoryPath.child(child).value}) }}">{{ child.name }}</a></li>
                 {% endfor %}

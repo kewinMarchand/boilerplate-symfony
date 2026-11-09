@@ -1,31 +1,31 @@
 <dialog id="mobile-menu" class="mobile-menu" aria-labelledby="mobile-menu-title" data-mobile-menu-target="dialog" data-action="close->mobile-menu#reset" data-testid="layout-mobile-menu">
     <div class="mobile-menu__header">
-        <p id="mobile-menu-title" class="mobile-menu__title">Menu</p>
+        <p id="mobile-menu-title" class="mobile-menu__title">{{ 'layout.menu'|trans }}</p>
         <button type="button" class="bui-button bui-button--outline" data-action="mobile-menu#close">
             {{ include('shared/ui/_icon.html.twig', {name: 'x'}) }}
-            <span>Fermer</span>
+            <span>{{ 'layout.close'|trans }}</span>
         </button>
     </div>
 
     <div class="mobile-menu__level" data-mobile-menu-target="level" data-level="root">
-        <h2 class="mobile-menu__heading" tabindex="-1">Menu</h2>
+        <h2 class="mobile-menu__heading" tabindex="-1">{{ 'layout.menu'|trans }}</h2>
         <ul class="mobile-menu__list" role="list">
             {% for item in site.navigation.main %}
                 <li>
                     {% if item.route == 'catalog' %}
                         <button type="button" class="mobile-menu__item" data-action="mobile-menu#show" data-mobile-menu-level-param="catalog">
-                            <span>{{ item.label }}</span>
+                            <span>{{ item.label|trans }}</span>
                             {{ include('shared/ui/_icon.html.twig', {name: 'chevron-right'}) }}
                         </button>
                     {% else %}
-                        <a class="mobile-menu__item" href="{{ path(item.route) }}"{% if app.current_route == item.route %} aria-current="page"{% endif %}>{{ item.label }}</a>
+                        <a class="mobile-menu__item" href="{{ path(item.route) }}"{% if app.current_route == item.route %} aria-current="page"{% endif %}>{{ item.label|trans }}</a>
                     {% endif %}
                 </li>
             {% endfor %}
         </ul>
     </div>
 
-    {{ include('shared/layout/_mobile_menu_level.html.twig', {level: 'catalog', parent: 'root', parent_label: 'Menu', title: 'Catalogue', all_label: 'Voir tout le catalogue', slugs: [], categories: tree.root.children}) }}
+    {{ include('shared/layout/_mobile_menu_level.html.twig', {level: 'catalog', parent: 'root', parent_label: 'layout.menu'|trans, title: 'nav.catalog'|trans, all_label: 'layout.mobile_catalog_all'|trans, slugs: [], categories: tree.root.children}) }}
     {% for categoryPath in catalog_paths() %}
         {% set category = categoryPath.category %}
         {% if category.children is not empty %}
@@ -33,9 +33,9 @@
             {{ include('shared/layout/_mobile_menu_level.html.twig', {
                 level: categoryPath.value|replace({'/': '-'}),
                 parent: parent.isRoot ? 'catalog' : parent.value|replace({'/': '-'}),
-                parent_label: parent.isRoot ? 'Catalogue' : parent.category.name,
+                parent_label: parent.isRoot ? 'nav.catalog'|trans : parent.category.name,
                 title: category.name,
-                all_label: 'Voir toute la catégorie',
+                all_label: 'layout.mobile_category_all'|trans,
                 slugs: categoryPath.value|split('/'),
                 categories: category.children,
             }) }}

@@ -1,22 +1,22 @@
 {% extends 'base.html.twig' %}
 
-{% set seo = seo_page({page: 'sitemap', title: 'Plan du site', description: 'Plan du site ' ~ site_identity().name ~ ' : liste de toutes les pages, navigation principale et informations légales.'}) %}
+{% set seo = seo_page({page: 'sitemap', title: 'nav.legal_sitemap'|trans, description: 'legal.sitemap_description'|trans({'%site%': site_identity().name})}) %}
 
 {% block body %}
     <article class="prose">
-        <h1>Plan du site</h1>
-        <h2>Navigation principale</h2>
+        <h1>{{ 'nav.legal_sitemap'|trans }}</h1>
+        <h2>{{ 'layout.main_navigation'|trans }}</h2>
         <ul data-testid="legal-sitemap-main">
             {% for item in site.navigation.main %}
-                <li><a href="{{ path(item.route) }}">{{ item.label }}</a></li>
+                <li><a href="{{ path(item.route) }}">{{ item.label|trans }}</a></li>
             {% endfor %}
         </ul>
-        <h2>Catalogue</h2>
+        <h2>{{ 'nav.catalog'|trans }}</h2>
         {{ include('legal/_category_tree.html.twig', {categories: catalog_tree().root.children, parents: []}) }}
-        <h2>Informations légales</h2>
+        <h2>{{ 'legal.information'|trans }}</h2>
         <ul data-testid="legal-sitemap-legal">
             {% for item in site.navigation.legal %}
-                <li><a href="{{ path(item.route) }}">{{ item.label }}</a></li>
+                <li><a href="{{ path(item.route) }}">{{ item.label|trans }}</a></li>
             {% endfor %}
         </ul>
     </article>

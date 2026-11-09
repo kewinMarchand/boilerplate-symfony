@@ -15,19 +15,19 @@
             <h1 id="home-title" class="hero__title">{{ identity.name }}</h1>
             {% if identity.tagline %}<p class="hero__lead">{{ identity.tagline }}</p>{% endif %}
             <div class="hero__actions">
-                <a class="bui-button" href="{{ path('tasks') }}" data-testid="home-tasks-link">Voir la démo Turbo Frame</a>
-                <a class="bui-button bui-button--inverse" href="{{ path('contact') }}" data-testid="home-contact-link">Voir le formulaire</a>
+                <a class="bui-button" href="{{ path('tasks') }}" data-testid="home-tasks-link">{{ 'home.tasks_link'|trans }}</a>
+                <a class="bui-button bui-button--inverse" href="{{ path('contact') }}" data-testid="home-contact-link">{{ 'home.contact_link'|trans }}</a>
             </div>
         </div>
     </section>
 
     <div class="container main__content">
         {% if featured_error %}
-            {{ include('shared/ui/_alert.html.twig', {variant: 'error', body: featured_error, testid: 'home-carousel-error'}) }}
+            {{ include('shared/ui/_alert.html.twig', {variant: 'error', body: 'home.featured_error'|trans, testid: 'home-carousel-error'}) }}
         {% elseif featured is not empty %}
             {{ include('shared/carousel/_carousel.html.twig', {
                 id: 'home-carousel',
-                title: 'À la une',
+                title: 'home.featured'|trans,
                 testid: 'home-carousel',
                 slides: featured|map(product => {
                     image: product.image,
@@ -39,11 +39,11 @@
         {% endif %}
 
         <section class="blog" aria-labelledby="home-blog-title" data-testid="home-blog">
-            <h2 id="home-blog-title">Derniers articles</h2>
+            <h2 id="home-blog-title">{{ 'home.latest_articles'|trans }}</h2>
             {% if articles_error %}
-                {{ include('shared/ui/_alert.html.twig', {variant: 'error', body: articles_error, testid: 'home-blog-error'}) }}
+                {{ include('shared/ui/_alert.html.twig', {variant: 'error', body: 'blog.load_error'|trans, testid: 'home-blog-error'}) }}
             {% elseif articles is empty %}
-                {{ include('shared/ui/_alert.html.twig', {body: 'Aucun article pour l’instant. Revenez bientôt.', testid: 'home-blog-empty'}) }}
+                {{ include('shared/ui/_alert.html.twig', {body: 'blog.empty'|trans, testid: 'home-blog-empty'}) }}
             {% else %}
                 <ul class="blog__grid" role="list">
                     {% for article in articles %}
@@ -52,7 +52,7 @@
                         </li>
                     {% endfor %}
                 </ul>
-                <p class="blog__all"><a class="bui-link" href="{{ path('blog') }}" data-testid="home-blog-all">Tous les articles</a></p>
+                <p class="blog__all"><a class="bui-link" href="{{ path('blog') }}" data-testid="home-blog-all">{{ 'blog.all'|trans }}</a></p>
             {% endif %}
         </section>
     </div>

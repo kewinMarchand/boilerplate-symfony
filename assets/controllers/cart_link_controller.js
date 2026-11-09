@@ -14,6 +14,7 @@ const span = (text, className) => {
 // Nom accessible « Panier, 3 articles » composé du texte visible et de compléments masqués : axe refuse un aria-label qui ne contient pas le texte affiché.
 export default class extends Controller {
     static targets = ['count'];
+    static values = { items: Object };
 
     connect() {
         this.unsubscribe = subscribeToCart(() => this.render());
@@ -36,7 +37,7 @@ export default class extends Controller {
         this.countTarget.replaceChildren(
             span(', ', 'bui-visually-hidden'),
             badge,
-            span(` article${count > 1 ? 's' : ''}`, 'bui-visually-hidden'),
+            span(this.itemsValue[new Intl.PluralRules(document.documentElement.lang).select(count)] ?? this.itemsValue.other, 'bui-visually-hidden'),
         );
     }
 }

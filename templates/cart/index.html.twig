@@ -1,19 +1,19 @@
 {% extends 'base.html.twig' %}
 
-{% set seo = seo_page({title: 'Panier', description: 'Votre panier : les produits choisis, leurs quantités et le total, gardés dans ce navigateur.', robots: 'noindex, follow'}) %}
+{% set seo = seo_page({title: 'cart.title'|trans, description: 'cart.description'|trans, robots: 'noindex, follow'}) %}
 
 {% block body %}
-    <h1>Panier</h1>
-    <noscript><p>Le panier demande JavaScript.</p></noscript>
-    <div data-controller="cart">
+    <h1>{{ 'cart.title'|trans }}</h1>
+    <noscript><p>{{ 'cart.noscript'|trans }}</p></noscript>
+    <div data-controller="cart" data-cart-product-path-value="{{ path('product', {slug: 'x'})|slice(0, -1) }}" data-cart-labels-value="{{ {unitPrice: 'cart.unit_price'|trans, quantity: 'cart.quantity'|trans, remove: 'cart.remove_item'|trans}|json_encode }}">
         <div data-cart-target="content"></div>
         <template data-cart-target="empty">
-            <p tabindex="-1" data-cart-empty data-testid="cart-empty">Votre panier est vide. <a class="bui-link" href="{{ path('catalog') }}">Parcourir le catalogue</a></p>
+            <p tabindex="-1" data-cart-empty data-testid="cart-empty">{{ 'cart.empty'|trans }}<a class="bui-link" href="{{ path('catalog') }}">{{ 'cart.browse'|trans }}</a></p>
         </template>
         <template data-cart-target="summary">
             <ul class="cart-lines" role="list" data-cart-lines></ul>
-            <p class="cart-total">Total : <span data-cart-total data-testid="cart-total"></span></p>
-            <p>La commande en ligne arrive bientôt.</p>
+            <p class="cart-total">{{ 'cart.total'|trans }}<span data-cart-total data-testid="cart-total"></span></p>
+            <p>{{ 'cart.soon'|trans }}</p>
         </template>
         <template data-cart-target="line">
             <li class="cart-line" data-testid="cart-line">
@@ -24,7 +24,7 @@
                     <input class="bui-field__input" type="number" min="1" max="99" data-field="quantity" data-action="cart#changeQuantity" data-testid="cart-quantity">
                 </div>
                 <span class="cart-line__subtotal" data-field="subtotal"></span>
-                <button type="button" class="bui-button bui-button--outline" data-field="remove" data-action="cart#remove" data-testid="cart-remove">Retirer</button>
+                <button type="button" class="bui-button bui-button--outline" data-field="remove" data-action="cart#remove" data-testid="cart-remove">{{ 'cart.remove'|trans }}</button>
             </li>
         </template>
     </div>

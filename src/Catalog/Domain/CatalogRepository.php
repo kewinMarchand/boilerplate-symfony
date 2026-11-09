@@ -39,11 +39,13 @@ interface CatalogRepository
     public function similar(Product $product, int $limit): array;
 
     /**
-     * Slugs de tous les produits, page après page (sitemap).
+     * Slugs de tous les produits par identifiant, page après page (sitemap).
      *
-     * @return list<string>
+     * @param string|null $locale langue des slugs (sitemap d'un site multilingue) ; null : langue de la page
+     *
+     * @return array<string, string>
      *
      * @throws CatalogLoadException
      */
-    public function productSlugs(): array;
+    public function productSlugs(?string $locale = null): array;
 }

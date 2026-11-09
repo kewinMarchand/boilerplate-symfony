@@ -2,7 +2,7 @@
 {{ {
     name: identity.name,
     short_name: identity.name,
-    lang: 'fr',
+    lang: page_locale().defaultLocale,
     start_url: '/',
     display: 'standalone',
     theme_color: identity.theme ? identity.theme.light.primary : site.theme_color,

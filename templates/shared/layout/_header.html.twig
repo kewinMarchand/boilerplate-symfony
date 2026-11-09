@@ -1,6 +1,9 @@
 {#- cart_link : lien du panier, fourni par le layout du site (le socle ne connaît pas le module panier), vide quand la vente en ligne est coupée -#}
 {% set tree = catalog_tree() %}
 <header class="header" data-controller="mobile-menu">
+    {%~ if seo.languages is not empty %}
+    {{ include('shared/layout/_language_switcher.html.twig') }}
+    {%~ endif %}
     <div class="header__inner container">
         <a class="header__logo" href="{{ path('home') }}" data-testid="layout-logo"{% if app.current_route == 'home' %} aria-current="page"{% endif %}>
             {%- set identity = site_identity() %}
@@ -13,14 +16,14 @@
                 <span>{{ identity.name }}</span>
             {% endif %}
         </a>
-        <nav class="header__nav" aria-label="Navigation principale">
+        <nav class="header__nav" aria-label="{{ 'layout.main_navigation'|trans }}">
             <ul class="nav-list" role="list">
                 {% for item in site.navigation.main %}
                     {% if item.route == 'catalog' %}
                         {{ include('shared/layout/_category_menu.html.twig') }}
                     {% else %}
                         <li>
-                            <a class="nav-link" href="{{ path(item.route) }}"{% if app.current_route == item.route %} aria-current="page"{% endif %}>{{ item.label }}</a>
+                            <a class="nav-link" href="{{ path(item.route) }}"{% if app.current_route == item.route %} aria-current="page"{% endif %}>{{ item.label|trans }}</a>
                         </li>
                     {% endif %}
                 {% endfor %}
@@ -28,14 +31,14 @@
         </nav>
         <div class="header__actions">
             {{ cart_link }}
-            <button type="button" class="bui-button bui-button--inverse mobile-menu-toggle" aria-label="Menu" aria-expanded="false" aria-controls="mobile-menu" data-mobile-menu-target="toggle" data-action="mobile-menu#open" data-testid="layout-mobile-menu-toggle">
+            <button type="button" class="bui-button bui-button--inverse mobile-menu-toggle" aria-label="{{ 'layout.menu'|trans }}" aria-expanded="false" aria-controls="mobile-menu" data-mobile-menu-target="toggle" data-action="mobile-menu#open" data-testid="layout-mobile-menu-toggle">
                 {{ include('shared/ui/_icon.html.twig', {name: 'menu'}) }}
-                <span class="header__action-label">Menu</span>
+                <span class="header__action-label">{{ 'layout.menu'|trans }}</span>
             </button>
             {{ include('shared/layout/_color_scheme_toggle.html.twig') }}
-            <button type="button" class="bui-button bui-button--inverse a11y-toggle" aria-label="Accessibilité renforcée" aria-pressed="false" data-controller="a11y-mode" data-action="a11y-mode#toggle" data-testid="a11y-mode-toggle">
+            <button type="button" class="bui-button bui-button--inverse a11y-toggle" aria-label="{{ 'layout.a11y_mode'|trans }}" aria-pressed="false" data-controller="a11y-mode" data-action="a11y-mode#toggle" data-testid="a11y-mode-toggle">
                 {{ include('shared/ui/_icon.html.twig', {name: 'person-standing'}) }}
-                <span class="header__action-label">Accessibilité renforcée</span>
+                <span class="header__action-label">{{ 'layout.a11y_mode'|trans }}</span>
             </button>
         </div>
     </div>

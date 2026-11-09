@@ -97,6 +97,24 @@ final class ApiPayload
     }
 
     /**
+     * Équivalents d'une ressource détaillée dans chaque langue activée (`alternates` du contrat, section 29), par langue :
+     * `['fr' => 'monstera-deliciosa', 'en' => 'swiss-cheese-plant']`. Absent ou vide (site monolingue) : aucun.
+     *
+     * @param array<string, mixed> $object
+     *
+     * @return array<string, string>
+     */
+    public static function alternates(array $object): array
+    {
+        $alternates = [];
+        foreach (self::objects($object['alternates'] ?? [], 'alternates') as $alternate) {
+            $alternates[self::string($alternate, 'locale')] = self::string($alternate, 'slug');
+        }
+
+        return $alternates;
+    }
+
+    /**
      * Objet `image` du contrat, ou null quand l'API n'en a pas.
      *
      * @param array<string, mixed> $object

@@ -1,7 +1,7 @@
 <div class="mobile-menu__level" data-mobile-menu-target="level" data-level="{{ level }}" hidden>
     <button type="button" class="mobile-menu__back" data-action="mobile-menu#show" data-mobile-menu-level-param="{{ parent }}" data-testid="layout-mobile-menu-back">
         {{ include('shared/ui/_icon.html.twig', {name: 'chevron-left'}) }}
-        <span>Retour : {{ parent_label }}</span>
+        <span>{{ 'layout.back'|trans({'%label%': parent_label}) }}</span>
     </button>
     <h2 class="mobile-menu__heading" tabindex="-1">{{ title }}</h2>
     <ul class="mobile-menu__list" role="list">

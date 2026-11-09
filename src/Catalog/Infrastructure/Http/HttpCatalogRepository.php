@@ -95,14 +95,15 @@ final class HttpCatalogRepository implements CatalogRepository
         }
     }
 
-    public function productSlugs(): array
+    public function productSlugs(?string $locale = null): array
     {
         $slugs = [];
+        $localeQuery = null === $locale ? '' : '&locale='.rawurlencode($locale);
         try {
             for ($page = 1;; ++$page) {
-                $items = ApiPayload::objects($this->apiClient->request('GET', '/api/products?page='.$page.'&itemsPerPage='.self::MAX_PAGE_SIZE)->toArray(), 'products');
+                $items = ApiPayload::objects($this->apiClient->request('GET', '/api/products?page='.$page.'&itemsPerPage='.self::MAX_PAGE_SIZE.$localeQuery)->toArray(), 'products');
                 foreach ($items as $item) {
-                    $slugs[] = ApiPayload::string($item, 'slug');
+                    $slugs[ApiPayload::id($item, 'id')] = ApiPayload::string($item, 'slug');
                 }
                 if (\count($items) < self::MAX_PAGE_SIZE) {
                     return $slugs;

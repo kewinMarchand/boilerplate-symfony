@@ -2,26 +2,26 @@
 
 {% set server_rendered = tasks is defined %}
 {% set seo = seo_page({
-    title: 'Tâches',
-    description: 'Démo Turbo Frame : liste de tâches chargée à la demande, avec gestion du chargement, des erreurs et de la liste vide.',
+    title: 'nav.tasks'|trans,
+    description: 'tasks.description'|trans,
     canonical: path('tasks'),
     robots: server_rendered ? 'noindex, follow' : 'index, follow',
 }) %}
 
 {% block body %}
-    <h1>Tâches</h1>
-    <p class="lead">Liste chargée à la demande dans un Turbo Frame : chargement, erreur avec relance et liste vide sont gérés.</p>
+    <h1>{{ 'nav.tasks'|trans }}</h1>
+    <p class="lead">{{ 'tasks.lead'|trans }}</p>
     {% if server_rendered %}
         {{ include('tasks/_list.html.twig') }}
     {% else %}
         <turbo-frame id="tasks" src="{{ path('tasks_list') }}" loading="lazy" aria-live="polite">
-            <div class="skeleton-list tasks__loading" role="status" aria-busy="true" aria-label="Chargement des tâches" data-testid="tasks-loading">
+            <div class="skeleton-list tasks__loading" role="status" aria-busy="true" aria-label="{{ 'tasks.loading'|trans }}" data-testid="tasks-loading">
                 <span class="bui-skeleton" aria-hidden="true"></span>
                 <span class="bui-skeleton" aria-hidden="true"></span>
                 <span class="bui-skeleton" aria-hidden="true"></span>
             </div>
             <noscript>
-                <p><a href="{{ path('tasks_list') }}" data-testid="tasks-noscript-link">Afficher les tâches</a></p>
+                <p><a href="{{ path('tasks_list') }}" data-testid="tasks-noscript-link">{{ 'tasks.show'|trans }}</a></p>
             </noscript>
         </turbo-frame>
     {% endif %}

@@ -1,0 +1,9 @@
+contact:
+    email:
+        invalid: 'Indiquez une adresse e-mail valide, par exemple nom@domaine.fr.'
+    message:
+        too_long: 'Votre message ne doit pas dépasser 5000 caractères.'
+        too_short: 'Votre message doit contenir au moins 10 caractères.'
+    name:
+        too_long: 'Votre nom ne doit pas dépasser 100 caractères.'
+        too_short: 'Indiquez votre nom (2 caractères minimum).'

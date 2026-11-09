@@ -7,12 +7,14 @@ namespace App\Catalog\Domain;
 final readonly class Category
 {
     /**
-     * @param list<Category> $children
+     * @param list<Category>        $children
+     * @param array<string, string> $alternates slug de la catégorie dans chaque langue activée, vide sur un site monolingue
      */
     public function __construct(
         public string $slug,
         public string $name,
         public array $children = [],
+        public array $alternates = [],
     ) {
     }
 

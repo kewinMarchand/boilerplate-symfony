@@ -280,6 +280,28 @@
     outline-color: var(--color-primary-contrast);
 }
 
+/* Sélecteur de langue : bande au-dessus de la barre, présente seulement à plus d'une langue. */
+.language-switcher__list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: var(--space-1);
+}
+
+.language-switcher__link {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--touch-target);
+    padding-inline: var(--space-2);
+    color: inherit;
+    text-underline-offset: 4px;
+}
+
+.language-switcher__link[aria-current='true'] {
+    font-weight: 700;
+    text-decoration: none;
+}
+
 .nav-list {
     display: flex;
     flex-wrap: wrap;

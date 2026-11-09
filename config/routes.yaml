@@ -10,6 +10,17 @@
 controllers:
     resource: routing.controllers
 
+# Les mêmes routes sous le préfixe d'une langue autre que la langue par défaut (/en/produit/…, section 29 bis de la spec
+# commune). Les langues viennent de l'API : l'exigence ne vérifie que la forme, App\Shared\UI\Locale\LocaleSubscriber
+# répond 404 à un préfixe qui n'est pas une langue activée autre que la langue par défaut.
+controllers_localized:
+    resource: routing.controllers
+    prefix: /{_locale}
+    name_prefix: localized_
+    requirements:
+        _locale: '[a-z]{2}'
+    trailing_slash_on_root: false
+
 csp_report:
     path: /api/csp-report
     controller: Kewinmarchand\Csp\Symfony\CspReportController

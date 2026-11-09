@@ -4,12 +4,12 @@ import { Controller } from '@hotwired/stimulus';
 import { formatPrice, removeItem, setQuantity, totalPrice } from '../cart.js';
 import { readCart, saveCart, subscribeToCart } from '../cart_storage.js';
 
-const productPath = (slug) => `/produit/${encodeURIComponent(slug)}`;
-
 // Contenu de la page panier, lu dans le navigateur. Les lignes ne sont reconstruites que si la liste des produits change :
 // un champ de quantité en cours de saisie garde son focus.
 export default class extends Controller {
     static targets = ['content', 'empty', 'summary', 'line'];
+    // productPath : adresse d'une fiche dans la langue de la page, sans le slug ; labels : libellés de la page, passés par le HTML
+    static values = { productPath: String, labels: Object };
 
     connect() {
         this.renderedSlugs = null;
@@ -60,9 +60,9 @@ export default class extends Controller {
             if (input.valueAsNumber !== line.quantity) {
                 input.value = String(line.quantity);
             }
-            row.querySelector('[data-field="subtotal"]').textContent = formatPrice(line.price * line.quantity);
+            row.querySelector('[data-field="subtotal"]').textContent = formatPrice(line.price * line.quantity, document.documentElement.lang);
         }
-        this.contentTarget.querySelector('[data-cart-total]').textContent = formatPrice(totalPrice(lines));
+        this.contentTarget.querySelector('[data-cart-total]').textContent = formatPrice(totalPrice(lines), document.documentElement.lang);
     }
 
     createLine(line) {
@@ -71,13 +71,13 @@ export default class extends Controller {
         const inputId = `cart-quantity-${line.slug}`;
 
         row.dataset.slug = line.slug;
-        field('name').href = productPath(line.slug);
+        field('name').href = this.productPathValue + encodeURIComponent(line.slug);
         field('name').textContent = line.name;
-        field('unit-price').textContent = `${formatPrice(line.price)} l’unité`;
+        field('unit-price').textContent = this.labelsValue.unitPrice.replace('%price%', formatPrice(line.price, document.documentElement.lang));
         field('label').htmlFor = inputId;
-        field('label').textContent = `Quantité de ${line.name}`;
+        field('label').textContent = this.labelsValue.quantity.replace('%name%', line.name);
         field('quantity').id = inputId;
-        field('remove').setAttribute('aria-label', `Retirer ${line.name}`);
+        field('remove').setAttribute('aria-label', this.labelsValue.remove.replace('%name%', line.name));
 
         return row;
     }

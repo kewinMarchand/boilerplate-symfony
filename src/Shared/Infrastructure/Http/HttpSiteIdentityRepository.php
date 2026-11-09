@@ -17,10 +17,12 @@ final readonly class HttpSiteIdentityRepository implements SiteIdentityRepositor
     {
     }
 
-    public function current(): SiteIdentity
+    public function current(?string $locale = null): SiteIdentity
     {
         try {
-            return SiteIdentityTranslation::identity($this->apiClient->request('GET', '/api/site-identity')->toArray());
+            $options = null === $locale ? [] : ['query' => ['locale' => $locale]];
+
+            return SiteIdentityTranslation::identity($this->apiClient->request('GET', '/api/site-identity', $options)->toArray());
         } catch (ExceptionInterface|InvalidApiPayloadException $exception) {
             throw new SiteIdentityLoadException($exception);
         }

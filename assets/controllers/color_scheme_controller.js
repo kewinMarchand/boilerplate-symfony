@@ -12,6 +12,7 @@ let menusReady = false;
 
 export default class extends Controller {
     static targets = ['trigger', 'item'];
+    static values = { labels: Object };
 
     connect() {
         if (!menusReady) {
@@ -35,7 +36,7 @@ export default class extends Controller {
         const root = document.documentElement;
         const scheme = currentColorScheme(root);
 
-        this.triggerTarget.setAttribute('aria-label', colorSchemeLabel(scheme, isA11yModeEnhanced(root)));
+        this.triggerTarget.setAttribute('aria-label', colorSchemeLabel(scheme, isA11yModeEnhanced(root), this.labelsValue));
         const icon = this.triggerTarget.querySelector('use');
         icon.setAttribute('href', icon.getAttribute('href').replace(/#.*$/, `#${ICONS[scheme]}`));
         for (const item of this.itemTargets) {

@@ -83,7 +83,7 @@ final class ArticleControllerTest extends WebTestCase
     {
         $client = self::createClient();
         self::getContainer()->set(ArticleRepository::class, new class implements ArticleRepository {
-            public function findLatest(int $limit, ?string $section = null): array
+            public function findLatest(int $limit, ?string $section = null, ?string $locale = null): array
             {
                 return [];
             }
@@ -195,7 +195,7 @@ final class ArticleControllerTest extends WebTestCase
     {
         $client = self::createClient();
         self::getContainer()->set(ArticleRepository::class, new class implements ArticleRepository {
-            public function findLatest(int $limit, ?string $section = null): array
+            public function findLatest(int $limit, ?string $section = null, ?string $locale = null): array
             {
                 return [];
             }

@@ -1,24 +1,24 @@
 <turbo-frame id="tasks">
     {% if error %}
-        {% embed 'shared/ui/_alert.html.twig' with {variant: 'error', body: error, testid: 'tasks-error'} %}
+        {% embed 'shared/ui/_alert.html.twig' with {variant: 'error', body: 'tasks.load_error'|trans, testid: 'tasks-error'} %}
             {% block action %}
                 <form method="get" action="{{ path('tasks_list') }}">
                     <button type="submit" class="bui-button bui-button--outline" data-testid="tasks-retry">
                         {{ include('shared/ui/_icon.html.twig', {name: 'rotate-cw'}) }}
-                        <span>Réessayer</span>
+                        <span>{{ 'common.retry'|trans }}</span>
                     </button>
                 </form>
             {% endblock %}
         {% endembed %}
     {% elseif tasks is empty %}
-        {{ include('shared/ui/_alert.html.twig', {body: 'Aucune tâche pour l’instant. Tout est à jour.', testid: 'tasks-empty'}) }}
+        {{ include('shared/ui/_alert.html.twig', {body: 'tasks.empty'|trans, testid: 'tasks-empty'}) }}
     {% else %}
         <ul class="task-list" role="list" data-testid="tasks-list">
             {% for task in tasks %}
                 <li class="task" data-testid="tasks-item">
                     {{ include('shared/ui/_icon.html.twig', {name: task.done ? 'circle-check' : 'list-todo'}) }}
                     <span class="task__title">{{ task.title }}</span>
-                    <span class="task__status">{{ task.done ? 'Terminée' : 'À faire' }}</span>
+                    <span class="task__status">{{ task.done ? 'tasks.done'|trans : 'tasks.todo'|trans }}</span>
                 </li>
             {% endfor %}
         </ul>

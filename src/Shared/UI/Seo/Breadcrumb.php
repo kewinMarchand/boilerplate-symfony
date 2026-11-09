@@ -18,14 +18,16 @@ final readonly class Breadcrumb
      * le dernier élément n'a jamais de lien.
      *
      * @param list<array{label: string, path?: string}> $trail
+     * @param string                                    $homeLabel libellé de l'accueil dans la langue de la page
+     * @param string                                    $homePath  accueil dans la langue de la page
      */
-    public static function fromTrail(array $trail): self
+    public static function fromTrail(array $trail, string $homeLabel = 'Accueil', string $homePath = '/'): self
     {
         if ([] === $trail) {
             return new self([]);
         }
 
-        $items = [new BreadcrumbItem('Accueil', '/')];
+        $items = [new BreadcrumbItem($homeLabel, $homePath)];
         $last = array_key_last($trail);
         foreach ($trail as $index => $step) {
             $items[] = new BreadcrumbItem($step['label'], $index === $last ? null : ($step['path'] ?? null));

@@ -33,4 +33,8 @@ describe('panier', () => {
   it('affiche les centimes en euros', () => {
     assert.match(formatPrice(10470), /^104,70\s€$/)
   })
+
+  it('suit la langue de la page', () => {
+    assert.equal(formatPrice(3490, 'en'), '€34.90')
+  })
 })

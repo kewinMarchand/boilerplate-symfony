@@ -107,6 +107,7 @@ final class CatalogTranslation
             ApiPayload::images($data, 'gallery'),
             ApiPayload::string($data, 'metaTitle'),
             ApiPayload::string($data, 'metaDescription'),
+            ApiPayload::alternates($data),
         );
     }
 
@@ -158,6 +159,7 @@ final class CatalogTranslation
                 ApiPayload::string($category, 'slug'),
                 ApiPayload::string($category, 'name'),
                 self::categories($category['children'] ?? [], $path.'.children'),
+                ApiPayload::alternates($category),
             ),
             ApiPayload::objects($payload, $path),
         );

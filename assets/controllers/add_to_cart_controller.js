@@ -9,7 +9,7 @@ const ANNOUNCE_DELAY_MS = 100;
 
 export default class extends Controller {
     static targets = ['template', 'status'];
-    static values = { item: Object, cartUrl: String };
+    static values = { item: Object, cartUrl: String, added: String, view: String };
 
     // Le bouton n'existe qu'avec JavaScript. Tout ce qui suit le gabarit est remplacé : une page restaurée du cache de Turbo le contient déjà.
     connect() {
@@ -22,8 +22,8 @@ export default class extends Controller {
         const link = document.createElement('a');
         link.className = 'bui-link';
         link.href = this.cartUrlValue;
-        link.textContent = 'Voir le panier';
+        link.textContent = this.viewValue;
         this.statusTarget.replaceChildren();
-        setTimeout(() => this.statusTarget.replaceChildren(`${this.itemValue.name} ajouté au panier. `, link), ANNOUNCE_DELAY_MS);
+        setTimeout(() => this.statusTarget.replaceChildren(this.addedValue.replace('%name%', this.itemValue.name), link), ANNOUNCE_DELAY_MS);
     }
 }

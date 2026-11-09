@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"{% if groups is not empty %} xmlns:xhtml="http://www.w3.org/1999/xhtml"{% endif %}>
+{% if groups is empty %}
 {% for item in site.navigation.main|merge(site.navigation.legal) %}
     <url><loc>{{ site.url }}{{ path(item.route) }}</loc></url>
 {% endfor %}
@@ -12,4 +13,13 @@
 {% for categoryPath in catalog_paths() %}
     <url><loc>{{ site.url }}{{ path('catalog', {path: categoryPath.value}) }}</loc></url>
 {% endfor %}
+{% else %}
+{% for group in groups %}
+{% for locale, path in group %}
+    <url><loc>{{ site.url }}{{ path }}</loc>
+{%- for alternate_locale, alternate_path in group %}<xhtml:link rel="alternate" hreflang="{{ alternate_locale }}" href="{{ site.url }}{{ alternate_path }}"/>{% endfor -%}
+{%- if group[default_locale] is defined %}<xhtml:link rel="alternate" hreflang="x-default" href="{{ site.url }}{{ group[default_locale] }}"/>{% endif %}</url>
+{% endfor %}
+{% endfor %}
+{% endif %}
 </urlset>

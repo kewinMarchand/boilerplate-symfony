@@ -8,20 +8,19 @@ parameters:
         name: Boilerplate Symfony
         description: Boilerplate Symfony avec Twig, Stimulus et Turbo, rendu serveur, outillé pour la QA, les tests end-to-end et l’accessibilité.
         url: '%env(SITE_URL)%'
-        locale: fr_FR
         theme_color: '#1d4ed8'
         navigation:
             main:
-                - { route: home, label: Accueil }
-                - { route: catalog, label: Catalogue }
-                - { route: blog, label: Blog }
-                - { route: tasks, label: Tâches }
-                - { route: contact, label: Contact }
+                - { route: home, label: nav.home }
+                - { route: catalog, label: nav.catalog }
+                - { route: blog, label: nav.blog }
+                - { route: tasks, label: nav.tasks }
+                - { route: contact, label: nav.contact }
             legal:
-                - { route: legal_notice, label: Mentions légales }
-                - { route: legal_privacy, label: Données personnelles }
-                - { route: legal_accessibility, label: Accessibilité }
-                - { route: legal_sitemap, label: Plan du site }
+                - { route: legal_notice, label: nav.legal_notice }
+                - { route: legal_privacy, label: nav.legal_privacy }
+                - { route: legal_accessibility, label: nav.legal_accessibility }
+                - { route: legal_sitemap, label: nav.legal_sitemap }
 
 twig:
     globals:

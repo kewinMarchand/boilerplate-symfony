@@ -20,9 +20,9 @@ final class ContactType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('name', TextType::class, ['label' => 'Nom', 'empty_data' => ''])
-            ->add('email', EmailType::class, ['label' => 'E-mail', 'empty_data' => ''])
-            ->add('message', TextareaType::class, ['label' => 'Message', 'empty_data' => ''])
+            ->add('name', TextType::class, ['label' => 'contact.form.name', 'empty_data' => ''])
+            ->add('email', EmailType::class, ['label' => 'contact.form.email', 'empty_data' => ''])
+            ->add('message', TextareaType::class, ['label' => 'contact.form.message', 'empty_data' => ''])
             ->add('product', HiddenType::class);
     }
 

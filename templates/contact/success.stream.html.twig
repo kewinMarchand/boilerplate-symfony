@@ -2,5 +2,5 @@
     <template>{{ include('contact/_form.html.twig') }}</template>
 </turbo-stream>
 <turbo-stream action="update" target="contact-status">
-    <template>{{ include('shared/ui/_alert.html.twig', {variant: 'success', body: success, testid: 'contact-success'}) }}</template>
+    <template>{{ include('shared/ui/_alert.html.twig', {variant: 'success', body: success|trans, testid: 'contact-success'}) }}</template>
 </turbo-stream>

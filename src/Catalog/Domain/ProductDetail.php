@@ -13,9 +13,10 @@ use App\Shared\Domain\Image;
 final readonly class ProductDetail
 {
     /**
-     * @param list<CategoryLink> $categoryPath
-     * @param list<string>       $description  paragraphes, vide si l'admin n'en a pas écrit
-     * @param list<Image>        $gallery      images en plus de l'image principale, dans l'ordre
+     * @param list<CategoryLink>    $categoryPath
+     * @param list<string>          $description  paragraphes, vide si l'admin n'en a pas écrit
+     * @param list<Image>           $gallery      images en plus de l'image principale, dans l'ordre
+     * @param array<string, string> $alternates   slug du produit dans chaque langue activée, vide sur un site monolingue
      */
     public function __construct(
         public Product $product,
@@ -24,6 +25,7 @@ final readonly class ProductDetail
         public array $gallery,
         public string $metaTitle,
         public string $metaDescription,
+        public array $alternates = [],
     ) {
     }
 
